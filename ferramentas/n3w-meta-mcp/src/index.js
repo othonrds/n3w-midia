@@ -270,7 +270,7 @@ const TOOLS = [
     name: "criar_criativo",
     description: "Cria criativo de vídeo ou imagem (object_story_spec) com CTA livre (inclui SEE_DETAILS, LEARN_MORE, SHOP_NOW…).",
     inputSchema: S({
-      conta: CONTA, nome: str("nome"), pagina_id: str("padrão = página configurada"), instagram_id: str("opcional"),
+      conta: CONTA, nome: str("nome"), pagina_id: str("padrão = página configurada"),
       video_id: str("para vídeo"), miniatura_url: str("obrigatória com vídeo; use status_video"), image_hash: str("para imagem"),
       texto: str("texto principal"), titulo: str("headline"), descricao: str("opcional"),
       link: str("URL de destino"), cta: str("padrão SEE_DETAILS"), url_tags: str("UTMs opcionais"),
@@ -278,7 +278,8 @@ const TOOLS = [
     run: async (env, a) => {
       const page_id = a.pagina_id || env.PAGE_ID;
       const call_to_action = { type: a.cta || "SEE_DETAILS", value: { link: a.link } };
-      const spec = { page_id, instagram_user_id: a.instagram_id };
+      // Regra do Othon (07/10): anúncios só com a Página do Facebook; sem conta do Instagram vinculada.
+      const spec = { page_id };
       if (a.video_id) spec.video_data = { video_id: a.video_id, image_url: a.miniatura_url, message: a.texto, title: a.titulo, link_description: a.descricao, call_to_action };
       else spec.link_data = { image_hash: a.image_hash, link: a.link, message: a.texto, name: a.titulo, description: a.descricao, call_to_action };
       return graph(env, "POST", `${act(env, a.conta)}/adcreatives`, { name: a.nome, object_story_spec: spec, url_tags: a.url_tags });
@@ -409,7 +410,7 @@ async function handleRpc(env, msg) {
       const v = PROTOCOL_VERSIONS.includes(params && params.protocolVersion) ? params.protocolVersion : PROTOCOL_VERSIONS[0];
       return ok({
         protocolVersion: v, serverInfo: SERVER_INFO, capabilities: { tools: { listChanged: false } },
-        instructions: "Conector Meta Ads da N3w. Tudo é criado PAUSADO. Ativar e aumentar orçamento exigem autorizacao_humana com a frase do Othon. Valores em reais.",
+        instructions: "Conector Meta Ads da N3w. Tudo é criado PAUSADO. Ativar e aumentar orçamento exigem autorizacao_humana com a frase do Othon. Valores em reais. Identidade dos anúncios: só a Página do Facebook, nunca vincular conta do Instagram.",
       });
     }
     case "ping": return ok({});
