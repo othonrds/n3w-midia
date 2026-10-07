@@ -47,7 +47,7 @@ html.standalone,html.standalone body{background:#ffd9ec}
 .appsheet{display:flex;gap:1.2rem;align-items:center;text-align:left}
 .appsheet .appicon{flex:0 0 7rem;width:7rem;height:7rem;border-radius:1.6rem;box-shadow:0 .5rem 1.4rem rgba(255,79,158,.35);background-size:cover;background-position:center}
 .appsheet h2{margin:0 2.6rem .3rem 0;font-size:1.5rem}
-.appsheet p{margin:0 0 .6rem;font-size:.92rem;line-height:1.4;color:var(--ink2)}
+.appsheet p{margin:0 2.8rem .6rem 0;font-size:.92rem;line-height:1.4;color:var(--ink2)}
 .appsheet ol{margin:0 0 .7rem;padding:0;list-style:none;display:grid;gap:.4rem}
 .appsheet li{display:flex;align-items:center;gap:.55rem;font-weight:800;font-size:.95rem}
 .appsheet li b{flex:0 0 1.7rem;height:1.7rem;border-radius:50%;background:var(--pink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem}
