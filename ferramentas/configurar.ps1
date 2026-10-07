@@ -11,6 +11,7 @@ Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like "*n3w_operar
   Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue
   Write-Host "  parado: processo $($_.ProcessId)"
 }
+Remove-Item (Join-Path ([Environment]::GetFolderPath("Startup")) "N3w Operario.lnk") -ErrorAction SilentlyContinue
 Remove-Item (Join-Path $Pasta "estado.json") -ErrorAction SilentlyContinue
 Write-Host "  ok"
 
@@ -34,8 +35,15 @@ if ($r -notmatch '^[sS]') {
 
 Write-Host ""
 Write-Host "=== 4/4  Instalando ===" -ForegroundColor Cyan
-$acao = "`"$PS`" -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$Script`""
-cmd /c "schtasks /create /f /tn `"N3w Operario`" /sc onlogon /rl limited /tr `"$($acao -replace '"','\"')`"" | Out-Null
+$startup = [Environment]::GetFolderPath("Startup")
+$lnk = Join-Path $startup "N3w Operario.lnk"
+$ws = New-Object -ComObject WScript.Shell
+$sc = $ws.CreateShortcut($lnk)
+$sc.TargetPath = $PS
+$sc.Arguments = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$Script`""
+$sc.WorkingDirectory = $Pasta
+$sc.WindowStyle = 7
+$sc.Save()
 Start-Process -FilePath $PS -ArgumentList @("-NoProfile","-WindowStyle","Hidden","-ExecutionPolicy","Bypass","-File","`"$Script`"") -WindowStyle Hidden
 Write-Host "Pronto! O Disparador esta rodando e vai ligar sozinho sempre que o Windows iniciar." -ForegroundColor Green
 Write-Host "Pode apagar as outras pastas antigas em C:\N3w (deixe so esta)."
