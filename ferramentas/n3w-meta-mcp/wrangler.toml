@@ -1,0 +1,9 @@
+name = "n3w-meta"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+GRAPH_VERSION = "v26.0"
+AD_ACCOUNT_ID = "1805973277429998"
+PAGE_ID = "1358861377303862"
+# Segredos (nunca aqui): META_TOKEN, CONNECTOR_KEY
