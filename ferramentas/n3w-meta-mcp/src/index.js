@@ -451,7 +451,7 @@ function resumoLinha(r) {
   const checkout = pick(r.actions, ["omni_initiated_checkout", "initiate_checkout", "offsite_conversion.fb_pixel_initiate_checkout"]);
   const gasto = Number(r.spend || 0);
   const out = {};
-  for (const k of ["date_start", "date_stop", "campaign_id", "campaign_name", "adset_id", "adset_name", "ad_id", "ad_name", "age", "gender", "publisher_platform"]) if (r[k] !== undefined) out[k] = r[k];
+  for (const k of ["date_start", "date_stop", "campaign_id", "campaign_name", "adset_id", "adset_name", "ad_id", "ad_name", "age", "gender", "country", "region", "publisher_platform", "platform_position", "device_platform", "impression_device"]) if (r[k] !== undefined) out[k] = r[k];
   Object.assign(out, {
     gasto, impressoes: Number(r.impressions || 0), alcance: Number(r.reach || 0), frequencia: Number(r.frequency || 0),
     cpm: Number(r.cpm || 0), cliques_link: Number(r.inline_link_clicks || 0), ctr_link: Number(r.inline_link_click_ctr || 0),
