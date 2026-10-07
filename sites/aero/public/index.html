@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Kit Plano de Voo · Rafael Francisco, ex-Capitão Aviador da FAB</title>
-<meta name="description" content="Quanto custa virar piloto no Brasil e qual rota é a sua: civil, militar ou policial. Guia com números checados, simulador de custos e aula, por Rafael Francisco, ex-Capitão Aviador da FAB.">
+<meta name="description" content="Quanto custa virar piloto no Brasil e qual rota é a sua: civil, militar ou policial. Guia com números checados e simulador de custos, por Rafael Francisco, ex-Capitão Aviador da FAB.">
 <meta property="og:title" content="Kit Plano de Voo · O mapa para virar piloto no Brasil">
 <meta property="og:description" content="Rotas civil, militar e policial com números reais e 52 fontes. Por Rafael Francisco, ex-Capitão Aviador da FAB.">
 <meta property="og:image" content="img/p1.jpg">
@@ -142,7 +142,7 @@ footer .wrap{display:grid;gap:8px}
    <div class="eyebrow">Guia de carreira · Edição 2026</div>
    <h1>Quanto custa virar piloto no Brasil e <em>qual rota é a sua?</em></h1>
    <p class="lead">O Kit Plano de Voo junta num lugar só as rotas civil, militar e policial: licenças, idades, concursos, salários e quanto custa cada etapa. São números checados, com 52 fontes, para você decidir antes de gastar o primeiro real.</p>
-   <a class="btn cta" href="#oferta">Quero o meu kit <small>R$ 67</small></a>
+   <a class="btn cta" href="#oferta" data-go="kit">Quero o meu kit <small>R$ 67</small></a>
    <div class="who"><div><b>Rafael Francisco</b><span>Ex-Capitão Aviador da FAB (2014–2025) · Piloto Comercial e Instrutor de Voo pela ANAC · ~1.050 h de voo</span></div></div>
   </div>
   <img class="cover" src="img/p1.jpg" alt="Capa do Kit Plano de Voo" width="744" height="1053">
@@ -190,7 +190,7 @@ footer .wrap{display:grid;gap:8px}
    <ul class="items">
     <li><div class="ic">01</div><div><b>Guia de 30 páginas (PDF)</b><span>Mapa da carreira civil, mercados e pisos salariais, custos item a item, caminho militar e policial, CMA e banca da ANAC.</span></div></li>
     <li><div class="ic">02</div><div><b>Planilha simulador de custos</b><span>Coloque o preço da sua escola e quanto pode investir por mês e veja em quantos meses chega ao Piloto Comercial.</span></div></li>
-    <li><div class="ic">03</div><div><b>Aula gravada com o Rafael</b><span>Cerca de 20 minutos explicando como usar o kit, com destaque para a rota militar e policial.</span></div></li>
+    <li><div class="ic">03</div><div><b>Rotas militar e policial em detalhe</b><span>EPCAR, AFA, Escola Naval, EsPCEx, PMs, Bombeiros, PRF e PF: idades, vagas, provas, saúde e remuneração.</span></div></li>
     <li><div class="ic">04</div><div><b>Checklists e plano de 90 dias</b><span>Checklist para escolher aeroclube ou escola, sinais de alerta e um plano de ação para sair do "um dia eu vou".</span></div></li>
    </ul>
    <div class="pages">
@@ -262,12 +262,12 @@ footer .wrap{display:grid;gap:8px}
   <div class="eyebrow">Garanta o seu</div>
   <h2>Kit Plano de Voo</h2>
   <div class="box">
-   <h3>Guia + planilha + aula</h3>
+   <h3>Guia + planilha simuladora</h3>
    <div class="price"><b>R$ 67</b><span>pagamento único · acesso imediato</span></div>
    <ul>
     <li>Guia de carreira de 30 páginas, com 52 fontes</li>
     <li>Planilha simulador de custos até o Piloto Comercial</li>
-    <li>Aula gravada de ~20 min com o Rafael</li>
+    <li>Comparativo civil × militar × policial</li>
     <li>Rotas civil, militar e policial num lugar só</li>
     <li>Checklists e plano de ação de 90 dias</li>
    </ul>
@@ -307,7 +307,7 @@ footer .wrap{display:grid;gap:8px}
   <div class="eyebrow" style="color:var(--amber-d)">Dúvidas</div>
   <h2>Perguntas frequentes</h2>
   <div class="faq">
-   <details><summary>Como recebo o kit?</summary><p>Logo após a confirmação do pagamento, você recebe por e-mail o acesso ao guia em PDF, à planilha e à aula.</p></details>
+   <details><summary>Como recebo o kit?</summary><p>Logo após a confirmação do pagamento, você recebe por e-mail o acesso à área de membros, com o guia em PDF e a planilha para baixar.</p></details>
    <details><summary>O kit analisa o meu caso?</summary><p>Não. O kit é o mapa completo, com números e ferramentas para você se planejar. A análise individual do seu caso é feita no Plano de Voo, o diagnóstico com o Rafael.</p></details>
    <details><summary>Os números estão atualizados?</summary><p>Os dados foram pesquisados em outubro de 2026 em fontes públicas (ANAC, editais da FAB, Marinha e Exército, aeroclubes e convenções coletivas), todas listadas no guia. Preços de escola e editais mudam: confirme sempre antes de pagar ou se inscrever.</p></details>
    <details><summary>Serve para quem quer a rota militar?</summary><p>Sim. Mais da metade do guia é dedicada a FAB, Marinha, Exército, PMs, Bombeiros, PRF, PF e Polícias Civis: idades, vagas, provas, saúde, teste físico e remuneração.</p></details>
@@ -326,10 +326,12 @@ footer .wrap{display:grid;gap:8px}
 
 <script>
 // Links de checkout (Payt) — preenchidos após o cadastro dos produtos
-var CHECKOUT_KIT = "";
-var CHECKOUT_PLANO = "";
+var CHECKOUT_KIT = "https://payt.site/mNCDMaK";
+var CHECKOUT_PLANO = "https://payt.site/wGCBDlp";
 function q(){return location.search||""}
 if(CHECKOUT_KIT){document.querySelectorAll('#cta-kit').forEach(function(a){a.href=CHECKOUT_KIT+q()})}
+function ic(){try{if(window.fbq)fbq('track','InitiateCheckout')}catch(e){}}
+document.querySelectorAll('#cta-kit,#cta-plano').forEach(function(a){a.addEventListener('click',ic)});
 if(CHECKOUT_PLANO){document.getElementById('cta-plano').href=CHECKOUT_PLANO+q()}
 </script>
 </body>

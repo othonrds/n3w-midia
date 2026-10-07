@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Compra confirmada · Kit Plano de Voo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0b1d36;--amber:#f5b21b;--muted:#5b6880;--line:#dde3ec}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:#f5f7fa;color:#14213a;line-height:1.55}
+.top{background:var(--navy);color:#fff;text-align:center;padding:40px 20px 34px;border-bottom:4px solid var(--amber)}
+.top .ok{display:inline-grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--amber);color:var(--navy);font-size:30px;font-weight:800;margin-bottom:14px}
+h1,h2{font-family:"Barlow Condensed",Inter,sans-serif;text-transform:uppercase;line-height:1.05}
+.top h1{font-size:clamp(30px,6vw,44px)}
+.top p{color:#c9d4e6;margin-top:8px;max-width:520px;margin-left:auto;margin-right:auto}
+.wrap{max-width:640px;margin:0 auto;padding:28px 18px 50px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px;border-top:5px solid var(--amber)}
+.eyebrow{font-family:"Barlow Condensed";font-weight:700;letter-spacing:.2em;font-size:14px;color:#c98a00;text-transform:uppercase}
+.card h2{font-size:clamp(28px,6vw,38px);color:var(--navy);margin:6px 0 10px}
+ol{list-style:none;counter-reset:s;display:grid;gap:12px;margin:18px 0}
+ol li{counter-increment:s;padding-left:42px;position:relative}
+ol li:before{content:counter(s);position:absolute;left:0;top:-2px;width:30px;height:30px;border-radius:50%;background:var(--amber);color:var(--navy);font-weight:800;display:grid;place-items:center}
+.audio{background:var(--navy);color:#fff;border-radius:12px;padding:18px;margin:18px 0}
+.audio p{font-size:14px;color:#c9d4e6;margin-bottom:10px}
+audio{width:100%}
+.price{font-size:18px;margin:6px 0 4px}
+.note{font-size:13px;color:var(--muted)}
+.btn{display:block;text-align:center;background:var(--amber);color:var(--navy);font-family:"Barlow Condensed";font-weight:800;font-size:22px;text-transform:uppercase;letter-spacing:.04em;text-decoration:none;padding:17px;border-radius:10px;margin-top:18px;box-shadow:0 8px 24px rgba(245,178,27,.35)}
+.skip{display:block;text-align:center;margin-top:14px;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<header class="top">
+ <div class="ok">✓</div>
+ <h1>Seu Kit Plano de Voo está a caminho</h1>
+ <p>Confira seu e-mail: o acesso à área de membros, com o guia em PDF e a planilha, chega logo após a confirmação do pagamento. Olhe também a caixa de spam.</p>
+</header>
+<main class="wrap">
+ <div class="card">
+  <div class="eyebrow">Próximo passo (opcional)</div>
+  <h2>Quer que o Rafael monte o plano com você?</h2>
+  <p>O kit é o mapa. No <b>Plano de Voo</b>, o Rafael olha para o seu caso: idade, orçamento, saúde, região e objetivo.</p>
+  <ol>
+   <li><b>Sessão online individual</b> com o Rafael.</li>
+   <li><b>Plano de carreira escrito</b> com próximos passos, prazos e prioridades.</li>
+   <li><b>Kit de apoio</b> para colocar o plano em prática.</li>
+  </ol>
+  <div class="audio">
+   <p>Ouça o Rafael explicar em 1 minuto:</p>
+   <audio controls preload="none" src="rafael-plano-de-voo.mp3"></audio>
+  </div>
+  <p class="price"><b>R$ 289 no Pix.</b> Se depois você seguir com uma mentoria completa, esse valor vira crédito no upgrade.</p>
+  <p class="note">O Rafael atende até 10 diagnósticos por semana.</p>
+  <a class="btn" id="cta-plano" href="https://payt.site/wGCBDlp">Quero o diagnóstico com o Rafael</a>
+  <a class="skip" href="index.html">Agora não, obrigado</a>
+ </div>
+</main>
+<script>
+(function(){var q=location.search||"";var a=document.getElementById('cta-plano');if(q)a.href=a.href+q;})();
+</script>
+</body>
+</html>
