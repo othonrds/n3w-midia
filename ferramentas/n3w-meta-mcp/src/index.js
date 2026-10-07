@@ -215,6 +215,8 @@ const TOOLS = [
         age_min: a.idade_min || 18, age_max: a.idade_max || 65,
         custom_audiences: a.publicos_sugeridos && a.publicos_sugeridos.length ? a.publicos_sugeridos.map((id) => ({ id })) : undefined,
         targeting_automation: { advantage_audience: adv ? 1 : 0 },
+        // Com Advantage+ ligado, públicos entram como SUGESTÃO; sem isto a Meta recusa (erro 100/1359202).
+        targeting_relaxation_types: adv ? { lookalike: 1, custom_audience: 1 } : undefined,
       };
       return graph(env, "POST", `${act(env, a.conta)}/adsets`, {
         campaign_id: a.campanha_id, name: a.nome, status: "PAUSED",
