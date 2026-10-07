@@ -87,8 +87,10 @@ function start(){
   mo.observe(document.body,{childList:true,subtree:true,characterData:true});
 }
 function set(c){ if(!ok(c)) return; lang=c; try{ localStorage.setItem(KEY,c); }catch(e){} document.documentElement.lang=c==='pt'?'pt-BR':c; walk(document.body); }
+const TAG={en:'Create your <em>dream</em> life.',pt:'Crie a vida dos seus <em>sonhos</em>.',es:'Crea la vida de tus <em>sueños</em>.',fr:'Crée la vie de tes <em>rêves</em>.',de:'Erschaffe dein <em>Traum</em>leben.',it:'Crea la vita dei tuoi <em>sogni</em>.'};
+function tagline(){ return TAG[lang]||TAG.en; }
 function label(){ return (LANGS.find(l=>l[0]===lang)||LANGS[0])[1]; }
-window.I18N={LANGS, get lang(){return lang;}, set, start, t:tr, label, detected:detect};
+window.I18N={LANGS, get lang(){return lang;}, set, start, t:tr, label, tagline, detected:detect};
 if(document.body) start(); else document.addEventListener('DOMContentLoaded',start);
 })();
 """.replace('__D__', json.dumps(D, ensure_ascii=False, separators=(',', ':'))).replace('__P__', json.dumps(P, ensure_ascii=False, separators=(',', ':')))
@@ -135,6 +137,7 @@ sub1("  rotok(){ document.body.classList.add('rot-ok'); }",
 sub1("document.addEventListener('click',e=>{ if(e.target.id==='overlay'",
      "document.addEventListener('change',e=>{ if(e.target.matches&&e.target.matches('select.lang')){ I18N.set(e.target.value); track('language_set',{lang:e.target.value,source:'settings'}); const back=cur; go(back); showSettings(); } });\ndocument.addEventListener('click',e=>{ if(e.target.id==='overlay'")
 
+sub1('<div class="tagline">Create your <em>dream</em> life.</div>', '<div class="tagline" data-noi18n>${I18N.tagline()}</div>')
 # report the language with game_start so the dashboard can split by language
 sub1("play(){ track('game_start',{returning:!!S.created});", "play(){ track('game_start',{returning:!!S.created,lang:I18N.lang});")
 sub1("const VERSION = '0.3.0';", "const VERSION = '0.3.1';")

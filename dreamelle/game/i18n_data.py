@@ -1,9 +1,6 @@
 # English source text -> [pt, es, fr, de, it]
 T = {
 # splash / static
-"Create your ": ["Crie sua vida dos ", "Crea la vida de tus ", "Crée la vie de tes ", "Erschaffe dein ", "Crea la vita dei tuoi "],
-"dream": ["sonhos", "sueños", "rêves", "Traum", "sogni"],
-" life.": [".", ".", ".", "leben.", "."],
 "Continue": ["Continuar", "Continuar", "Continuer", "Weiter", "Continua"],
 "Play": ["Jogar", "Jugar", "Jouer", "Spielen", "Gioca"],
 "Free to play · Auto-saves on this device": ["Grátis para jogar · Salva automaticamente neste aparelho", "Gratis · Se guarda automáticamente en este dispositivo", "Gratuit · Sauvegarde automatique sur cet appareil", "Kostenlos · Speichert automatisch auf diesem Gerät", "Gratis · Salvataggio automatico su questo dispositivo"],
