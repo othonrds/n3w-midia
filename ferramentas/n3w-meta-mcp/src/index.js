@@ -13,7 +13,7 @@
 // Tudo nasce PAUSADO. Ativar ou aumentar orçamento exige o campo `autorizacao_humana`
 // com a frase de autorização do Othon, que fica registrada no log da resposta.
 
-const SERVER_INFO = { name: "n3w-meta", version: "0.1.0" };
+const SERVER_INFO = { name: "n3w-meta", version: "0.2.0" };
 const PROTOCOL_VERSIONS = ["2025-06-18", "2025-03-26", "2024-11-05"];
 
 // ---------------------------------------------------------------- Graph API
@@ -369,7 +369,76 @@ const TOOLS = [
     inputSchema: S({ caminho: str("ex.: 123456/insights ou act_X/adrules_library"), parametros: { type: "object" } }, ["caminho"]),
     run: async (env, a) => graph(env, "GET", a.caminho, a.parametros || {}),
   },
+  // ------------------------------------------------------------ Mídia (bucket R2 "n3w-midia")
+  // Organização: <projeto>/criativos/<CRIATIVO>/arquivo · <projeto>/testes/<AAAA-MM-DD>_<T##>/teste.json|metricas-<hora>.json|resultado.json
+  //              privado/<projeto>/... (fotos de clientes: nunca públicas)
+  {
+    name: "midia_importar",
+    description: "Copia um arquivo de uma URL https para o bucket de mídia. caminho no padrão <projeto>/criativos/<CRIATIVO>/<arquivo> (ou privado/<projeto>/... para fotos de clientes, que nunca ficam públicas). Retorna o link público (serve para subir_video/subir_imagem).",
+    inputSchema: S({ url: str("https://..."), caminho: str("ex.: fotosadv/criativos/V02-H1/video.mp4") }, ["url", "caminho"]),
+    run: async (env, a) => {
+      const key = chaveValida(a.caminho);
+      if (!/^https:\/\//.test(a.url || "")) throw new Error("URL precisa ser https");
+      const r = await fetch(a.url);
+      if (!r.ok) throw new Error(`Não consegui baixar (${r.status})`);
+      const tipo = r.headers.get("content-type") || tipoPorExtensao(key);
+      const len = Number(r.headers.get("content-length") || 0);
+      const body = len ? r.body : await r.arrayBuffer();
+      const obj = await bucket(env).put(key, body, { httpMetadata: { contentType: tipo }, customMetadata: { origem: a.url.slice(0, 500), em: new Date().toISOString() } });
+      return { ok: true, caminho: key, bytes: obj.size, tipo, link: linkPublico(env, key) };
+    },
+  },
+  {
+    name: "midia_salvar_json",
+    description: "Grava um JSON no bucket (ficha do teste, snapshot de métricas, resultado). Ex.: fotosadv/testes/2026-10-07_T02/metricas-16h.json",
+    inputSchema: S({ caminho: str("termina em .json"), dados: { type: "object" } }, ["caminho", "dados"]),
+    run: async (env, a) => {
+      const key = chaveValida(a.caminho);
+      if (!key.endsWith(".json")) throw new Error("caminho precisa terminar em .json");
+      const txt = JSON.stringify(a.dados, null, 1);
+      await bucket(env).put(key, txt, { httpMetadata: { contentType: "application/json; charset=utf-8" } });
+      return { ok: true, caminho: key, bytes: txt.length, link: linkPublico(env, key) };
+    },
+  },
+  {
+    name: "midia_listar",
+    description: "Lista arquivos do bucket por prefixo (ex.: fotosadv/criativos/ ou fotosadv/testes/2026-10-07). Com pastas=true mostra só as subpastas.",
+    inputSchema: S({ prefixo: str("opcional"), pastas: { type: "boolean" }, limite: num("máx. 1000") }),
+    run: async (env, a) => {
+      const l = await bucket(env).list({ prefix: a.prefixo || "", limit: Math.min(a.limite || 500, 1000), delimiter: a.pastas ? "/" : undefined });
+      return { pastas: l.delimitedPrefixes || [], arquivos: l.objects.map((o) => ({ caminho: o.key, bytes: o.size, em: o.uploaded, link: linkPublico(env, o.key) })), truncado: l.truncated };
+    },
+  },
+  {
+    name: "midia_ler",
+    description: "Lê um arquivo de texto/JSON pequeno do bucket (até 200 KB).",
+    inputSchema: S({ caminho: str("caminho") }, ["caminho"]),
+    run: async (env, a) => {
+      const o = await bucket(env).get(chaveValida(a.caminho));
+      if (!o) throw new Error("não encontrado");
+      if (o.size > 200000) throw new Error("arquivo grande demais para ler aqui; use o link");
+      const t = await o.text();
+      try { return JSON.parse(t); } catch { return t; }
+    },
+  },
 ];
+
+
+function bucket(env) {
+  if (!env.MIDIA) throw new Error("Bucket de mídia não ligado ao Worker (binding MIDIA → n3w-midia).");
+  return env.MIDIA;
+}
+function chaveValida(k) {
+  k = String(k || "").trim().replace(/^\/+/, "");
+  if (!k || k.includes("..") || k.length > 400 || !/^[A-Za-z0-9._\-\/]+$/.test(k)) throw new Error("caminho inválido (use letras, números, . _ - /)");
+  return k;
+}
+const PRIVADO = (k) => k.startsWith("privado/");
+function linkPublico(env, k) { return PRIVADO(k) ? null : `${(env.PUBLIC_BASE || "").replace(/\/$/, "")}/m/${k}`; }
+function tipoPorExtensao(k) {
+  const e = k.split(".").pop().toLowerCase();
+  return { mp4: "video/mp4", mov: "video/quicktime", jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", gif: "image/gif", json: "application/json", txt: "text/plain; charset=utf-8", srt: "text/plain; charset=utf-8", mp3: "audio/mpeg" }[e] || "application/octet-stream";
+}
 
 function resumoLinha(r) {
   const pick = (arr, types) => {
@@ -450,7 +519,19 @@ export default {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
 
     if (url.pathname === "/" || url.pathname === "/saude") {
-      return Response.json({ ok: true, servidor: SERVER_INFO, graph_version: env.GRAPH_VERSION, token_configurado: !!env.META_TOKEN, chave_configurada: !!env.CONNECTOR_KEY }, { headers: CORS });
+      return Response.json({ ok: true, servidor: SERVER_INFO, graph_version: env.GRAPH_VERSION, token_configurado: !!env.META_TOKEN, chave_configurada: !!env.CONNECTOR_KEY, midia_ligada: !!env.MIDIA }, { headers: CORS });
+    }
+
+    // Arquivos públicos do bucket (para a Meta/Instagram buscarem). privado/ nunca é servido.
+    if (url.pathname.startsWith("/m/") && (request.method === "GET" || request.method === "HEAD")) {
+      const key = decodeURIComponent(url.pathname.slice(3));
+      if (!env.MIDIA || PRIVADO(key) || key.includes("..")) return new Response("not found", { status: 404 });
+      const obj = await env.MIDIA.get(key, { range: request.headers });
+      if (!obj) return new Response("not found", { status: 404 });
+      const h = new Headers(CORS); obj.writeHttpMetadata(h); h.set("etag", obj.httpEtag); h.set("accept-ranges", "bytes"); h.set("cache-control", "public, max-age=86400");
+      let status = 200;
+      if (obj.range && request.headers.get("range")) { const r = obj.range; const off = r.offset || 0; const len = r.length ?? obj.size - off; h.set("content-range", `bytes ${off}-${off + len - 1}/${obj.size}`); h.set("content-length", String(len)); status = 206; }
+      return new Response(request.method === "HEAD" ? null : obj.body, { status, headers: h });
     }
 
     const m = url.pathname.match(/^\/mcp(?:\/([^/]+))?\/?$/);

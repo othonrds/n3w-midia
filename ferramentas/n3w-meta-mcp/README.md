@@ -46,3 +46,16 @@ Pronto: o Claude passa a ver as 23 ferramentas.
 
 ## Trocar a versão da API
 Mude só `GRAPH_VERSION` nas variáveis do Worker (ex.: `v27.0`) e chame `conta_info` + `insights` para conferir. Se algo quebrar, volte o valor anterior — leva 10 segundos.
+
+## Mídia (v0.2) — bucket R2 `n3w-midia`
+Ferramentas: `midia_importar` (URL https → bucket, devolve link público), `midia_salvar_json`, `midia_listar`, `midia_ler`.
+Links públicos: `https://n3w-meta.othon-rdss.workers.dev/m/<caminho>` (servem para `subir_video`/`subir_imagem`). Tudo em `privado/` nunca é servido.
+
+Organização:
+```
+<projeto>/criativos/<CRIATIVO>/      video.mp4 · thumb.jpg · roteiro.txt · ficha.json
+<projeto>/testes/<AAAA-MM-DD>_<T##>/ teste.json (variável isolada, IDs Meta, criativo) · metricas-<HHh>.json · resultado.json
+<projeto>/organico/<perfil>/<data>/  posts e reels
+privado/<projeto>/                   fotos originais de clientes (nunca públicas)
+```
+Projetos: fotosadv, lawyer, tdah, aero, social-tomas, social-maggy.
