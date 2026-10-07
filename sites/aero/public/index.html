@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kit Plano de Voo · Rafael Francisco, ex-Capitão Aviador da FAB</title>
+<meta name="description" content="Quanto custa virar piloto no Brasil e qual rota é a sua: civil, militar ou policial. Guia com números checados, simulador de custos e aula, por Rafael Francisco, ex-Capitão Aviador da FAB.">
+<meta property="og:title" content="Kit Plano de Voo · O mapa para virar piloto no Brasil">
+<meta property="og:description" content="Rotas civil, militar e policial com números reais e 52 fontes. Por Rafael Francisco, ex-Capitão Aviador da FAB.">
+<meta property="og:image" content="img/p1.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0b1d36;--navy2:#10284a;--ink:#14213a;--muted:#5b6880;--line:#dde3ec;--paper:#f5f7fa;--amber:#f5b21b;--amber-d:#c98a00;--white:#fff;--red:#c0392b}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--white);line-height:1.55;-webkit-font-smoothing:antialiased}
+img{max-width:100%;height:auto;display:block}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+h1,h2,h3,.cond{font-family:"Barlow Condensed",Inter,sans-serif;text-transform:uppercase;letter-spacing:.01em;line-height:1.02}
+.eyebrow{font-family:"Barlow Condensed";font-weight:700;letter-spacing:.22em;font-size:14px;color:var(--amber);text-transform:uppercase}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--amber);color:var(--navy);font-family:"Barlow Condensed";font-weight:800;font-size:22px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;padding:18px 30px;border-radius:10px;box-shadow:0 8px 24px rgba(245,178,27,.35);transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn small{font-family:Inter;font-weight:600;font-size:13px;text-transform:none;letter-spacing:0;opacity:.8}
+.note{font-size:13px;color:var(--muted)}
+/* hero */
+.hero{background:radial-gradient(1200px 600px at 85% 10%,#1d3f6e 0%,var(--navy) 55%);color:#fff;overflow:hidden;position:relative}
+.hero:before{content:"";position:absolute;inset:0;background:repeating-radial-gradient(circle at 82% 22%,transparent 0 90px,rgba(255,255,255,.05) 91px 92px);pointer-events:none}
+.hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;padding-top:64px;padding-bottom:72px;position:relative}
+.hero h1{font-size:clamp(44px,6.4vw,82px);font-weight:800;margin:16px 0 18px}
+.hero h1 em{font-style:normal;color:var(--amber)}
+.hero p.lead{font-size:clamp(17px,2vw,20px);color:#c9d4e6;max-width:560px;margin-bottom:28px}
+.who{display:flex;gap:14px;align-items:center;margin-top:30px;border-left:3px solid var(--amber);padding-left:14px}
+.who b{display:block;font-size:17px}
+.who span{font-size:14px;color:#aebbd2}
+.cover{transform:rotate(3deg);border-radius:6px;box-shadow:0 30px 60px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.12)}
+/* numbers */
+.nums{background:var(--navy2);color:#fff;border-top:4px solid var(--amber)}
+.nums .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding-top:34px;padding-bottom:34px}
+.num b{font-family:"Barlow Condensed";font-weight:800;font-size:clamp(34px,4vw,48px);display:block;line-height:1}
+.num b.y{color:var(--amber)}
+.num span{font-size:14px;color:#b9c6db}
+section{padding:80px 0}
+section h2{font-size:clamp(34px,4.6vw,54px);font-weight:800;margin:10px 0 16px;color:var(--navy)}
+.sub{font-size:18px;color:var(--muted);max-width:700px}
+/* problems */
+.qs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+.q{background:var(--paper);border-radius:12px;padding:24px;border-left:4px solid var(--amber);font-size:18px;font-weight:600;font-style:italic;color:var(--navy)}
+/* trilhas */
+.alt{background:var(--paper)}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:36px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px;border-top:4px solid var(--amber)}
+.card h3{font-size:26px;color:var(--navy);margin-bottom:8px}
+.card p{font-size:15px;color:var(--muted)}
+/* kit */
+.kit{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;margin-top:36px}
+.items{list-style:none;display:grid;gap:14px}
+.items li{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px}
+.items .ic{width:44px;height:44px;border-radius:10px;background:var(--navy);color:var(--amber);display:grid;place-items:center;font-family:"Barlow Condensed";font-weight:800;font-size:20px}
+.items b{display:block;font-size:17px;color:var(--navy)}
+.items span{font-size:15px;color:var(--muted)}
+.pages{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pages img{border-radius:6px;border:1px solid var(--line);box-shadow:0 10px 24px rgba(11,29,54,.12)}
+.pages figure figcaption{font-size:12px;color:var(--muted);margin-top:6px}
+/* pais */
+.pais{background:var(--navy);color:#fff}
+.pais h2{color:#fff}
+.pais .sub{color:#b9c6db}
+.pais-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;margin-top:30px}
+.ages{display:grid;gap:10px}
+.age{display:grid;grid-template-columns:140px 1fr;gap:14px;align-items:center;font-size:15px}
+.age b{font-family:"Barlow Condensed";font-size:19px;letter-spacing:.03em}
+.bar{height:30px;background:rgba(255,255,255,.08);border-radius:6px;position:relative}
+.bar i{position:absolute;top:0;bottom:0;background:var(--amber);border-radius:6px;color:var(--navy);font-style:normal;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+.pais ul{list-style:none;display:grid;gap:12px;margin-top:18px}
+.pais li{padding-left:28px;position:relative;color:#d6deeb}
+.pais li:before{content:"✓";position:absolute;left:0;color:var(--amber);font-weight:700}
+/* mentor */
+.mentor{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;align-items:center;margin-top:30px}
+.logbook{background:var(--navy);color:#fff;border-radius:14px;padding:32px}
+.logbook h3{color:var(--amber);font-size:20px;letter-spacing:.2em;margin-bottom:16px}
+.row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed rgba(255,255,255,.18);font-family:"Barlow Condensed";font-size:20px;letter-spacing:.04em;text-transform:uppercase}
+.row b{color:var(--amber)}
+.quote{background:#fff8e6;border:1px solid #f3dc9c;border-radius:12px;padding:22px;margin-top:22px;font-style:italic}
+.quote small{display:block;font-style:normal;font-weight:700;color:var(--amber-d);letter-spacing:.18em;font-size:12px;margin-bottom:6px}
+.creds{list-style:none;display:grid;gap:10px;margin-top:18px}
+.creds li{padding-left:26px;position:relative}
+.creds li:before{content:"■";position:absolute;left:0;color:var(--amber);font-size:12px;top:4px}
+/* oferta */
+.offer{background:radial-gradient(900px 500px at 50% 0,#1d3f6e,var(--navy));color:#fff;text-align:center}
+.offer h2{color:#fff}
+.box{max-width:560px;margin:34px auto 0;background:#fff;color:var(--ink);border-radius:16px;padding:36px 30px;text-align:left;border-top:6px solid var(--amber);box-shadow:0 30px 60px rgba(0,0,0,.35)}
+.box h3{font-size:30px;color:var(--navy)}
+.price{display:flex;align-items:baseline;gap:10px;margin:14px 0 4px}
+.price b{font-family:"Barlow Condensed";font-weight:800;font-size:72px;color:var(--navy);line-height:1}
+.price span{color:var(--muted);font-size:15px}
+.box ul{list-style:none;display:grid;gap:10px;margin:22px 0 26px}
+.box li{padding-left:28px;position:relative;font-size:16px}
+.box li:before{content:"✓";position:absolute;left:0;color:var(--amber-d);font-weight:800}
+.box .btn{width:100%}
+.guar{display:flex;gap:12px;align-items:center;margin-top:18px;font-size:14px;color:var(--muted)}
+.guar b{color:var(--navy)}
+/* plano 289 */
+.next{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;margin-top:30px}
+.audio{background:var(--navy);border-radius:14px;padding:26px;color:#fff}
+.audio p{font-size:15px;color:#c9d4e6;margin:8px 0 14px}
+.audio audio{width:100%}
+.steps{list-style:none;counter-reset:s;display:grid;gap:14px;margin:20px 0}
+.steps li{counter-increment:s;padding-left:46px;position:relative;font-size:16px}
+.steps li:before{content:counter(s);position:absolute;left:0;top:-2px;width:32px;height:32px;border-radius:50%;background:var(--amber);color:var(--navy);font-weight:800;display:grid;place-items:center;font-family:"Barlow Condensed";font-size:18px}
+.btn.ghost{background:transparent;border:2px solid var(--navy);color:var(--navy);box-shadow:none;font-size:19px;padding:14px 24px}
+/* faq */
+.faq{max-width:800px;margin-top:30px}
+details{border-bottom:1px solid var(--line);padding:18px 0}
+summary{cursor:pointer;font-weight:700;font-size:17px;color:var(--navy);list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary:after{content:"+";color:var(--amber-d);font-size:22px;line-height:1}
+details[open] summary:after{content:"–"}
+details p{margin-top:10px;color:var(--muted)}
+footer{background:#08162a;color:#8b99b3;font-size:13px;padding:34px 0}
+footer .wrap{display:grid;gap:8px}
+.sticky{position:fixed;left:0;right:0;bottom:0;background:var(--navy);padding:10px 16px;display:none;z-index:9;box-shadow:0 -6px 20px rgba(0,0,0,.25)}
+.sticky .btn{width:100%;font-size:19px;padding:14px}
+@media (max-width:900px){
+ .hero .wrap,.kit,.pais-grid,.mentor,.next{grid-template-columns:1fr}
+ .hero .wrap{padding-top:40px;padding-bottom:50px;gap:30px}
+ .cover{max-width:280px;margin:0 auto}
+ .nums .wrap{grid-template-columns:1fr 1fr}
+ .qs{grid-template-columns:1fr}
+ .cards{grid-template-columns:1fr 1fr}
+ section{padding:60px 0}
+ .sticky{display:block}
+ body{padding-bottom:72px}
+}
+@media (max-width:560px){.cards{grid-template-columns:1fr}.age{grid-template-columns:110px 1fr}.price b{font-size:60px}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+ <div class="wrap">
+  <div>
+   <div class="eyebrow">Guia de carreira · Edição 2026</div>
+   <h1>Quanto custa virar piloto no Brasil e <em>qual rota é a sua?</em></h1>
+   <p class="lead">O Kit Plano de Voo junta num lugar só as rotas civil, militar e policial: licenças, idades, concursos, salários e quanto custa cada etapa. São números checados, com 52 fontes, para você decidir antes de gastar o primeiro real.</p>
+   <a class="btn cta" href="#oferta">Quero o meu kit <small>R$ 67</small></a>
+   <div class="who"><div><b>Rafael Francisco</b><span>Ex-Capitão Aviador da FAB (2014–2025) · Piloto Comercial e Instrutor de Voo pela ANAC · ~1.050 h de voo</span></div></div>
+  </div>
+  <img class="cover" src="img/p1.jpg" alt="Capa do Kit Plano de Voo" width="744" height="1053">
+ </div>
+</header>
+
+<div class="nums"><div class="wrap">
+ <div class="num"><b>R$ 129–188 mil</b><span>nossa conta para chegar ao Piloto Comercial na rota civil, no mínimo regulamentar</span></div>
+ <div class="num"><b class="y">R$ 0</b><span>na rota militar: a Força paga a formação e você recebe soldo</span></div>
+ <div class="num"><b>14 anos</b><span>idade mínima para a EPCAR, a porta mais larga da FAB</span></div>
+ <div class="num"><b>1.500 h</b><span>para a licença de Piloto de Linha Aérea, aos 21 anos</span></div>
+</div></div>
+
+<section>
+ <div class="wrap">
+  <div class="eyebrow" style="color:var(--amber-d)">O problema</div>
+  <h2>Todo mundo que sonha em voar trava nas mesmas perguntas</h2>
+  <p class="sub">As respostas estão espalhadas em editais, regulamentos da ANAC e tabelas de aeroclubes. Boa parte do que circula por aí não tem fonte.</p>
+  <div class="qs">
+   <div class="q">"Por onde eu começo?"</div>
+   <div class="q">"Quanto custa de verdade?"</div>
+   <div class="q">"Vale mais a pena a rota civil ou a militar?"</div>
+  </div>
+ </div>
+</section>
+
+<section class="alt">
+ <div class="wrap">
+  <div class="eyebrow" style="color:var(--amber-d)">Para quem é</div>
+  <h2>Um mapa para cada ponto da jornada</h2>
+  <div class="cards">
+   <div class="card"><h3>Quem ainda não começou</h3><p>Entenda licença por licença, do CMA ao Piloto de Linha Aérea, e o que cada uma permite.</p></div>
+   <div class="card"><h3>Aluno de PP ou PC</h3><p>Planeje o fluxo mensal, compare escolas e evite a hora repetida, que é o que mais encarece a formação.</p></div>
+   <div class="card"><h3>Quem mira as Forças</h3><p>EPCAR, AFA, Escola Naval, EsPCEx, PMs, Bombeiros, PRF e PF: idades, vagas, provas e etapas.</p></div>
+   <div class="card"><h3>Pais de futuros aviadores</h3><p>Saiba quais portas estão abertas para a idade do seu filho e como apoiar essa escolha com dados.</p></div>
+  </div>
+ </div>
+</section>
+
+<section>
+ <div class="wrap">
+  <div class="eyebrow" style="color:var(--amber-d)">O que você recebe</div>
+  <h2>O kit completo</h2>
+  <div class="kit">
+   <ul class="items">
+    <li><div class="ic">01</div><div><b>Guia de 30 páginas (PDF)</b><span>Mapa da carreira civil, mercados e pisos salariais, custos item a item, caminho militar e policial, CMA e banca da ANAC.</span></div></li>
+    <li><div class="ic">02</div><div><b>Planilha simulador de custos</b><span>Coloque o preço da sua escola e quanto pode investir por mês e veja em quantos meses chega ao Piloto Comercial.</span></div></li>
+    <li><div class="ic">03</div><div><b>Aula gravada com o Rafael</b><span>Cerca de 20 minutos explicando como usar o kit, com destaque para a rota militar e policial.</span></div></li>
+    <li><div class="ic">04</div><div><b>Checklists e plano de 90 dias</b><span>Checklist para escolher aeroclube ou escola, sinais de alerta e um plano de ação para sair do "um dia eu vou".</span></div></li>
+   </ul>
+   <div class="pages">
+    <figure><img src="img/p4.jpg" alt="Página: a rota civil, waypoint por waypoint" loading="lazy"><figcaption>A rota civil, licença por licença</figcaption></figure>
+    <figure><img src="img/p10.jpg" alt="Página: estimativa até o Piloto Comercial" loading="lazy"><figcaption>Estimativa de custo até o PC</figcaption></figure>
+    <figure><img src="img/p13.jpg" alt="Página: portas de entrada militares e a sua idade" loading="lazy"><figcaption>Portas militares e a sua idade</figcaption></figure>
+    <figure><img src="img/p25.jpg" alt="Página: plano de voo de 90 dias" loading="lazy"><figcaption>Seu plano de voo de 90 dias</figcaption></figure>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section class="pais">
+ <div class="wrap">
+  <div class="eyebrow">Para pais</div>
+  <h2>Seu filho sonha com a aviação?</h2>
+  <p class="sub">Na rota militar, a pergunta que decide tudo é a idade. Cada porta tem uma janela definida em edital, e algumas se abrem aos 14 anos.</p>
+  <div class="pais-grid">
+   <div class="ages">
+    <div class="age"><b>EPCAR (FAB)</b><div class="bar"><i style="left:8%;width:34%">14 a 18</i></div></div>
+    <div class="age"><b>Colégio Naval</b><div class="bar"><i style="left:17%;width:17%">15 a 17</i></div></div>
+    <div class="age"><b>AFA · Aviador</b><div class="bar"><i style="left:33%;width:42%">17 a 22</i></div></div>
+    <div class="age"><b>EsPCEx → AMAN</b><div class="bar"><i style="left:33%;width:42%">17 a 22</i></div></div>
+    <div class="age"><b>Escola Naval</b><div class="bar"><i style="left:42%;width:33%">18 a 22</i></div></div>
+    <p class="note" style="color:#8fa0bb">Faixas aproximadas. As regras exatas de cada edital estão no kit, com fonte.</p>
+   </div>
+   <div>
+    <h3 style="font-size:30px">O que o kit mostra para a família</h3>
+    <ul>
+     <li>Quais concursos estão abertos para a idade do seu filho hoje</li>
+     <li>Quantos candidatos disputam cada vaga e o que cai nas provas</li>
+     <li>Saúde, teste físico e exame psicológico: o que elimina candidatos</li>
+     <li>Quanto um militar ganha da escola preparatória ao posto de Capitão</li>
+     <li>A comparação honesta entre a rota civil e a militar</li>
+    </ul>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section>
+ <div class="wrap">
+  <div class="eyebrow" style="color:var(--amber-d)">Seu mentor</div>
+  <h2>Quem já esteve no cockpit</h2>
+  <div class="mentor">
+   <div class="logbook">
+    <h3>CADERNETA</h3>
+    <div class="row"><span>Horas de voo</span><b>~1.050 h</b></div>
+    <div class="row"><span>Piloto em comando</span><b>~500 h</b></div>
+    <div class="row"><span>Instrutor de voo</span><b>~500 h</b></div>
+    <div class="row"><span>FAB</span><b>2014–2025</b></div>
+    <div class="row" style="border:0"><span>CANAC</span><b>380084</b></div>
+   </div>
+   <div>
+    <p style="font-size:18px">Rafael Francisco foi Capitão Aviador da Força Aérea Brasileira por 11 anos. É piloto comercial e instrutor de voo certificado pela ANAC e pela FAB.</p>
+    <ul class="creds">
+     <li>Voou T-25 Universal, T-27 Tucano, A-29 Super Tucano e EMB-110 Bandeirante</li>
+     <li>Metade das horas de voo como instrutor: viu muito aluno acertar e errar o planejamento</li>
+     <li>Piloto desportivo e atleta de voo livre</li>
+    </ul>
+    <div class="quote"><small>PALAVRA DO MENTOR</small>"Pilotar se aprende com método, checklist e disciplina. Para planejar a carreira é igual."</div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section class="offer" id="oferta">
+ <div class="wrap">
+  <div class="eyebrow">Garanta o seu</div>
+  <h2>Kit Plano de Voo</h2>
+  <div class="box">
+   <h3>Guia + planilha + aula</h3>
+   <div class="price"><b>R$ 67</b><span>pagamento único · acesso imediato</span></div>
+   <ul>
+    <li>Guia de carreira de 30 páginas, com 52 fontes</li>
+    <li>Planilha simulador de custos até o Piloto Comercial</li>
+    <li>Aula gravada de ~20 min com o Rafael</li>
+    <li>Rotas civil, militar e policial num lugar só</li>
+    <li>Checklists e plano de ação de 90 dias</li>
+   </ul>
+   <a class="btn cta" id="cta-kit" href="#oferta">Comprar o kit agora</a>
+   <div class="guar"><b>7 dias de garantia.</b> Se o kit não ajudar você a planejar, devolvemos o valor.</div>
+  </div>
+ </div>
+</section>
+
+<section class="alt">
+ <div class="wrap">
+  <div class="eyebrow" style="color:var(--amber-d)">Quer um plano feito para você?</div>
+  <h2>Plano de Voo: diagnóstico com o Rafael</h2>
+  <p class="sub">O kit é o mapa. Se você quer que alguém olhe para o seu caso (idade, orçamento, saúde, região e objetivo), o próximo passo é o diagnóstico individual.</p>
+  <div class="next">
+   <div>
+    <ol class="steps">
+     <li><b>Sessão online com o Rafael</b> para entender em que ponto da jornada você está.</li>
+     <li><b>Plano de carreira escrito</b> com próximos passos, prazos e prioridades para o seu caso.</li>
+     <li><b>Kit de apoio</b> para colocar o plano em prática.</li>
+    </ol>
+    <p style="font-size:17px"><b>R$ 289 no Pix.</b> Se depois você seguir com uma das mentorias completas, esse valor vira crédito no upgrade.</p>
+    <p class="note" style="margin:8px 0 20px">Vagas limitadas: o Rafael atende até 10 diagnósticos por semana.</p>
+    <a class="btn ghost" id="cta-plano" href="#oferta">Quero o diagnóstico</a>
+   </div>
+   <div class="audio">
+    <div class="eyebrow">Ouça o Rafael</div>
+    <p>Em 1 minuto ele explica como funciona o Plano de Voo.</p>
+    <audio controls preload="none" src="rafael-plano-de-voo.mp3"></audio>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section>
+ <div class="wrap">
+  <div class="eyebrow" style="color:var(--amber-d)">Dúvidas</div>
+  <h2>Perguntas frequentes</h2>
+  <div class="faq">
+   <details><summary>Como recebo o kit?</summary><p>Logo após a confirmação do pagamento, você recebe por e-mail o acesso ao guia em PDF, à planilha e à aula.</p></details>
+   <details><summary>O kit analisa o meu caso?</summary><p>Não. O kit é o mapa completo, com números e ferramentas para você se planejar. A análise individual do seu caso é feita no Plano de Voo, o diagnóstico com o Rafael.</p></details>
+   <details><summary>Os números estão atualizados?</summary><p>Os dados foram pesquisados em outubro de 2026 em fontes públicas (ANAC, editais da FAB, Marinha e Exército, aeroclubes e convenções coletivas), todas listadas no guia. Preços de escola e editais mudam: confirme sempre antes de pagar ou se inscrever.</p></details>
+   <details><summary>Serve para quem quer a rota militar?</summary><p>Sim. Mais da metade do guia é dedicada a FAB, Marinha, Exército, PMs, Bombeiros, PRF, PF e Polícias Civis: idades, vagas, provas, saúde, teste físico e remuneração.</p></details>
+   <details><summary>Sou pai ou mãe. O kit é para mim?</summary><p>É. Ele mostra quais portas estão abertas para a idade do seu filho e quanto custa cada caminho, para a família decidir com informação.</p></details>
+   <details><summary>E se eu não gostar?</summary><p>Você tem 7 dias de garantia. Se o kit não for útil, pede o reembolso e devolvemos o valor.</p></details>
+  </div>
+ </div>
+</section>
+
+<footer><div class="wrap">
+ <div>Kit Plano de Voo · Rafael Francisco · CANAC 380084</div>
+ <div>Conteúdo informativo. Não substitui os regulamentos da ANAC, os editais oficiais nem as instituições de ensino. Salários citados são pisos e médias públicas, não promessa de renda.</div>
+</div></footer>
+
+<div class="sticky"><a class="btn cta" href="#oferta">Quero o kit · R$ 67</a></div>
+
+<script>
+// Links de checkout (Payt) — preenchidos após o cadastro dos produtos
+var CHECKOUT_KIT = "";
+var CHECKOUT_PLANO = "";
+function q(){return location.search||""}
+if(CHECKOUT_KIT){document.querySelectorAll('#cta-kit').forEach(function(a){a.href=CHECKOUT_KIT+q()})}
+if(CHECKOUT_PLANO){document.getElementById('cta-plano').href=CHECKOUT_PLANO+q()}
+</script>
+</body>
+</html>
