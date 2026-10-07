@@ -164,7 +164,7 @@ const TOOLS = [
       conta: CONTA, objeto_id: str("opcional: id de campanha/conjunto/anúncio; padrão = conta"),
       nivel: { type: "string", enum: ["account", "campaign", "adset", "ad"] },
       periodo: str("date_preset"), desde: str("AAAA-MM-DD"), ate: str("AAAA-MM-DD"),
-      por_dia: { type: "boolean" }, campos: str("lista separada por vírgula (opcional)"), quebras: str("breakdowns, ex.: age,gender (opcional)"),
+      por_dia: { type: "boolean" }, campos: str("lista separada por vírgula (opcional)"), quebras: str("breakdowns, ex.: age,gender | publisher_platform,platform_position | hourly_stats_aggregated_by_advertiser_time_zone (por hora)"),
       filtro_status: { type: "array", items: { type: "string" }, description: "ex.: [\"ACTIVE\"] filtra pelo status efetivo do nível" },
     }),
     run: async (env, a) => {
@@ -207,6 +207,9 @@ const TOOLS = [
       publicos_sugeridos: { type: "array", items: { type: "string" }, description: "IDs de públicos personalizados/semelhantes" },
       targeting_json: { type: "object", description: "targeting completo (substitui os campos acima)" },
       inicio: str("ISO opcional"),
+      orcamento_total_reais: num("orçamento VITALÍCIO em reais (obrigatório para programação de horário; exige fim)"),
+      fim: str("ISO, fim do conjunto (obrigatório com orçamento vitalício)"),
+      programacao: { type: "array", items: { type: "object" }, description: "horários de veiculação no fuso da conta, ex.: [{\"de\":10,\"ate\":17},{\"de\":0,\"ate\":2}] (horas cheias; dias opcional 0=dom..6=sáb). Só com orçamento vitalício" },
     }, ["campanha_id", "nome"]),
     run: async (env, a) => {
       const adv = a.advantage_plus !== false;
@@ -222,7 +225,11 @@ const TOOLS = [
         campaign_id: a.campanha_id, name: a.nome, status: "PAUSED",
         optimization_goal: a.otimizacao || "OFFSITE_CONVERSIONS", billing_event: "IMPRESSIONS",
         promoted_object: a.pixel_id ? { pixel_id: a.pixel_id, custom_event_type: a.evento || "PURCHASE" } : undefined,
-        daily_budget: a.orcamento_diario_reais ? Math.round(a.orcamento_diario_reais * 100) : undefined,
+        daily_budget: a.orcamento_diario_reais && !a.orcamento_total_reais ? Math.round(a.orcamento_diario_reais * 100) : undefined,
+        lifetime_budget: a.orcamento_total_reais ? Math.round(a.orcamento_total_reais * 100) : undefined,
+        end_time: a.fim,
+        pacing_type: a.programacao && a.programacao.length ? ["day_parting"] : undefined,
+        adset_schedule: programacaoMeta(a.programacao),
         targeting, start_time: a.inicio,
       });
     },
@@ -440,6 +447,14 @@ function tipoPorExtensao(k) {
   return { mp4: "video/mp4", mov: "video/quicktime", jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", gif: "image/gif", json: "application/json", txt: "text/plain; charset=utf-8", srt: "text/plain; charset=utf-8", mp3: "audio/mpeg" }[e] || "application/octet-stream";
 }
 
+function programacaoMeta(prog) {
+  if (!prog || !prog.length) return undefined;
+  return prog.map((b) => ({
+    start_minute: Math.round(Number(b.de) * 60),
+    end_minute: Math.round(Number(b.ate) * 60),
+    days: Array.isArray(b.dias) && b.dias.length ? b.dias : [0, 1, 2, 3, 4, 5, 6],
+  }));
+}
 function resumoLinha(r) {
   const pick = (arr, types) => {
     if (!arr) return 0;
@@ -451,7 +466,7 @@ function resumoLinha(r) {
   const checkout = pick(r.actions, ["omni_initiated_checkout", "initiate_checkout", "offsite_conversion.fb_pixel_initiate_checkout"]);
   const gasto = Number(r.spend || 0);
   const out = {};
-  for (const k of ["date_start", "date_stop", "campaign_id", "campaign_name", "adset_id", "adset_name", "ad_id", "ad_name", "age", "gender", "country", "region", "publisher_platform", "platform_position", "device_platform", "impression_device"]) if (r[k] !== undefined) out[k] = r[k];
+  for (const k of ["date_start", "date_stop", "campaign_id", "campaign_name", "adset_id", "adset_name", "ad_id", "ad_name", "age", "gender", "country", "region", "publisher_platform", "platform_position", "device_platform", "impression_device", "hourly_stats_aggregated_by_advertiser_time_zone"]) if (r[k] !== undefined) out[k] = r[k];
   Object.assign(out, {
     gasto, impressoes: Number(r.impressions || 0), alcance: Number(r.reach || 0), frequencia: Number(r.frequency || 0),
     cpm: Number(r.cpm || 0), cliques_link: Number(r.inline_link_clicks || 0), ctr_link: Number(r.inline_link_click_ctr || 0),
