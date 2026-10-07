@@ -1,0 +1,258 @@
+{
+ "rate": "+12%",
+ "lines": [
+  {
+   "tts": "Mesma pessoa. Três luzes diferentes.",
+   "shots": [
+    {
+     "img": "janela_close.jpg",
+     "f": [
+      0.5,
+      0.42
+     ],
+     "z": [
+      1.0,
+      1.1
+     ],
+     "text": "Mesma pessoa. *3 luzes* diferentes."
+    },
+    {
+     "img": "pb_close.jpg",
+     "f": [
+      0.5,
+      0.4
+     ],
+     "z": [
+      1.0,
+      1.1
+     ],
+     "text": "Mesma pessoa. *3 luzes* diferentes.",
+     "keep": 1
+    },
+    {
+     "img": "edicao_noite.jpg",
+     "f": [
+      0.68,
+      0.3
+     ],
+     "z": [
+      1.0,
+      1.1
+     ],
+     "text": "Mesma pessoa. *3 luzes* diferentes.",
+     "keep": 1
+    }
+   ]
+  },
+  {
+   "tts": "Luz um: janela. Suave e natural.",
+   "shots": [
+    {
+     "img": "janela.jpg",
+     "f": [
+      0.5,
+      0.45
+     ],
+     "z": [
+      1.0,
+      1.1
+     ],
+     "text": "*Janela*: suave e natural",
+     "pos": "low",
+     "tag": "LUZ 1"
+    },
+    {
+     "img": "janela_close.jpg",
+     "f": [
+      0.5,
+      0.38
+     ],
+     "z": [
+      1.2,
+      1.32
+     ],
+     "text": "passa *leveza*",
+     "pos": "low",
+     "tag": "LUZ 1"
+    }
+   ]
+  },
+  {
+   "tts": "Luz dois: lateral. Contraste e presença.",
+   "shots": [
+    {
+     "img": "pb_close.jpg",
+     "f": [
+      0.45,
+      0.42
+     ],
+     "z": [
+      1.0,
+      1.12
+     ],
+     "text": "*Lateral*: contraste",
+     "pos": "low",
+     "tag": "LUZ 2",
+     "flash": 1
+    },
+    {
+     "img": "janela_pb.jpg",
+     "f": [
+      0.5,
+      0.4
+     ],
+     "z": [
+      1.08,
+      1.18
+     ],
+     "text": "e *presença*",
+     "pos": "low",
+     "tag": "LUZ 2"
+    }
+   ]
+  },
+  {
+   "tts": "Luz três: abajur quente. Clima de bastidor.",
+   "shots": [
+    {
+     "img": "edicao_noite.jpg",
+     "f": [
+      0.55,
+      0.45
+     ],
+     "z": [
+      1.0,
+      1.08
+     ],
+     "text": "*Quente*: luz de abajur",
+     "pos": "low",
+     "tag": "LUZ 3",
+     "flash": 1
+    },
+    {
+     "img": "edicao_noite.jpg",
+     "f": [
+      0.7,
+      0.28
+     ],
+     "z": [
+      1.45,
+      1.6
+     ],
+     "text": "clima de *bastidor*",
+     "pos": "low",
+     "tag": "LUZ 3"
+    }
+   ]
+  },
+  {
+   "tts": "No estúdio, tudo isso sob controle.",
+   "shots": [
+    {
+     "img": "octa.jpg",
+     "f": [
+      0.4,
+      0.45
+     ],
+     "z": [
+      1.0,
+      1.1
+     ],
+     "text": "No estúdio: *controle* total",
+     "pos": "low",
+     "tag": "BASTIDOR"
+    },
+    {
+     "img": "estudio.png",
+     "f": [
+      0.6,
+      0.4
+     ],
+     "z": [
+      1.05,
+      1.15
+     ],
+     "text": "a luz decide como você é *visto*",
+     "pos": "low",
+     "tag": "BASTIDOR"
+    }
+   ]
+  },
+  {
+   "tts": "Qual é a sua: um, dois ou três? Comenta e me segue pra mais.",
+   "shots": [
+    {
+     "grid": [
+      "janela_close.jpg",
+      "pb_close.jpg",
+      "edicao_noite.jpg"
+     ],
+     "foc": [
+      [
+       0.5,
+       0.42
+      ],
+      [
+       0.5,
+       0.45
+      ],
+      [
+       0.68,
+       0.3
+      ]
+     ],
+     "lab": [
+      "1",
+      "2",
+      "3"
+     ],
+     "z": [
+      1.0,
+      1.06
+     ],
+     "dark": 0.25,
+     "text": "Qual é a sua: *1, 2 ou 3*?",
+     "pos": "mid",
+     "y": 880,
+     "size": 96,
+     "text2": "Comente e siga para mais"
+    }
+   ]
+  }
+ ],
+ "cover": {
+  "grid": [
+   "janela_close.jpg",
+   "pb_close.jpg",
+   "edicao_noite.jpg"
+  ],
+  "foc": [
+   [
+    0.5,
+    0.42
+   ],
+   [
+    0.5,
+    0.45
+   ],
+   [
+    0.68,
+    0.3
+   ]
+  ],
+  "lab": [
+   "1",
+   "2",
+   "3"
+  ],
+  "z": [
+   1.0,
+   1.0
+  ],
+  "dark": 0.2,
+  "text": "Mesma pessoa. *3 luzes* diferentes.",
+  "pos": "mid",
+  "y": 900,
+  "size": 104
+ }
+}
