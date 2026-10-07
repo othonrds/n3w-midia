@@ -197,6 +197,17 @@ T = {
 "The Founder's Pass opens in a few days. Thanks for your interest — keep playing!": ["O Founder’s Pass abre em poucos dias. Obrigado pelo interesse — continue jogando!", "El Founder’s Pass abre en unos días. ¡Gracias por tu interés! Sigue jugando.", "Le Founder’s Pass ouvre dans quelques jours. Merci pour ton intérêt — continue à jouer !", "Der Founder’s Pass startet in ein paar Tagen. Danke für dein Interesse – spiel weiter!", "Il Founder’s Pass apre tra pochi giorni. Grazie per l’interesse: continua a giocare!"],
 "Checkout opened in a new tab — thank you for supporting Dreamelle!": ["O pagamento abriu em uma nova aba — obrigado por apoiar o Dreamelle!", "El pago se abrió en una pestaña nueva. ¡Gracias por apoyar Dreamelle!", "Le paiement s’est ouvert dans un nouvel onglet — merci de soutenir Dreamelle !", "Der Checkout wurde in einem neuen Tab geöffnet – danke, dass du Dreamelle unterstützt!", "Il pagamento si è aperto in una nuova scheda: grazie per sostenere Dreamelle!"],
 "Progress reset.": ["Progresso apagado.", "Progreso reiniciado.", "Progression réinitialisée.", "Fortschritt zurückgesetzt.", "Progressi azzerati."],
+# app / full screen
+"Play full screen like an app": ["Jogue em tela cheia, como um app", "Juega en pantalla completa, como una app", "Joue en plein écran, comme une appli", "Spiel im Vollbild – wie eine App", "Gioca a schermo intero, come un’app"],
+"Add Dreamelle to your Home Screen. It opens full screen, with no browser bars — just like an app.": ["Adicione o Dreamelle à sua Tela de Início. Ele abre em tela cheia, sem as barras do navegador — igual a um app.", "Añade Dreamelle a tu pantalla de inicio. Se abre en pantalla completa, sin barras del navegador, igual que una app.", "Ajoute Dreamelle à ton écran d’accueil. Il s’ouvre en plein écran, sans barres du navigateur — comme une appli.", "Füge Dreamelle zu deinem Home-Bildschirm hinzu. Es öffnet im Vollbild, ohne Browserleisten – wie eine App.", "Aggiungi Dreamelle alla schermata Home. Si apre a schermo intero, senza barre del browser, proprio come un’app."],
+"Tap the Share button": ["Toque no botão Compartilhar", "Toca el botón Compartir", "Touche le bouton Partager", "Tippe auf „Teilen“", "Tocca il pulsante Condividi"],
+"Choose “Add to Home Screen”": ["Escolha “Adicionar à Tela de Início”", "Elige “Añadir a pantalla de inicio”", "Choisis « Sur l’écran d’accueil »", "Wähle „Zum Home-Bildschirm“", "Scegli “Aggiungi alla schermata Home”"],
+"Open Dreamelle from your Home Screen": ["Abra o Dreamelle pela Tela de Início", "Abre Dreamelle desde tu pantalla de inicio", "Ouvre Dreamelle depuis ton écran d’accueil", "Öffne Dreamelle vom Home-Bildschirm", "Apri Dreamelle dalla schermata Home"],
+"Your progress comes with you.": ["Seu progresso vai junto.", "Tu progreso viene contigo.", "Ta progression te suit.", "Dein Fortschritt kommt mit.", "I tuoi progressi vengono con te."],
+"Play in browser": ["Jogar no navegador", "Jugar en el navegador", "Jouer dans le navigateur", "Im Browser spielen", "Gioca nel browser"],
+"Install the app": ["Instalar o app", "Instalar la app", "Installer l’appli", "App installieren", "Installa l’app"],
+"Get the app": ["Baixar o app", "Obtener la app", "Obtenir l’appli", "App holen", "Scarica l’app"],
+"Full screen": ["Tela cheia", "Pantalla completa", "Plein écran", "Vollbild", "Schermo intero"],
 }
 
 # Interpolated strings: regex (on trimmed text) -> [pt, es, fr, de, it]; {1} raw group, {t1} translated group

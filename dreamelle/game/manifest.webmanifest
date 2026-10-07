@@ -1,0 +1,40 @@
+{
+ "name": "Dreamelle",
+ "short_name": "Dreamelle",
+ "description": "Create your dream life.",
+ "id": "/",
+ "start_url": "/?src=app",
+ "scope": "/",
+ "display": "fullscreen",
+ "display_override": [
+  "fullscreen",
+  "standalone"
+ ],
+ "orientation": "landscape",
+ "background_color": "#ffd9ec",
+ "theme_color": "#ff8cc4",
+ "categories": [
+  "games",
+  "entertainment"
+ ],
+ "icons": [
+  {
+   "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/f3721bec-d83f-4abf-a457-65bd805265fb.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/c8dd10a7-1443-4225-bb7e-7dc94e6d56c2.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/c8dd10a7-1443-4225-bb7e-7dc94e6d56c2.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
