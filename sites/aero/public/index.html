@@ -130,6 +130,13 @@ footer{background:#08162a;color:#8b99b3;font-size:13px;padding:34px 0}
 footer .wrap{display:grid;gap:8px}
 .sticky{position:fixed;left:0;right:0;bottom:0;background:var(--navy);padding:10px 16px;display:none;z-index:9;box-shadow:0 -6px 20px rgba(0,0,0,.25)}
 .sticky .btn{width:100%;font-size:19px;padding:14px}
+.yts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.yt{position:relative;border:0;padding:0;background:#000;border-radius:12px;overflow:hidden;cursor:pointer;aspect-ratio:16/9;text-align:left;font-family:inherit}
+.yt img{width:100%;height:100%;object-fit:cover;opacity:.85}
+.yt .play{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;background:var(--amber);color:var(--navy);display:grid;place-items:center;font-size:22px}
+.yt .t{position:absolute;left:0;right:0;bottom:0;padding:22px 12px 10px;background:linear-gradient(transparent,rgba(0,0,0,.85));color:#fff;font-size:13px;font-weight:600}
+.yt iframe{width:100%;height:100%;border:0;display:block}
+@media (max-width:900px){.yts{grid-template-columns:1fr}}
 /* A/B: blocos só da versão B */
 .vB{display:none}
 .lpB .vB{display:block}
@@ -187,6 +194,9 @@ footer .wrap{display:grid;gap:8px}
   <h2>Ele já fez esse caminho</h2>
   <p class="sub">11 anos como Aviador da FAB. Agora o Rafael abre o mapa para você.</p>
   <video src="rafael-do-sonho-ao-cockpit.mp4" poster="img/video-poster.jpg" muted autoplay loop playsinline preload="metadata"></video>
+  <h3 class="cond" style="font-size:28px;margin:40px 0 14px;color:#fff">Tucano, Super Tucano e Fumaça</h3>
+  <div class="yts"><button class="yt" data-id="Qb2QZP0qZek" aria-label="Assistir: FAB comemora 40 anos do T-27 Tucano"><img src="https://i.ytimg.com/vi/Qb2QZP0qZek/hqdefault.jpg" alt="" loading="lazy"><span class="play">▶</span><span class="t">FAB comemora 40 anos do T-27 Tucano</span></button><button class="yt" data-id="rGhqCceuPGE" aria-label="Assistir: Esquadrilha da Fumaça se despede do T-27 Tucano"><img src="https://i.ytimg.com/vi/rGhqCceuPGE/hqdefault.jpg" alt="" loading="lazy"><span class="play">▶</span><span class="t">Esquadrilha da Fumaça se despede do T-27 Tucano</span></button><button class="yt" data-id="ipPfv9igAv0" aria-label="Assistir: FAB em Ação: esquadrões de A-29 Super Tucano"><img src="https://i.ytimg.com/vi/ipPfv9igAv0/hqdefault.jpg" alt="" loading="lazy"><span class="play">▶</span><span class="t">FAB em Ação: esquadrões de A-29 Super Tucano</span></button></div>
+  <p class="note" style="color:#8fa0bb;margin-top:10px">Vídeos públicos do YouTube, de seus autores. Sem vínculo com a Força Aérea Brasileira.</p>
  </div>
 </section>
 
@@ -387,6 +397,7 @@ if(CHECKOUT_KIT){document.querySelectorAll('#cta-kit').forEach(function(a){a.hre
 function ic(){try{if(window.fbq)fbq('track','InitiateCheckout')}catch(e){}tr('checkout_click',{produto:this.id==='cta-plano'?'plano289':'kit67'})}
 document.querySelectorAll('#cta-kit,#cta-plano').forEach(function(a){a.addEventListener('click',ic)});
 if(CHECKOUT_PLANO){document.getElementById('cta-plano').href=CHECKOUT_PLANO+q()}
+document.querySelectorAll('.yt').forEach(function(b){b.addEventListener('click',function(){var id=b.getAttribute('data-id');b.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';tr('video_play',{id:id})},{once:true})});
 document.querySelectorAll('a[href="#oferta"]').forEach(function(a){a.addEventListener('click',function(){tr('cta_oferta')})});
 </script>
 </body>
