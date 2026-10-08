@@ -53,6 +53,8 @@ export const CSS = `
 .lp h2{font:700 clamp(22px,3.6cqi,30px)/1.2 "Playfair Display",Georgia,serif;margin:0 0 18px;color:var(--p);text-wrap:balance}
 .lp .lead{font-size:16px;opacity:.85;margin:0 0 22px;max-width:52ch}
 .lp .photo{aspect-ratio:4/5;width:100%;border-radius:10px;background:var(--soft);overflow:hidden;display:grid;place-items:center;color:#8a8f98;font-size:12px;text-align:center}
+.lp .photo .mono{font:700 clamp(48px,12cqi,96px)/1 "Playfair Display",Georgia,serif;color:#fff}
+.lp .photo:has(.mono){background:var(--p)}
 .lp .photo img{width:100%;height:100%;object-fit:cover;display:block}
 .lp section{padding:44px 6%}
 .lp .soft{background:var(--soft)}
@@ -69,6 +71,7 @@ export const CSS = `
 .lp .contato a{color:inherit}
 .lp footer{padding:22px 6%;font-size:12px;opacity:.75;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .lp footer a{color:inherit}
+.lp.semfoto .h,.lp.semfoto .about{grid-template-columns:1fr}.lp.semfoto .h{padding-block:48px 56px}.lp.semfoto .h .lead{max-width:60ch}
 .lp.t-moderno{--soft:#EEF2F6}
 .lp.t-moderno h1,.lp.t-moderno h2{font-family:"Manrope",sans-serif;font-weight:800;letter-spacing:-.02em}
 .lp.t-moderno .h{background:var(--p);color:#fff}.lp.t-moderno .h h1{color:#fff}
@@ -85,7 +88,7 @@ export function renderLP(d, { previa = false, fotoVazia = "Sua foto aqui" } = {}
   const zap = String(d.zap||"").replace(/\D/g,"");
   const wa = zap ? `https://wa.me/55${zap}?text=${encodeURIComponent("Olá, vim pelo site e gostaria de agendar uma consulta.")}` : "#";
   const logo = d.logo ? `<img src="${esc(d.logo)}" alt="Logo ${esc(nome)}">` : `<span class="mark">${esc(iniciais(nome))}</span>`;
-  const foto = d.foto ? `<img src="${esc(d.foto)}" alt="${esc(nome)}" loading="eager">` : `<span>${esc(fotoVazia)}</span>`;
+  const foto = d.foto ? `<img src="${esc(d.foto)}" alt="${esc(nome)}" loading="eager">` : previa ? `<span>${esc(fotoVazia)}</span>` : `<span class="mono">${esc(iniciais(nome))}</span>`;
   const local = t.online ? "Atendimento online" : [d.cidade, d.uf].filter(Boolean).map(esc).join("/");
   const oab = `OAB/${esc(d.uf||"UF")} ${esc(d.oab||"")}`;
   const insta = d.insta ? String(d.insta).replace(/^@/,"") : "";
@@ -94,14 +97,15 @@ export function renderLP(d, { previa = false, fotoVazia = "Sua foto aqui" } = {}
     d.email ? `<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>` : "",
     insta ? `<a href="https://instagram.com/${esc(insta)}" target="_blank" rel="noopener">@${esc(insta)}</a>` : "",
   ].join("");
+  const semFoto = !d.foto && !previa; // publicada sem foto: layout de coluna única, nunca "Sua foto aqui"
   const html = `${previa ? '<div class="wm"></div>' : ""}
   <div class="nav"><div class="logo">${logo}<span>${esc(nome)}</span></div><a class="cta sm" href="${wa}" target="_blank" rel="noopener">Fale pelo WhatsApp</a></div>
   <div class="h"><div><div class="kicker">${esc(a.k)}${local ? " · " + local : ""}</div>
     <h1>${esc(t.h1)}</h1><p class="lead">${esc(t.sub)}</p>
     <a class="cta" href="${wa}" target="_blank" rel="noopener">Agendar uma consulta</a></div>
-    <div class="photo">${foto}</div></div>
+    ${semFoto ? "" : `<div class="photo">${foto}</div>`}</div>
   <section class="soft"><h2>Como posso ajudar</h2><div class="grid3">${a.sv.map(s=>`<div class="card"><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p></div>`).join("")}</div></section>
-  <section><div class="about"><div class="photo">${foto}</div><div><div class="kicker">Sobre</div><h2>${esc(nome)}</h2><p>${esc(t.bio)}</p>
+  <section><div class="about">${semFoto ? "" : `<div class="photo">${foto}</div>`}<div><div class="kicker">Sobre</div><h2>${esc(nome)}</h2><p>${esc(t.bio)}</p>
     <p><strong>${oab}</strong> · ${esc(d.atend||"")}</p></div></div></section>
   <section class="soft"><h2>Como funciona o atendimento</h2><div class="grid3">
     <div class="card"><h3>Primeiro contato</h3><p>Você envia uma mensagem e agenda um horário.</p></div>
@@ -110,5 +114,5 @@ export function renderLP(d, { previa = false, fotoVazia = "Sua foto aqui" } = {}
   <section><h2>Perguntas frequentes</h2>${a.f.map(q=>`<details><summary>${esc(q[0])}</summary><p>${esc(q[1])}</p></details>`).join("")}</section>
   <section class="final"><h2>Tire suas dúvidas sobre o seu caso</h2><p>Atendimento ${t.online ? "online para todo o Brasil" : (d.cidade ? "em " + esc(d.cidade) + " e online" : "presencial e online")}.</p><a class="cta" href="${wa}" target="_blank" rel="noopener">Falar com ${esc(primeiroNome(nome))}</a>${contato ? `<div class="contato">${contato}</div>` : ""}</section>
   <footer><span>${esc(nome)} · ${oab}</span><span>${d.zap ? "WhatsApp " + esc(d.zap) : ""}</span></footer>`;
-  return { cls: "lp t-" + (["classico","moderno","minimal"].includes(d.tpl) ? d.tpl : "classico"), style: `--p:${corOk(d.p,"#1B2A41")};--a:${corOk(d.a,"#C9A227")}`, html };
+  return { cls: "lp t-" + (["classico","moderno","minimal"].includes(d.tpl) ? d.tpl : "classico") + (semFoto ? " semfoto" : ""), style: `--p:${corOk(d.p,"#1B2A41")};--a:${corOk(d.a,"#C9A227")}`, html };
 }
