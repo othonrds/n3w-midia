@@ -13,7 +13,7 @@
 // Tudo nasce PAUSADO. Ativar ou aumentar orçamento exige o campo `autorizacao_humana`
 // com a frase de autorização do Othon, que fica registrada no log da resposta.
 
-const SERVER_INFO = { name: "n3w-meta", version: "0.2.0" };
+const SERVER_INFO = { name: "n3w-meta", version: "0.3.0" };
 const PROTOCOL_VERSIONS = ["2025-06-18", "2025-03-26", "2024-11-05"];
 
 // ---------------------------------------------------------------- Graph API
@@ -376,6 +376,97 @@ const TOOLS = [
     inputSchema: S({ caminho: str("ex.: 123456/insights ou act_X/adrules_library"), parametros: { type: "object" } }, ["caminho"]),
     run: async (env, a) => graph(env, "GET", a.caminho, a.parametros || {}),
   },
+  // ------------------------------------------------------------ Instagram orgânico (substitui o Windsor na postagem)
+  // Permissões do token: instagram_basic, instagram_content_publish, instagram_manage_comments.
+  // A conta do Instagram precisa estar ligada a uma Página do portfólio do System User.
+  {
+    name: "ig_contas",
+    description: "Lista as contas do Instagram que o conector pode publicar (ligadas às Páginas do portfólio) e a cota de posts das últimas 24 h.",
+    inputSchema: S({}),
+    run: async (env) => {
+      const r = await graph(env, "GET", "me/accounts", { fields: "id,name,instagram_business_account{id,username,followers_count}", limit: 100 });
+      const out = [];
+      for (const p of r.data || []) {
+        const ig = p.instagram_business_account;
+        if (!ig) continue;
+        let cota = null;
+        try { const c = await graph(env, "GET", `${ig.id}/content_publishing_limit`, { fields: "config,quota_usage" }); cota = c.data && c.data[0]; } catch (e) { cota = { erro: e.message }; }
+        out.push({ ig_id: ig.id, usuario: ig.username, seguidores: ig.followers_count, pagina: { id: p.id, nome: p.name }, cota_24h: cota });
+      }
+      return out;
+    },
+  },
+  {
+    name: "ig_publicar",
+    description: "Publica no Instagram: tipo IMAGEM, CARROSSEL (2–10 itens), REELS ou STORY. Mídia por URL pública https (use midia_importar para hospedar). Vídeo: se a Meta ainda estiver processando, devolve container_id e status — chame ig_publicar_container depois.",
+    inputSchema: S({
+      ig_id: str("ID da conta do Instagram (ver ig_contas)"),
+      tipo: { type: "string", enum: ["IMAGEM", "CARROSSEL", "REELS", "STORY"] },
+      urls: { type: "array", items: { type: "string" }, description: "URLs https das mídias (1 para IMAGEM/REELS/STORY; 2–10 para CARROSSEL). .mp4/.mov = vídeo" },
+      legenda: str("texto do post (não vale para STORY)"),
+      capa_url: str("opcional: capa do REELS"),
+      no_feed: { type: "boolean", description: "REELS também no feed (padrão true)" },
+    }, ["ig_id", "tipo", "urls"]),
+    run: async (env, a) => {
+      const urls = a.urls || [];
+      const ehVideo = (u) => /\.(mp4|mov|m4v)(\?|$)/i.test(u);
+      if (!urls.length) throw new Error("informe urls");
+      let containerId;
+      if (a.tipo === "CARROSSEL") {
+        if (urls.length < 2 || urls.length > 10) throw new Error("carrossel precisa de 2 a 10 mídias");
+        const filhos = [];
+        for (const u of urls) {
+          const c = await graph(env, "POST", `${a.ig_id}/media`, ehVideo(u) ? { media_type: "VIDEO", video_url: u, is_carousel_item: true } : { image_url: u, is_carousel_item: true });
+          filhos.push(c.id);
+        }
+        for (const f of filhos) { const st = await esperarContainer(env, f, 20000); if (st !== "FINISHED") return { pendente: true, filhos, aviso: `item ${f} ainda ${st}; tente de novo em 1 min` }; }
+        containerId = (await graph(env, "POST", `${a.ig_id}/media`, { media_type: "CAROUSEL", children: filhos.join(","), caption: a.legenda })).id;
+      } else if (a.tipo === "REELS") {
+        containerId = (await graph(env, "POST", `${a.ig_id}/media`, { media_type: "REELS", video_url: urls[0], caption: a.legenda, cover_url: a.capa_url, share_to_feed: a.no_feed !== false })).id;
+      } else if (a.tipo === "STORY") {
+        containerId = (await graph(env, "POST", `${a.ig_id}/media`, ehVideo(urls[0]) ? { media_type: "STORIES", video_url: urls[0] } : { media_type: "STORIES", image_url: urls[0] })).id;
+      } else {
+        containerId = (await graph(env, "POST", `${a.ig_id}/media`, { image_url: urls[0], caption: a.legenda })).id;
+      }
+      const st = await esperarContainer(env, containerId, 25000);
+      if (st !== "FINISHED") return { publicado: false, container_id: containerId, status: st, proximo: "chame ig_publicar_container com este container_id em 1–2 min" };
+      return publicarContainer(env, a.ig_id, containerId);
+    },
+  },
+  {
+    name: "ig_publicar_container",
+    description: "Publica um container já criado (vídeo/reels que estava processando). Confere o status antes.",
+    inputSchema: S({ ig_id: str("conta do Instagram"), container_id: str("devolvido por ig_publicar") }, ["ig_id", "container_id"]),
+    run: async (env, a) => {
+      const st = await esperarContainer(env, a.container_id, 25000);
+      if (st !== "FINISHED") return { publicado: false, container_id: a.container_id, status: st };
+      return publicarContainer(env, a.ig_id, a.container_id);
+    },
+  },
+  {
+    name: "ig_posts",
+    description: "Lista os posts recentes de uma conta do Instagram com curtidas, comentários e link.",
+    inputSchema: S({ ig_id: str("conta do Instagram"), limite: num("padrão 12") }, ["ig_id"]),
+    run: async (env, a) => graphAll(env, `${a.ig_id}/media`, { fields: "id,caption,media_type,media_product_type,permalink,timestamp,like_count,comments_count" }, a.limite || 12),
+  },
+  {
+    name: "ig_comentarios",
+    description: "Lista comentários de um post do Instagram (com respostas).",
+    inputSchema: S({ media_id: str("id do post") }, ["media_id"]),
+    run: async (env, a) => graphAll(env, `${a.media_id}/comments`, { fields: "id,text,username,timestamp,hidden,like_count,replies{id,text,username,timestamp}" }, 200),
+  },
+  {
+    name: "ig_responder",
+    description: "Responde a um comentário do Instagram.",
+    inputSchema: S({ comentario_id: str("id do comentário"), texto: str("resposta") }, ["comentario_id", "texto"]),
+    run: async (env, a) => graph(env, "POST", `${a.comentario_id}/replies`, { message: a.texto }),
+  },
+  {
+    name: "ig_ocultar",
+    description: "Oculta (ou volta a mostrar) um comentário do Instagram. Não apaga.",
+    inputSchema: S({ comentario_id: str("id do comentário"), ocultar: { type: "boolean", description: "padrão true" } }, ["comentario_id"]),
+    run: async (env, a) => graph(env, "POST", a.comentario_id, { hide: a.ocultar !== false }),
+  },
   // ------------------------------------------------------------ Mídia (bucket R2 "n3w-midia")
   // Organização: <projeto>/criativos/<CRIATIVO>/arquivo · <projeto>/testes/<AAAA-MM-DD>_<T##>/teste.json|metricas-<hora>.json|resultado.json
   //              privado/<projeto>/... (fotos de clientes: nunca públicas)
@@ -430,6 +521,25 @@ const TOOLS = [
   },
 ];
 
+
+// Espera o container do Instagram ficar pronto (vídeo leva segundos a minutos).
+async function esperarContainer(env, id, maxMs) {
+  const t0 = Date.now();
+  let st = "IN_PROGRESS";
+  while (Date.now() - t0 < maxMs) {
+    const r = await graph(env, "GET", id, { fields: "status_code" });
+    st = r.status_code || "FINISHED";
+    if (st === "FINISHED" || st === "ERROR" || st === "EXPIRED") return st;
+    await sleep(3000);
+  }
+  return st;
+}
+async function publicarContainer(env, igId, containerId) {
+  const p = await graph(env, "POST", `${igId}/media_publish`, { creation_id: containerId });
+  let link = null;
+  try { link = (await graph(env, "GET", p.id, { fields: "permalink" })).permalink; } catch {}
+  return { publicado: true, media_id: p.id, link };
+}
 
 function bucket(env) {
   if (!env.MIDIA) throw new Error("Bucket de mídia não ligado ao Worker (binding MIDIA → n3w-midia).");
