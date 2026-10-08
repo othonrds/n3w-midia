@@ -11,20 +11,23 @@ async function capture(b) {
   const c = await b.newContext({ viewport: { width: 844, height: 390 }, deviceScaleFactor: 2, locale: 'en-US' });
   const p = await c.newPage();
   await p.route('**/connect.facebook.net/**', r => r.abort());
-  const W = ms => p.waitForTimeout(ms), S = n => p.screenshot({ path: `${OUT}/shots/${n}.png` });
+  const R = {};
+  const W = ms => p.waitForTimeout(ms), S = async (n, sels = []) => { await p.screenshot({ path: `${OUT}/shots/${n}.png` });
+    for (const sel of sels) { const r = await p.evaluate(q => { const e = document.querySelector(q); if (!e) return null; const b = e.getBoundingClientRect(); return { x: b.x, y: b.y, w: b.width, h: b.height }; }, sel); R[n + ' ' + sel] = r; } };
   await p.goto(GAME); await W(3500); await S('splash');
-  await p.evaluate("Dreamelle.state.name='Ava';Dreamelle.go('char')"); await W(2500); await S('char');
-  await p.evaluate("Dreamelle.go('career')"); await W(2500); await S('career');
-  await p.evaluate("Object.assign(Dreamelle.state,{created:true,career:'lawyer',onbDone:true});Dreamelle.go('home')"); await W(2500); await S('home');
+  await p.evaluate("Dreamelle.state.name='Ava';Dreamelle.go('char')"); await W(2500); await S('char', ['.looks']);
+  await p.evaluate("Dreamelle.go('career')"); await W(2500); await S('career', ['#career-lawyer']);
+  await p.evaluate("Object.assign(Dreamelle.state,{created:true,career:'lawyer',onbDone:true});Dreamelle.go('home')"); await W(2500); await S('home', ['#goals']);
   await p.click('#btn-start'); await W(2600); await S('map');
   await p.evaluate("Dreamelle.go('law')"); await W(2500); await S('law');
-  await p.click('#job-clause'); await W(2000); await S('case');
-  await p.click('#ans-0'); await W(900); await S('case_wrong');
+  await p.click('#job-clause'); await W(2000); await S('case', ['.answers']);
+  await p.click('#ans-0'); await W(900); await S('case_wrong', ['.answers', '#fb']);
   await p.click('#ans-1'); await W(2600); await S('reward');
   await p.evaluate("Dreamelle.go('org')"); await W(1800);
   // file two docs correctly so the counters show progress
   for (const [doc, f] of [['d1', 'contracts'], ['d3', 'evidence']]) { await p.click('#doc-' + doc); await W(250); await p.click('#folder-' + f); await W(500); }
-  await S('org');
+  await S('org', ['.folders']);
+  fs.writeFileSync(`${OUT}/shots/rects.json`, JSON.stringify(R));
   await c.close();
 }
 
@@ -52,6 +55,12 @@ const phone = (shot, x, y, w, rot = 0) => {
   const h = Math.round(w * 390 / 844);
   return `<div class="phone" style="left:${x}px;top:${y}px;transform:rotate(${rot}deg)"><div class="isl"></div><div class="scr" style="width:${w}px;height:${h}px"><img src="shots/${shot}.png"></div></div>`;
 };
+let RECTS = {};
+const zoom = (shot, sel, x, y, w, pad = 6) => {
+  const r = RECTS[shot + ' ' + sel]; if (!r) return '';
+  const rx = r.x - pad, ry = r.y - pad, rw = r.w + 2 * pad, rh = r.h + 2 * pad, k = w / rw;
+  return `<div style="position:absolute;left:${x}px;top:${y}px;width:${w}px;height:${Math.round(rh * k)}px;border-radius:34px;border:8px solid #fff;box-shadow:0 0 0 6px #ff8cc4,0 30px 60px rgba(120,30,90,.35);background:url(shots/${shot}.png) ${-rx * k}px ${-ry * k}px/${844 * k}px auto no-repeat"></div>`;
+};
 const FINE = 'Original game · Free to start · Not affiliated with any toy brand';
 const foot = (cta = 'Play free in your browser →') => `<div class="cta">${cta}</div><div class="logo">Dreamelle</div><div class="fine">${FINE}</div>`;
 const soft = (img, op = .82) => `<div class="bg" style="background-image:url(${img});filter:blur(6px) saturate(1.1);transform:scale(1.06)"></div><div class="veil" style="background:linear-gradient(180deg,rgba(255,232,244,${op}) 0%,rgba(255,226,242,${op - .1}) 45%,rgba(255,236,246,${op + .08}) 100%)"></div>`;
@@ -66,7 +75,7 @@ const ADS = [
   { id: 'C02', angulo: 'carreira-quiz', hook: 'Would you make a good lawyer?', html: () =>
     `${soft(A.C03_escritorio)}<div class="hook" style="top:96px">Would you make a <em>good lawyer?</em></div>
      <div class="sub" style="top:330px">Solve your first case in Sunset Bay.</div>
-     ${phone('case', 50, 470, 940, -2)}${foot('Take the case →')}` },
+     ${phone('case', -40, 440, 1080, -3)}${zoom('case', '.answers', 140, 900, 880)}<img class="pose" src="${A.P03_advogada}" style="left:-10px;top:760px;height:520px">${foot('Take the case →')}` },
   { id: 'C03', angulo: 'identidade', hook: 'Which one are you?', html: () =>
     `<div class="bg" style="background:linear-gradient(160deg,#ffe3f1,#f1e6ff)"></div>
      <div class="hook" style="top:90px;text-align:center">Which one <em>are you?</em></div>
@@ -77,37 +86,38 @@ const ADS = [
   { id: 'C04', angulo: 'escolha-look', hook: 'Pick her look. Live her life.', html: () =>
     `${soft(A.C04_casa)}<div class="hook" style="top:96px">Pick her look. <em>Live her life.</em></div>
      <div class="sub" style="top:330px">6 looks to start. More unlock as you play.</div>
-     ${phone('char', 50, 480, 940, 0)}<div class="tap" style="left:690px;top:640px"></div>${foot('Create your character →')}` },
+     ${phone('char', -40, 430, 1080, -2)}${zoom('char', '.looks', 100, 960, 900, 10)}<div class="tap" style="left:520px;top:985px"></div>${foot('Create your character →')}` },
   { id: 'C05', angulo: 'dream-life', hook: 'Your dream life starts on Day 1.', html: () =>
     `${soft(A.C01_quarto)}<div class="hook" style="top:96px">Your dream life starts on <em>Day 1.</em></div>
      <div class="sub" style="top:330px">Go to work, win a case, level up, go home.</div>
-     ${phone('home', 50, 480, 940, 2)}${foot()}` },
+     ${phone('home', 0, 450, 1080, 2)}${zoom('home', '#goals', 560, 830, 440)}${foot()}` },
   { id: 'C06', angulo: 'carreira-fantasia', hook: 'Pick your dream career.', html: () =>
     `${soft(A.C04_casa)}<div class="hook" style="top:96px">Pick your <em>dream career.</em></div>
      <div class="sub" style="top:330px">Start as a lawyer today. More careers are coming soon.</div>
-     ${phone('career', 50, 520, 940, -2)}${foot()}` },
+     ${phone('career', -40, 450, 1080, -2)}${zoom('career', '#career-lawyer', 120, 820, 340, 4)}${foot()}` },
   { id: 'C07', angulo: 'falha-desafio', hook: 'She almost lost her first case.', html: () =>
     `${soft(A.C03_escritorio)}<div class="hook" style="top:96px">She almost lost <em>her first case.</em></div>
      <div class="sub" style="top:330px">Can you get it right on the first try?</div>
-     ${phone('case_wrong', 50, 480, 940, 0)}${foot('Try the case →')}` },
+     ${phone('case_wrong', -40, 440, 1080, -2)}${zoom('case_wrong', '#fb', 70, 930, 940, 8)}${foot('Try the case →')}` },
   { id: 'C08', angulo: 'satisfatorio', hook: 'Sort the case files in 45 seconds.', html: () =>
     `${soft(A.C03_escritorio)}<div class="hook" style="top:96px">Sort the case files in <em>45 seconds.</em></div>
      <div class="sub" style="top:330px">Tap, drag, beat the clock.</div>
-     ${phone('org', 50, 480, 940, 2)}${foot('Beat the clock →')}` },
+     ${phone('org', 0, 440, 1080, 2)}${zoom('org', '.folders', 600, 840, 410)}${foot('Beat the clock →')}` },
   { id: 'C09', angulo: 'explorar-cidade', hook: 'Welcome to Sunset Bay.', html: () =>
     `<div class="bg" style="background-image:url(${A.C02_mapa})"></div><div class="veil" style="background:linear-gradient(180deg,rgba(255,232,244,.96) 0%,rgba(255,232,244,.75) 30%,rgba(255,232,244,.15) 55%,rgba(255,232,244,.85) 88%)"></div>
      <div class="hook" style="top:96px">Welcome to <em>Sunset Bay.</em></div>
      <div class="sub" style="top:330px">Level up to unlock the salon, the beach and shopping.</div>
-     ${phone('map', 50, 520, 940, -2)}${foot('Explore the city →')}` },
+     ${phone('map', -30, 470, 1100, -2)}${foot('Explore the city →')}` },
   { id: 'C10', angulo: 'recompensa', hook: 'That “case won” feeling.', html: () =>
     `${soft(A.C03_escritorio, .78)}<div class="hook" style="top:96px">That <em>“case won”</em> feeling.</div>
      <div class="sub" style="top:330px">Earn XP, coins and reputation. Level up your career.</div>
-     ${phone('reward', 50, 480, 760, -3)}<img class="pose" src="${A.P04_comemora}" style="right:10px;top:380px;height:820px">${foot()}` },
+     ${phone('reward', 30, 470, 800, -3)}<img class="pose" src="${A.P04_comemora}" style="right:10px;top:380px;height:820px">${foot()}` },
 ];
 
 (async () => {
   const b = await chromium.launch();
   if (!process.env.SKIP_CAPTURE) await capture(b);
+  RECTS = JSON.parse(fs.readFileSync(`${OUT}/shots/rects.json`, 'utf8'));
   const c = await b.newContext({ viewport: { width: 1080, height: 1350 }, deviceScaleFactor: 1 });
   const p = await c.newPage();
   const only = process.env.ONLY ? process.env.ONLY.split(',') : null;
