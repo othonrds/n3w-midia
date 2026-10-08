@@ -7,7 +7,17 @@
 <meta name="description" content="Quanto custa virar piloto no Brasil e qual rota é a sua: civil, militar ou policial. Guia com números checados e simulador de custos, por Rafael Francisco, ex-Capitão Aviador da FAB.">
 <meta property="og:title" content="Kit Plano de Voo · O mapa para virar piloto no Brasil">
 <meta property="og:description" content="Rotas civil, militar e policial com números reais e 52 fontes. Por Rafael Francisco, ex-Capitão Aviador da FAB.">
-<meta property="og:image" content="img/p1.jpg">
+<meta property="og:image" content="https://aerosectorfly.com/img/p1.jpg">
+<script>
+// Teste A/B da página: ?lp=a|b força; senão sorteia 50/50 e lembra no aparelho
+(function(){var v,m=location.search.match(/[?&]lp=(a|b)/i);
+ if(m){v=m[1].toUpperCase()}else{try{v=localStorage.getItem('aero_lp')}catch(e){}
+ if(v!=='A'&&v!=='B'){v=Math.random()<.5?'A':'B'}}
+ try{localStorage.setItem('aero_lp',v)}catch(e){}
+ window.AERO_LP=v;document.documentElement.className+=' lp'+v;})();
+window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -120,7 +130,22 @@ footer{background:#08162a;color:#8b99b3;font-size:13px;padding:34px 0}
 footer .wrap{display:grid;gap:8px}
 .sticky{position:fixed;left:0;right:0;bottom:0;background:var(--navy);padding:10px 16px;display:none;z-index:9;box-shadow:0 -6px 20px rgba(0,0,0,.25)}
 .sticky .btn{width:100%;font-size:19px;padding:14px}
+/* A/B: blocos só da versão B */
+.vB{display:none}
+.lpB .vB{display:block}
+.mentor-photo{border-radius:14px;margin-bottom:18px;box-shadow:0 16px 36px rgba(11,29,54,.25);aspect-ratio:4/3;object-fit:cover;object-position:60% 30%;width:100%}
+.film{background:var(--navy);color:#fff;padding:56px 0}
+.film h2{color:#fff;margin-bottom:8px}
+.film .sub{color:#b9c6db;margin-bottom:24px}
+.film video{width:100%;max-width:860px;border-radius:14px;box-shadow:0 24px 50px rgba(0,0,0,.45);display:block}
+.story{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;margin-top:24px}
+.story p{font-size:18px;margin-bottom:14px}
+.story .sign{font-family:"Barlow Condensed";font-weight:700;font-size:24px;color:var(--navy);text-transform:uppercase;letter-spacing:.04em}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.gallery img{border-radius:10px;width:100%;height:100%;object-fit:cover;aspect-ratio:1/1}
+.gallery img:first-child{grid-row:span 2;aspect-ratio:auto;object-position:72% 35%}
 @media (max-width:900px){
+ .story{grid-template-columns:1fr}
  .hero .wrap,.kit,.pais-grid,.mentor,.next{grid-template-columns:1fr}
  .hero .wrap{padding-top:40px;padding-bottom:50px;gap:30px}
  .cover{max-width:280px;margin:0 auto}
@@ -155,6 +180,15 @@ footer .wrap{display:grid;gap:8px}
  <div class="num"><b>14 anos</b><span>idade mínima para a EPCAR, a porta mais larga da FAB</span></div>
  <div class="num"><b>1.500 h</b><span>para a licença de Piloto de Linha Aérea, aos 21 anos</span></div>
 </div></div>
+
+<section class="film vB">
+ <div class="wrap">
+  <div class="eyebrow">Do sonho ao cockpit</div>
+  <h2>Ele já fez esse caminho</h2>
+  <p class="sub">11 anos como Aviador da FAB. Agora o Rafael abre o mapa para você.</p>
+  <video src="rafael-do-sonho-ao-cockpit.mp4" poster="img/video-poster.jpg" muted autoplay loop playsinline preload="metadata"></video>
+ </div>
+</section>
 
 <section>
  <div class="wrap">
@@ -236,6 +270,8 @@ footer .wrap{display:grid;gap:8px}
   <div class="eyebrow" style="color:var(--amber-d)">Seu mentor</div>
   <h2>Quem já esteve no cockpit</h2>
   <div class="mentor">
+   <div>
+   <img class="mentor-photo" src="img/rafael-selfie.jpg" alt="Rafael Francisco no cockpit, de capacete e máscara, com a pista ao fundo" loading="lazy" width="1200" height="900">
    <div class="logbook">
     <h3>CADERNETA</h3>
     <div class="row"><span>Horas de voo</span><b>~1.050 h</b></div>
@@ -243,6 +279,7 @@ footer .wrap{display:grid;gap:8px}
     <div class="row"><span>Instrutor de voo</span><b>~500 h</b></div>
     <div class="row"><span>FAB</span><b>2014–2025</b></div>
     <div class="row" style="border:0"><span>CANAC</span><b>380084</b></div>
+   </div>
    </div>
    <div>
     <p style="font-size:18px">Rafael Francisco foi Capitão Aviador da Força Aérea Brasileira por 11 anos. É piloto comercial e instrutor de voo certificado pela ANAC e pela FAB.</p>
@@ -302,6 +339,27 @@ footer .wrap{display:grid;gap:8px}
  </div>
 </section>
 
+<section class="vB">
+ <div class="wrap">
+  <div class="eyebrow" style="color:var(--amber-d)">Quem sou eu</div>
+  <h2>Muito prazer, Rafael Francisco</h2>
+  <div class="story">
+   <div>
+    <p>Fui Capitão Aviador da Força Aérea Brasileira de 2014 a 2025. Voei T-25 Universal, T-27 Tucano, A-29 Super Tucano e EMB-110 Bandeirante. Hoje sou piloto comercial e instrutor de voo pela ANAC, piloto desportivo e atleta de voo livre.</p>
+    <p>Metade das minhas cerca de 1.050 horas de voo foi ensinando. Nesse tempo, vi muita gente travar não por falta de talento, mas por falta de um plano: escola errada, hora repetida, concurso que não leva ao cockpit.</p>
+    <p>O Kit Plano de Voo é o mapa que eu gostaria de ter tido no começo: as rotas civil, militar e policial, com os números de verdade, para você decidir antes de gastar.</p>
+    <p class="sign">Rafael Francisco · CANAC 380084</p>
+    <a class="btn cta" href="#oferta" style="margin-top:14px">Quero o meu kit <small>R$ 67</small></a>
+   </div>
+   <div class="gallery">
+    <img src="img/rafael-cadete.jpg" alt="Rafael Francisco como cadete, sorrindo no cockpit" loading="lazy">
+    <img src="img/rafael-ceu.jpg" alt="Rafael Francisco de capacete e máscara olhando para o céu" loading="lazy">
+    <img src="img/rafael-cockpit.jpg" alt="Rafael Francisco no cockpit com a capota aberta" loading="lazy">
+   </div>
+  </div>
+ </div>
+</section>
+
 <section>
  <div class="wrap">
   <div class="eyebrow" style="color:var(--amber-d)">Dúvidas</div>
@@ -328,11 +386,15 @@ footer .wrap{display:grid;gap:8px}
 // Links de checkout (Payt) — preenchidos após o cadastro dos produtos
 var CHECKOUT_KIT = "https://payt.site/mNCDMaK";
 var CHECKOUT_PLANO = "https://payt.site/wGCBDlp";
-function q(){return location.search||""}
+// repassa as UTMs do anúncio e marca a versão da página (utm_term=lp-a / lp-b) para ler na Payt
+function q(){var p=new URLSearchParams(location.search);p.delete('lp');p.set('utm_term','lp-'+(window.AERO_LP||'A').toLowerCase());return '?'+p.toString()}
+function tr(n,d){try{d=d||{};d.lp=window.AERO_LP;window.va('event',{name:n,data:d})}catch(e){}}
+tr('lp_view');
 if(CHECKOUT_KIT){document.querySelectorAll('#cta-kit').forEach(function(a){a.href=CHECKOUT_KIT+q()})}
-function ic(){try{if(window.fbq)fbq('track','InitiateCheckout')}catch(e){}}
+function ic(){try{if(window.fbq)fbq('track','InitiateCheckout')}catch(e){}tr('checkout_click',{produto:this.id==='cta-plano'?'plano289':'kit67'})}
 document.querySelectorAll('#cta-kit,#cta-plano').forEach(function(a){a.addEventListener('click',ic)});
 if(CHECKOUT_PLANO){document.getElementById('cta-plano').href=CHECKOUT_PLANO+q()}
+document.querySelectorAll('a[href="#oferta"]').forEach(function(a){a.addEventListener('click',function(){tr('cta_oferta')})});
 </script>
 </body>
 </html>
