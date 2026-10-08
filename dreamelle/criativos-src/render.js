@@ -38,7 +38,7 @@ body{width:1080px;height:1350px;overflow:hidden;font-family:Nunito,sans-serif;co
 .bg{position:absolute;inset:0;background-size:cover;background-position:center}
 .veil{position:absolute;inset:0}
 .hook{position:absolute;left:72px;right:72px;font-family:Fredoka,sans-serif;font-weight:700;font-size:92px;line-height:1.02;letter-spacing:-1px;color:#4a2547}
-.hook em{font-style:normal;color:#ff4f9e}
+.hook em{font-style:normal;color:#ff4f9e;white-space:nowrap}
 .sub{position:absolute;left:72px;right:72px;font-weight:800;font-size:38px;line-height:1.25;color:#6b3f68}
 .cta{position:absolute;left:72px;bottom:84px;font-family:Fredoka,sans-serif;font-weight:600;font-size:40px;color:#ff4f9e}
 .fine{position:absolute;left:72px;right:72px;bottom:40px;font-weight:700;font-size:22px;color:rgba(74,37,71,.6)}
