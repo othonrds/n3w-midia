@@ -1,0 +1,1836 @@
+{
+  "produto": "Simulados Banca ANAC – PP e PC",
+  "projeto": "AERO",
+  "mentor": "Rafael Francisco",
+  "versao": "1.0-mvp",
+  "gerado_em": "2026-10-08",
+  "aviso": "Questões originais, elaboradas a partir do conteúdo programático. Não são questões oficiais da ANAC. Confira sempre a regulamentação vigente.",
+  "materias": [
+    {
+      "id": "regulamentacao",
+      "nome": "Regulamentação"
+    },
+    {
+      "id": "navegacao",
+      "nome": "Navegação Aérea"
+    },
+    {
+      "id": "meteorologia",
+      "nome": "Meteorologia"
+    },
+    {
+      "id": "teoria_de_voo",
+      "nome": "Teoria de Voo"
+    },
+    {
+      "id": "conhecimentos_tecnicos",
+      "nome": "Conhecimentos Técnicos"
+    },
+    {
+      "id": "performance",
+      "nome": "Performance, Peso e Balanceamento"
+    }
+  ],
+  "questoes": [
+    {
+      "id": "PP-REG-001",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Qual é a idade mínima para a concessão da licença de Piloto Privado – Avião (PPR) no Brasil?",
+      "alternativas": {
+        "A": "21 anos completos",
+        "B": "16 anos completos",
+        "C": "17 anos completos",
+        "D": "18 anos completos"
+      },
+      "correta": "D",
+      "explicacao": "O RBAC 61 exige 18 anos completos e ensino médio concluído para a licença de piloto privado. Os 16 anos se referem ao aluno piloto.",
+      "referencia": "RBAC 61.73 (EMD 16)"
+    },
+    {
+      "id": "PP-REG-002",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Para exercer as prerrogativas da licença de Piloto Privado – Avião, o piloto deve possuir, no mínimo, Certificado Médico Aeronáutico (CMA) de:",
+      "alternativas": {
+        "A": "1ª classe",
+        "B": "Nenhuma classe, pois o PP dispensa CMA",
+        "C": "2ª classe",
+        "D": "4ª classe"
+      },
+      "correta": "C",
+      "explicacao": "A licença de piloto privado exige CMA de 2ª classe válido. A 1ª classe é exigida para piloto comercial e piloto de linha aérea.",
+      "referencia": "RBAC 61.17; RBAC 67; Carta de Serviços ANAC – Licença PPR"
+    },
+    {
+      "id": "PP-REG-003",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "De acordo com o RBAC 61, uma habilitação de classe (por exemplo, monomotor terrestre – MNTE) tem validade de:",
+      "alternativas": {
+        "A": "60 meses, acompanhando a validade do CMA",
+        "B": "24 meses, contados a partir do mês da aprovação no último exame de proficiência",
+        "C": "12 meses, contados da data do último voo",
+        "D": "36 meses, contados a partir da emissão da licença"
+      },
+      "correta": "B",
+      "explicacao": "Habilitações de classe valem 24 meses e habilitações de tipo valem 12 meses, contados a partir do mês do último exame de proficiência.",
+      "referencia": "RBAC 61.19(b) (EMD 16)"
+    },
+    {
+      "id": "PP-REG-004",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Para atuar como piloto em comando em voo diurno de avião, a experiência recente mínima exigida é:",
+      "alternativas": {
+        "A": "3 decolagens e 3 aterrissagens nos 30 dias precedentes, em qualquer aeronave",
+        "B": "1 decolagem e 1 aterrissagem nos 60 dias precedentes",
+        "C": "3 decolagens e 3 aterrissagens nos 90 dias precedentes, na mesma categoria e classe ou tipo",
+        "D": "5 decolagens e 5 aterrissagens nos 90 dias precedentes"
+      },
+      "correta": "C",
+      "explicacao": "O RBAC 61 exige pelo menos 3 decolagens e 3 aterrissagens nos últimos 90 dias, operando os comandos de aeronave da mesma categoria e classe ou tipo.",
+      "referencia": "RBAC 61.21(a) (EMD 16)"
+    },
+    {
+      "id": "PP-REG-005",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Um voo VFR diurno em avião só pode ser iniciado se houver combustível suficiente, considerando vento e meteorologia conhecidos, para voar até o local previsto para o primeiro pouso e, depois disso, voar mais:",
+      "alternativas": {
+        "A": "60 minutos em velocidade de máximo alcance",
+        "B": "45 minutos em velocidade normal de cruzeiro",
+        "C": "20 minutos em velocidade normal de cruzeiro",
+        "D": "30 minutos em velocidade normal de cruzeiro"
+      },
+      "correta": "D",
+      "explicacao": "Para avião em VFR diurno, a reserva mínima é de 30 minutos após o primeiro ponto de pouso previsto. À noite, a reserva sobe para 45 minutos.",
+      "referencia": "RBAC 91.151(a)(1) (EMD 08)"
+    },
+    {
+      "id": "PP-REG-006",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Segundo o RBAC 91, em relação ao consumo de álcool, um tripulante não pode atuar:",
+      "alternativas": {
+        "A": "Somente se tiver ingerido bebida alcoólica nas últimas 8 horas",
+        "B": "Possuindo qualquer concentração de álcool no organismo",
+        "C": "Apenas se apresentar sinais visíveis de embriaguez",
+        "D": "Com concentração de álcool acima de 0,2 g/L de sangue"
+      },
+      "correta": "B",
+      "explicacao": "O RBAC 91 adota tolerância zero: é vedado atuar sob efeito de álcool ou possuindo qualquer concentração de álcool no organismo.",
+      "referencia": "RBAC 91.17 (EMD 08)"
+    },
+    {
+      "id": "PP-REG-007",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Quem tem a autoridade final e a responsabilidade pela operação e pela segurança de voo de uma aeronave?",
+      "alternativas": {
+        "A": "O órgão de controle de tráfego aéreo",
+        "B": "O piloto em comando",
+        "C": "O mecânico que liberou a aeronave para o voo",
+        "D": "O proprietário ou operador da aeronave"
+      },
+      "correta": "B",
+      "explicacao": "O RBAC 91 atribui ao piloto em comando a autoridade final e a responsabilidade pela operação e pela segurança do voo.",
+      "referencia": "RBAC 91.3(a) (EMD 08)"
+    },
+    {
+      "id": "PP-REG-008",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Em aeronave não pressurizada, acima de que altitude cada tripulante deve usar oxigênio suplementar durante todo o tempo de voo?",
+      "alternativas": {
+        "A": "Acima de 10.000 pés MSL",
+        "B": "Acima de 12.500 pés MSL",
+        "C": "Acima de 18.000 pés MSL",
+        "D": "Acima de 14.000 pés MSL"
+      },
+      "correta": "D",
+      "explicacao": "Entre 12.500 e 14.000 ft MSL, a tripulação usa oxigênio nos trechos com mais de 30 minutos. Acima de 14.000 ft MSL, cada tripulante usa oxigênio durante todo o tempo nessas altitudes.",
+      "referencia": "RBAC 91.211 (EMD 08)"
+    },
+    {
+      "id": "PP-REG-009",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Duas aeronaves a motor convergem aproximadamente no mesmo nível. Segundo as Regras do Ar, qual delas deve ceder passagem?",
+      "alternativas": {
+        "A": "A que estiver mais próxima do destino",
+        "B": "A de maior velocidade",
+        "C": "A que tiver a outra à sua esquerda",
+        "D": "A que tiver a outra à sua direita"
+      },
+      "correta": "D",
+      "explicacao": "Em convergência no mesmo nível entre aeronaves da mesma categoria, cede passagem aquela que tem a outra à sua direita.",
+      "referencia": "ICA 100-12 – Regras do Ar (direito de passagem)"
+    },
+    {
+      "id": "PP-REG-010",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Duas aeronaves se aproximam de frente, ou quase de frente, com perigo de colisão. Qual é a ação prevista nas Regras do Ar?",
+      "alternativas": {
+        "A": "A mais baixa desce e a mais alta sobe",
+        "B": "Ambas alteram o rumo para a direita",
+        "C": "A mais lenta mantém o rumo e a mais rápida desvia",
+        "D": "Ambas alteram o rumo para a esquerda"
+      },
+      "correta": "B",
+      "explicacao": "Em aproximação de frente, cada aeronave altera seu rumo para a direita.",
+      "referencia": "ICA 100-12 – Regras do Ar (direito de passagem)"
+    },
+    {
+      "id": "PP-REG-011",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Ao ultrapassar outra aeronave em voo, a aeronave ultrapassadora deve:",
+      "alternativas": {
+        "A": "Solicitar que a aeronave ultrapassada desvie para a esquerda",
+        "B": "Manter-se afastada da outra, alterando seu rumo para a direita",
+        "C": "Ultrapassar por baixo, mantendo o rumo",
+        "D": "Ultrapassar pela esquerda e subir 500 ft"
+      },
+      "correta": "B",
+      "explicacao": "A aeronave que está sendo ultrapassada tem direito de passagem. A ultrapassadora deve manter-se afastada, alterando o rumo para a direita.",
+      "referencia": "ICA 100-12 – Regras do Ar (ultrapassagem)"
+    },
+    {
+      "id": "PP-REG-012",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Um avião e um planador convergem aproximadamente no mesmo nível. De acordo com as Regras do Ar:",
+      "alternativas": {
+        "A": "Ambos alteram o rumo para a esquerda",
+        "B": "O avião deve ceder passagem ao planador",
+        "C": "O planador deve ceder passagem ao avião",
+        "D": "Cede passagem quem estiver mais alto"
+      },
+      "correta": "B",
+      "explicacao": "Aeronaves mais pesadas que o ar propulsadas mecanicamente cedem passagem a dirigíveis, planadores e balões, por serem menos manobráveis.",
+      "referencia": "ICA 100-12 – Regras do Ar (direito de passagem)"
+    },
+    {
+      "id": "PP-REG-013",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Duas aeronaves se aproximam de um aeródromo para pouso. Em regra, qual delas tem prioridade?",
+      "alternativas": {
+        "A": "A que estiver em nível mais baixo",
+        "B": "A de maior porte",
+        "C": "A que estiver em nível mais alto",
+        "D": "A que primeiro estabeleceu contato rádio com a torre"
+      },
+      "correta": "A",
+      "explicacao": "Quando duas aeronaves se aproximam para pousar, a que está mais alta cede passagem à mais baixa. A mais baixa, porém, não pode se aproveitar disso para cortar a frente da outra.",
+      "referencia": "ICA 100-12 – Regras do Ar (pouso)"
+    },
+    {
+      "id": "PP-REG-014",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Durante um voo, o piloto perde totalmente a comunicação rádio bilateral. Qual código deve ser ajustado no transponder?",
+      "alternativas": {
+        "A": "7600",
+        "B": "7700",
+        "C": "2000",
+        "D": "7500"
+      },
+      "correta": "A",
+      "explicacao": "O código 7600 indica falha de comunicações. O 7700 indica emergência e o 7500 indica interferência ilícita.",
+      "referencia": "ICA 100-12; ICA 100-37"
+    },
+    {
+      "id": "PP-REG-015",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Uma aeronave em voo recebe da torre um sinal de luz verde intermitente. O significado é:",
+      "alternativas": {
+        "A": "Aeródromo impraticável, não pouse",
+        "B": "Autorizado a pousar",
+        "C": "Regresse para pouso",
+        "D": "Dê passagem e continue circulando"
+      },
+      "correta": "C",
+      "explicacao": "Para aeronave em voo, verde intermitente significa regressar para pouso. O verde contínuo autoriza o pouso, o vermelho contínuo manda dar passagem e continuar circulando, e o vermelho intermitente indica aeródromo impraticável.",
+      "referencia": "ICA 100-12 – Sinais luminosos"
+    },
+    {
+      "id": "PP-REG-016",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Abaixo do FL100, em espaço aéreo em que se exigem as distâncias de nuvens, os mínimos VMC são:",
+      "alternativas": {
+        "A": "Visibilidade de 8 km; 1.500 m horizontalmente e 1.000 ft verticalmente das nuvens",
+        "B": "Visibilidade de 3 km; 1.000 m horizontalmente e 500 ft verticalmente das nuvens",
+        "C": "Visibilidade de 5 km; 300 m horizontalmente e 1.500 ft verticalmente das nuvens",
+        "D": "Visibilidade de 5 km; 1.500 m horizontalmente e 1.000 ft verticalmente das nuvens"
+      },
+      "correta": "D",
+      "explicacao": "Abaixo do FL100, as condições VMC exigem visibilidade de voo de 5 km e afastamento de nuvens de 1.500 m na horizontal e 1.000 ft (300 m) na vertical. No FL100 ou acima, a visibilidade sobe para 8 km.",
+      "referencia": "ICA 100-12 – Condições meteorológicas de voo visual"
+    },
+    {
+      "id": "PP-REG-017",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Exceto para pouso e decolagem, um voo VFR não pode ser realizado sobre cidades e aglomerações de pessoas em altura inferior a:",
+      "alternativas": {
+        "A": "1.000 ft acima do obstáculo mais alto num raio de 600 m em torno da aeronave",
+        "B": "500 ft acima do obstáculo mais alto num raio de 300 m",
+        "C": "1.500 ft acima do solo, sem considerar obstáculos",
+        "D": "2.000 ft acima do obstáculo mais alto num raio de 1.000 m"
+      },
+      "correta": "A",
+      "explicacao": "Sobre cidades, povoados e grupos de pessoas ao ar livre, o mínimo é 1.000 ft acima do obstáculo mais alto num raio de 600 m. Sobre as demais áreas, o mínimo é 500 ft acima do solo ou da água.",
+      "referencia": "ICA 100-12 – Alturas mínimas VFR"
+    },
+    {
+      "id": "PP-REG-018",
+      "nivel": "PP",
+      "materia": "regulamentacao",
+      "enunciado": "Um voo VFR em cruzeiro acima de 3.000 ft, com rota magnética 090°, deve utilizar qual dos níveis abaixo?",
+      "alternativas": {
+        "A": "FL055",
+        "B": "FL060",
+        "C": "FL045",
+        "D": "FL050"
+      },
+      "correta": "A",
+      "explicacao": "Para rotas magnéticas de 000° a 179°, os níveis VFR são milhares ímpares + 500 ft (FL035, FL055, FL075...). De 180° a 359°, são milhares pares + 500 ft (FL045, FL065...).",
+      "referencia": "ICA 100-12 – Tabela de níveis de cruzeiro"
+    },
+    {
+      "id": "PP-NAV-001",
+      "nivel": "PP",
+      "materia": "navegacao",
+      "enunciado": "Uma milha náutica (NM) equivale a aproximadamente:",
+      "alternativas": {
+        "A": "1.609 metros",
+        "B": "2.000 metros",
+        "C": "1.852 metros",
+        "D": "1.000 metros"
+      },
+      "correta": "C",
+      "explicacao": "A milha náutica corresponde a 1.852 m, aproximadamente um minuto de arco de latitude. 1.609 m é a milha terrestre (statute).",
+      "referencia": "MCA 101-1; conteúdo programático de Navegação Aérea (ANAC)"
+    },
+    {
+      "id": "PP-NAV-002",
+      "nivel": "PP",
+      "materia": "navegacao",
+      "enunciado": "Ao longo de um meridiano, a distância correspondente a 1° de latitude é de aproximadamente:",
+      "alternativas": {
+        "A": "100 NM",
+        "B": "60 NM",
+        "C": "1 NM",
+        "D": "360 NM"
+      },
+      "correta": "B",
+      "explicacao": "Um grau de latitude tem 60 minutos de arco, e cada minuto corresponde a cerca de 1 NM. Logo, 1° de latitude equivale a cerca de 60 NM.",
+      "referencia": "Conteúdo programático de Navegação Aérea (ANAC)"
+    },
+    {
+      "id": "PP-NAV-003",
+      "nivel": "PP",
+      "materia": "navegacao",
+      "enunciado": "Rumo verdadeiro 090° numa região com declinação magnética de 20°W. Qual é o rumo magnético?",
+      "alternativas": {
+        "A": "110°",
+        "B": "090°",
+        "C": "070°",
+        "D": "020°"
+      },
+      "correta": "A",
+      "explicacao": "Com declinação oeste, soma-se ao valor verdadeiro para obter o magnético (“oeste é maior”): 090° + 20° = 110°.",
+      "referencia": "Conteúdo programático de Navegação Aérea (ANAC)"
+    },
+    {
+      "id": "PP-NAV-004",
+      "nivel": "PP",
+      "materia": "navegacao",
+      "enunciado": "O desvio da bússola magnética (desvio, e não declinação) é causado por:",
+      "alternativas": {
+        "A": "Aceleração e curvas da aeronave",
+        "B": "Diferença entre o polo norte geográfico e o polo norte magnético",
+        "C": "Campos magnéticos gerados pela própria aeronave, como componentes metálicos e equipamentos elétricos",
+        "D": "Inclinação das linhas de força do campo magnético terrestre"
+      },
+      "correta": "C",
+      "explicacao": "O desvio vem de interferências magnéticas da própria aeronave e é registrado no cartão de desvios. A declinação é a diferença entre os norte verdadeiro e magnético.",
+      "referencia": "Conteúdo programático de Navegação Aérea / Instrumentos (ANAC)"
+    },
+    {
+      "id": "PP-NAV-005",
+      "nivel": "PP",
+      "materia": "navegacao",
+      "enunciado": "Uma aeronave percorrerá 120 NM com velocidade no solo (GS) de 100 kt. Qual o tempo de voo?",
+      "alternativas": {
+        "A": "1 h 12 min",
+        "B": "1 h 20 min",
+        "C": "1 h 02 min",
+        "D": "1 h 10 min"
+      },
+      "correta": "A",
+      "explicacao": "Tempo = distância ÷ GS = 120 ÷ 100 = 1,2 h. 0,2 h equivale a 12 minutos.",
+      "referencia": "Cálculo de navegação (computador de voo)"
+    },
+    {
+      "id": "PP-NAV-006",
+      "nivel": "PP",
+      "materia": "navegacao",
+      "enunciado": "Um avião consome 30 litros por hora. Para um voo de 2 h 20 min, qual o consumo previsto (sem reservas)?",
+      "alternativas": {
+        "A": "70 litros",
+        "B": "75 litros",
+        "C": "66 litros",
+        "D": "60 litros"
+      },
+      "correta": "A",
+      "explicacao": "2 h 20 min equivalem a cerca de 2,33 h. 30 L/h × 2,33 h = 70 L. Um erro comum é tratar 20 minutos como 0,2 h.",
+      "referencia": "Cálculo de navegação (computador de voo)"
+    },
+    {
+      "id": "PP-NAV-007",
+      "nivel": "PP",
+      "materia": "navegacao",
+      "enunciado": "Com velocidade aerodinâmica verdadeira (TAS) de 100 kt e vento de proa de 20 kt, a velocidade no solo (GS) será de:",
+      "alternativas": {
+        "A": "120 kt",
+        "B": "100 kt",
+        "C": "90 kt",
+        "D": "80 kt"
+      },
+      "correta": "D",
+      "explicacao": "Com vento de proa, a GS é a TAS menos a componente de proa: 100 − 20 = 80 kt.",
+      "referencia": "Triângulo de velocidades"
+    },
+    {
+      "id": "PP-NAV-008",
+      "nivel": "PP",
+      "materia": "navegacao",
+      "enunciado": "Voando em rota com vento soprando da esquerda, para manter a rota desejada o piloto deve corrigir a proa:",
+      "alternativas": {
+        "A": "Alternadamente para a direita e para a esquerda",
+        "B": "Não é necessária correção de proa, apenas de velocidade",
+        "C": "Para a direita, afastando-se do vento",
+        "D": "Para a esquerda, em direção ao vento"
+      },
+      "correta": "D",
+      "explicacao": "O vento da esquerda empurra a aeronave para a direita (deriva à direita). Para compensar, aproa-se para o lado de onde vem o vento.",
+      "referencia": "Triângulo de velocidades"
+    },
+    {
+      "id": "PP-NAV-009",
+      "nivel": "PP",
+      "materia": "navegacao",
+      "enunciado": "Um voo decola às 15:00 UTC de Brasília. Considerando a hora legal de Brasília (UTC−3, sem horário de verão), qual a hora local da decolagem?",
+      "alternativas": {
+        "A": "18:00",
+        "B": "12:00",
+        "C": "15:00",
+        "D": "13:00"
+      },
+      "correta": "B",
+      "explicacao": "Brasília está em UTC−3. 15:00 UTC − 3 h = 12:00 local.",
+      "referencia": "ICA 100-12 (uso do UTC); Decreto nº 9.772/2019 (fim do horário de verão)"
+    },
+    {
+      "id": "PP-NAV-010",
+      "nivel": "PP",
+      "materia": "navegacao",
+      "enunciado": "Linhas que unem pontos de mesma declinação magnética recebem o nome de:",
+      "alternativas": {
+        "A": "Agônicas de desvio",
+        "B": "Isóbaras",
+        "C": "Isotermas",
+        "D": "Isogônicas"
+      },
+      "correta": "D",
+      "explicacao": "Isogônicas ligam pontos de mesma declinação magnética. A linha agônica é a isogônica de declinação zero. Isóbaras e isotermas são linhas meteorológicas.",
+      "referencia": "Conteúdo programático de Navegação Aérea (ANAC)"
+    },
+    {
+      "id": "PP-NAV-011",
+      "nivel": "PP",
+      "materia": "navegacao",
+      "enunciado": "A linha que corta todos os meridianos sob um mesmo ângulo, permitindo voar com rumo constante, chama-se:",
+      "alternativas": {
+        "A": "Linha agônica",
+        "B": "Ortodromia",
+        "C": "Equador magnético",
+        "D": "Loxodromia"
+      },
+      "correta": "D",
+      "explicacao": "A loxodromia mantém ângulo constante com os meridianos, ou seja, rumo constante. A ortodromia é o arco de círculo máximo, a menor distância entre dois pontos.",
+      "referencia": "Conteúdo programático de Navegação Aérea (ANAC)"
+    },
+    {
+      "id": "PP-NAV-012",
+      "nivel": "PP",
+      "materia": "navegacao",
+      "enunciado": "Uma aeronave encontra-se sobre a radial 090 de um VOR. Em relação à estação, ela está:",
+      "alternativas": {
+        "A": "Ao sul da estação",
+        "B": "A oeste da estação",
+        "C": "A leste da estação",
+        "D": "Ao norte da estação"
+      },
+      "correta": "C",
+      "explicacao": "Radial é a linha de marcação magnética que se afasta da estação. A radial 090 aponta para leste a partir do VOR.",
+      "referencia": "Conteúdo programático de Navegação Aérea – radionavegação (ANAC)"
+    },
+    {
+      "id": "PP-NAV-013",
+      "nivel": "PP",
+      "materia": "navegacao",
+      "enunciado": "Proa magnética 060° e o ponteiro do ADF indica marcação relativa de 090°. Qual a marcação magnética para a estação (NDB)?",
+      "alternativas": {
+        "A": "330°",
+        "B": "030°",
+        "C": "150°",
+        "D": "090°"
+      },
+      "correta": "C",
+      "explicacao": "Marcação magnética = proa magnética + marcação relativa = 060° + 090° = 150°.",
+      "referencia": "Conteúdo programático de Navegação Aérea – ADF/NDB (ANAC)"
+    },
+    {
+      "id": "PP-NAV-014",
+      "nivel": "PP",
+      "materia": "navegacao",
+      "enunciado": "A Carta Aeronáutica Mundial (WAC), muito usada na navegação visual, tem escala de:",
+      "alternativas": {
+        "A": "1:250.000",
+        "B": "1:5.000.000",
+        "C": "1:1.000.000",
+        "D": "1:500.000"
+      },
+      "correta": "C",
+      "explicacao": "A WAC é publicada na escala 1:1.000.000. A escala 1:500.000 corresponde a outros tipos de carta, como a sectional e algumas cartas regionais.",
+      "referencia": "MCA 101-1; ICA 96-1 (cartas aeronáuticas)"
+    },
+    {
+      "id": "PP-MET-001",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "Na Atmosfera Padrão Internacional (ISA), ao nível médio do mar, a temperatura e a pressão são:",
+      "alternativas": {
+        "A": "0 °C e 1013,25 hPa",
+        "B": "15 °C e 1013,25 hPa",
+        "C": "20 °C e 1013,25 hPa",
+        "D": "15 °C e 1000 hPa"
+      },
+      "correta": "B",
+      "explicacao": "A ISA define, ao nível do mar, temperatura de 15 °C e pressão de 1013,25 hPa (29,92 inHg).",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC); ICAO Doc 7488"
+    },
+    {
+      "id": "PP-MET-002",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "Na troposfera da atmosfera padrão, a temperatura diminui com a altitude aproximadamente:",
+      "alternativas": {
+        "A": "3 °C a cada 1.000 ft",
+        "B": "6,5 °C a cada 1.000 ft",
+        "C": "1 °C a cada 1.000 ft",
+        "D": "2 °C a cada 1.000 ft"
+      },
+      "correta": "D",
+      "explicacao": "O gradiente térmico padrão é de 6,5 °C por km, ou cerca de 2 °C (1,98 °C) por 1.000 ft.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC); ICAO Doc 7488"
+    },
+    {
+      "id": "PP-MET-003",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "METAR SBGR 081200Z 15008KT 9999 SCT025 BKN040 25/18 Q1018. Qual é o teto?",
+      "alternativas": {
+        "A": "2.500 ft",
+        "B": "4.000 ft",
+        "C": "400 ft",
+        "D": "25.000 ft"
+      },
+      "correta": "B",
+      "explicacao": "Teto é a altura da base da camada mais baixa com cobertura BKN ou OVC. SCT (esparso) não constitui teto. BKN040 indica 4.000 ft.",
+      "referencia": "MCA 105-16 (códigos meteorológicos); ICA 105-1"
+    },
+    {
+      "id": "PP-MET-004",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "No METAR, o termo CAVOK indica:",
+      "alternativas": {
+        "A": "Céu claro, sem nenhuma nuvem em qualquer altitude",
+        "B": "Condições visuais apenas para o circuito de tráfego",
+        "C": "Visibilidade acima de 5 km e teto acima de 1.500 ft",
+        "D": "Visibilidade de 10 km ou mais, nenhuma nuvem abaixo de 5.000 ft (ou da maior altitude mínima de setor, se maior), ausência de CB/TCU e de tempo significativo"
+      },
+      "correta": "D",
+      "explicacao": "CAVOK substitui os grupos de visibilidade, tempo presente e nuvens quando todos esses critérios são atendidos simultaneamente. Ainda pode haver nuvens acima de 5.000 ft.",
+      "referencia": "MCA 105-16; ICAO Anexo 3"
+    },
+    {
+      "id": "PP-MET-005",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "No METAR, o código FG (nevoeiro) é utilizado quando a visibilidade, devido a gotículas de água em suspensão, é:",
+      "alternativas": {
+        "A": "Entre 1.000 m e 5.000 m",
+        "B": "Inferior a 1.000 m",
+        "C": "Inferior a 3.000 m",
+        "D": "Inferior a 5.000 m"
+      },
+      "correta": "B",
+      "explicacao": "FG é usado com visibilidade abaixo de 1.000 m. Entre 1.000 m e 5.000 m, com umidade, usa-se BR (névoa úmida).",
+      "referencia": "MCA 105-16; ICAO Anexo 3"
+    },
+    {
+      "id": "PP-MET-006",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "Qual tipo de nuvem está associado a trovoadas, granizo, turbulência severa e relâmpagos?",
+      "alternativas": {
+        "A": "Cirrostratus (CS)",
+        "B": "Cumulonimbus (CB)",
+        "C": "Altostratus (AS)",
+        "D": "Nimbostratus (NS)"
+      },
+      "correta": "B",
+      "explicacao": "O cumulonimbus é a nuvem de trovoada, com grande desenvolvimento vertical. Pode trazer granizo, turbulência severa, gelo, windshear e descargas elétricas.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PP-MET-007",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "As nuvens altas (cirrus, cirrocumulus e cirrostratus) são compostas principalmente por:",
+      "alternativas": {
+        "A": "Partículas de poeira e fumaça",
+        "B": "Cristais de gelo",
+        "C": "Gotículas de água super-resfriadas",
+        "D": "Gotas de chuva"
+      },
+      "correta": "B",
+      "explicacao": "Pelas baixas temperaturas no nível em que se formam, as nuvens altas são compostas essencialmente de cristais de gelo.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PP-MET-008",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "Camada de nuvem espessa e escura, de aspecto uniforme, que produz chuva contínua e reduz a visibilidade:",
+      "alternativas": {
+        "A": "Cirrus",
+        "B": "Altocumulus lenticularis",
+        "C": "Nimbostratus",
+        "D": "Cumulus de bom tempo"
+      },
+      "correta": "C",
+      "explicacao": "O nimbostratus é uma nuvem estratiforme espessa associada a precipitação contínua e prolongada, típica de frentes quentes.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PP-MET-009",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "Uma massa de ar estável tende a apresentar:",
+      "alternativas": {
+        "A": "Nuvens cumuliformes, pancadas de chuva e turbulência",
+        "B": "Ausência total de nuvens em qualquer situação",
+        "C": "Nuvens estratiformes, visibilidade reduzida e ar calmo (pouca turbulência)",
+        "D": "Trovoadas frequentes e boa visibilidade"
+      },
+      "correta": "C",
+      "explicacao": "O ar estável resiste a movimentos verticais. Favorece nuvens em camadas, névoa e nevoeiro, visibilidade restrita e voo suave.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PP-MET-010",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "Uma massa de ar instável, com umidade suficiente, tende a produzir:",
+      "alternativas": {
+        "A": "Céu claro com visibilidade restrita por névoa seca",
+        "B": "Nuvens estratiformes e garoa contínua",
+        "C": "Nuvens cumuliformes, pancadas de chuva e turbulência",
+        "D": "Nevoeiro de radiação e ar calmo"
+      },
+      "correta": "C",
+      "explicacao": "No ar instável, as correntes ascendentes favorecem nuvens de desenvolvimento vertical, pancadas e turbulência. Fora da precipitação, a visibilidade costuma ser boa.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PP-MET-011",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "Na passagem de uma frente fria, é comum observar:",
+      "alternativas": {
+        "A": "Céu limpo antes e nevoeiro denso após a passagem, sem mudança de vento",
+        "B": "Aumento gradual de temperatura e chuva fraca contínua por vários dias",
+        "C": "Elevação da temperatura e queda acentuada da umidade antes da frente",
+        "D": "Formação de nuvens cumuliformes (inclusive CB), queda de temperatura e mudança na direção do vento"
+      },
+      "correta": "D",
+      "explicacao": "Na frente fria, o ar frio avança e força a subida do ar quente, gerando nebulosidade convectiva e por vezes linhas de instabilidade. Após a passagem, a temperatura cai e o vento muda de direção.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PP-MET-012",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "Para que haja formação de gelo estrutural na aeronave, são necessárias:",
+      "alternativas": {
+        "A": "Apenas temperatura externa inferior a −20 °C, mesmo em ar seco",
+        "B": "Umidade visível (nuvem ou precipitação) e temperatura da superfície da aeronave igual ou inferior a 0 °C",
+        "C": "Umidade relativa acima de 50% e temperatura acima de 5 °C",
+        "D": "Voo acima do FL200, independentemente da umidade"
+      },
+      "correta": "B",
+      "explicacao": "O gelo estrutural se forma quando gotas de água, geralmente super-resfriadas, atingem uma superfície com temperatura de 0 °C ou menos.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PP-MET-013",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "Sobre a formação de gelo no carburador, é correto afirmar:",
+      "alternativas": {
+        "A": "Só ocorre em voo dentro de nuvens",
+        "B": "Pode ocorrer mesmo com temperatura externa bem acima de 0 °C, principalmente com umidade elevada",
+        "C": "Não ocorre com potência reduzida",
+        "D": "Só ocorre com temperatura externa abaixo de 0 °C"
+      },
+      "correta": "B",
+      "explicacao": "A vaporização do combustível e a queda de pressão no venturi resfriam o ar admitido. Por isso pode formar gelo com temperatura externa positiva, sobretudo com ar úmido e potência reduzida.",
+      "referencia": "Conteúdo programático de Meteorologia / Conhecimentos Técnicos (ANAC)"
+    },
+    {
+      "id": "PP-MET-014",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "Ponto de orvalho é:",
+      "alternativas": {
+        "A": "A temperatura até a qual o ar deve ser resfriado, a pressão constante, para ficar saturado",
+        "B": "A temperatura em que a água congela na superfície",
+        "C": "A temperatura mínima registrada durante a noite",
+        "D": "A diferença entre a temperatura do ar e a umidade relativa"
+      },
+      "correta": "A",
+      "explicacao": "Quando a temperatura do ar cai até o ponto de orvalho, o ar satura. Diferença pequena entre temperatura e ponto de orvalho indica risco de nevoeiro ou nuvens baixas.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PP-MET-015",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "O nevoeiro de radiação forma-se tipicamente:",
+      "alternativas": {
+        "A": "Durante a tarde, com forte aquecimento solar",
+        "B": "Somente em regiões montanhosas, pela subida do ar nas encostas",
+        "C": "Em noites de céu claro, com vento calmo ou fraco e umidade elevada, sobre terra",
+        "D": "Quando ar quente e úmido se desloca sobre superfície fria do mar, com vento moderado"
+      },
+      "correta": "C",
+      "explicacao": "Com céu claro, o solo perde calor por radiação durante a noite e resfria o ar junto à superfície até a saturação. O vento calmo ou fraco favorece o processo.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PP-MET-016",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "Durante o dia, em regiões litorâneas, a brisa marítima sopra:",
+      "alternativas": {
+        "A": "Do mar para a terra",
+        "B": "Somente à noite",
+        "C": "Da terra para o mar",
+        "D": "Paralelamente à costa, sempre de norte"
+      },
+      "correta": "A",
+      "explicacao": "Durante o dia, a terra aquece mais que o mar, formando pressão relativamente mais baixa sobre a terra. O ar então flui do mar para a terra. À noite, ocorre a brisa terrestre.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PP-MET-017",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "Um piloto voa de uma área de alta pressão para uma de baixa pressão sem reajustar o altímetro. A altitude real da aeronave será:",
+      "alternativas": {
+        "A": "Impossível de estimar, pois o altímetro deixa de funcionar",
+        "B": "Maior do que a indicada no altímetro",
+        "C": "Igual à indicada no altímetro",
+        "D": "Menor do que a indicada no altímetro"
+      },
+      "correta": "D",
+      "explicacao": "Na pressão menor, o altímetro interpreta a queda de pressão como ganho de altitude e indica acima do real. A aeronave fica mais baixa que o indicado (“de alta para baixa, cuidado embaixo”).",
+      "referencia": "Conteúdo programático de Meteorologia / Instrumentos (ANAC)"
+    },
+    {
+      "id": "PP-MET-018",
+      "nivel": "PP",
+      "materia": "meteorologia",
+      "enunciado": "No Hemisfério Sul, o vento circula em torno de um centro de baixa pressão (ciclone) no sentido:",
+      "alternativas": {
+        "A": "Horário",
+        "B": "Sempre de leste para oeste, sem rotação",
+        "C": "Radial, saindo do centro",
+        "D": "Anti-horário"
+      },
+      "correta": "A",
+      "explicacao": "Pelo efeito de Coriolis, no Hemisfério Sul a circulação ciclônica (em torno de baixas) é horária e a anticiclônica (em torno de altas) é anti-horária. No Hemisfério Norte é o inverso.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PP-TEO-001",
+      "nivel": "PP",
+      "materia": "teoria_de_voo",
+      "enunciado": "Mantidos constantes os demais fatores, se a velocidade de uma aeronave dobrar, a sustentação produzida pela asa:",
+      "alternativas": {
+        "A": "Permanece a mesma",
+        "B": "Dobra",
+        "C": "Reduz-se à metade",
+        "D": "Quadruplica"
+      },
+      "correta": "D",
+      "explicacao": "Na equação L = ½·ρ·V²·S·CL, a sustentação é proporcional ao quadrado da velocidade. Dobrar V multiplica L por 4.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PP-TEO-002",
+      "nivel": "PP",
+      "materia": "teoria_de_voo",
+      "enunciado": "Ângulo de ataque é o ângulo formado entre:",
+      "alternativas": {
+        "A": "A corda da asa e o eixo longitudinal da aeronave",
+        "B": "A trajetória de voo e o horizonte",
+        "C": "A corda do aerofólio e o vento relativo",
+        "D": "O eixo longitudinal da aeronave e o horizonte"
+      },
+      "correta": "C",
+      "explicacao": "O ângulo de ataque é medido entre a corda e o vento relativo. O ângulo entre a corda e o eixo longitudinal é o ângulo de incidência, e o ângulo com o horizonte é a atitude.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PP-TEO-003",
+      "nivel": "PP",
+      "materia": "teoria_de_voo",
+      "enunciado": "O estol ocorre quando:",
+      "alternativas": {
+        "A": "O ângulo de ataque crítico é excedido, em qualquer velocidade ou atitude",
+        "B": "A velocidade cai abaixo de um valor fixo, independentemente do ângulo de ataque",
+        "C": "A potência do motor é reduzida a marcha lenta",
+        "D": "O nariz da aeronave fica acima do horizonte"
+      },
+      "correta": "A",
+      "explicacao": "O estol depende do ângulo de ataque: ao passar do ângulo crítico, o escoamento descola do extradorso e a sustentação cai. Pode acontecer em qualquer velocidade e atitude.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PP-TEO-004",
+      "nivel": "PP",
+      "materia": "teoria_de_voo",
+      "enunciado": "O principal efeito da extensão dos flapes é:",
+      "alternativas": {
+        "A": "Reduzir o arrasto e aumentar a velocidade de cruzeiro",
+        "B": "Aumentar a sustentação e o arrasto, permitindo voar com velocidade menor",
+        "C": "Reduzir a sustentação para facilitar a descida sem alterar o arrasto",
+        "D": "Aumentar a estabilidade lateral da aeronave"
+      },
+      "correta": "B",
+      "explicacao": "Os flapes aumentam a curvatura e o CL máximo da asa, reduzindo a velocidade de estol. Também geram arrasto, o que permite aproximações mais íngremes e lentas.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PP-TEO-005",
+      "nivel": "PP",
+      "materia": "teoria_de_voo",
+      "enunciado": "Com o aumento da velocidade em voo nivelado, o arrasto induzido e o arrasto parasita, respectivamente:",
+      "alternativas": {
+        "A": "Diminuem ambos",
+        "B": "Aumentam ambos",
+        "C": "Aumenta e diminui",
+        "D": "Diminui e aumenta"
+      },
+      "correta": "D",
+      "explicacao": "O arrasto induzido é maior em baixas velocidades (alto ângulo de ataque) e diminui com a velocidade. O arrasto parasita cresce com o quadrado da velocidade.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PP-TEO-006",
+      "nivel": "PP",
+      "materia": "teoria_de_voo",
+      "enunciado": "Em uma curva nivelada coordenada com 60° de inclinação, o fator de carga é de:",
+      "alternativas": {
+        "A": "2 g",
+        "B": "3 g",
+        "C": "1 g",
+        "D": "1,5 g"
+      },
+      "correta": "A",
+      "explicacao": "Em curva nivelada, n = 1/cos(inclinação). Para 60°, cos 60° = 0,5, então n = 2 g.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PP-TEO-007",
+      "nivel": "PP",
+      "materia": "teoria_de_voo",
+      "enunciado": "Ao voar muito próximo do solo (até cerca de uma envergadura de altura), a aeronave experimenta o efeito solo, que:",
+      "alternativas": {
+        "A": "Aumenta a turbulência de ponta de asa",
+        "B": "Aumenta o arrasto induzido e a velocidade de estol",
+        "C": "Reduz o arrasto induzido, fazendo a aeronave tender a “flutuar” no arredondamento",
+        "D": "Elimina a necessidade de ajuste de potência no pouso"
+      },
+      "correta": "C",
+      "explicacao": "Perto do solo, a deflexão para baixo do escoamento e os vórtices de ponta de asa são reduzidos, diminuindo o arrasto induzido. A aeronave tende a flutuar no pouso e pode sair do solo antes de ter velocidade segura na decolagem.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PP-TEO-008",
+      "nivel": "PP",
+      "materia": "teoria_de_voo",
+      "enunciado": "Os ailerons controlam o movimento da aeronave em torno do eixo:",
+      "alternativas": {
+        "A": "Vertical (guinada)",
+        "B": "Longitudinal e vertical simultaneamente",
+        "C": "Transversal ou lateral (arfagem)",
+        "D": "Longitudinal (rolamento)"
+      },
+      "correta": "D",
+      "explicacao": "Os ailerons produzem rolamento em torno do eixo longitudinal. O profundor controla a arfagem e o leme controla a guinada.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PP-TEO-009",
+      "nivel": "PP",
+      "materia": "teoria_de_voo",
+      "enunciado": "O profundor controla o movimento de:",
+      "alternativas": {
+        "A": "Rolamento, em torno do eixo longitudinal",
+        "B": "Derrapagem, em torno do eixo longitudinal",
+        "C": "Guinada, em torno do eixo vertical",
+        "D": "Arfagem, em torno do eixo transversal (lateral)"
+      },
+      "correta": "D",
+      "explicacao": "O profundor varia o ângulo de ataque, levantando ou baixando o nariz, ou seja, arfagem em torno do eixo transversal.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PP-TEO-010",
+      "nivel": "PP",
+      "materia": "teoria_de_voo",
+      "enunciado": "O leme de direção atua no movimento de:",
+      "alternativas": {
+        "A": "Arfagem, em torno do eixo transversal",
+        "B": "Guinada, em torno do eixo vertical",
+        "C": "Arfagem e rolamento simultaneamente",
+        "D": "Rolamento, em torno do eixo longitudinal"
+      },
+      "correta": "B",
+      "explicacao": "O leme de direção, comandado pelos pedais, produz guinada em torno do eixo vertical e é usado para coordenar as curvas.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PP-TEO-011",
+      "nivel": "PP",
+      "materia": "teoria_de_voo",
+      "enunciado": "Dentro dos limites aprovados, um CG mais à frente tende a:",
+      "alternativas": {
+        "A": "Aumentar a estabilidade longitudinal, exigindo mais força no profundor",
+        "B": "Reduzir a velocidade de estol",
+        "C": "Não ter efeito sobre a estabilidade longitudinal",
+        "D": "Reduzir a estabilidade longitudinal e facilitar o arredondamento"
+      },
+      "correta": "A",
+      "explicacao": "O CG à frente aumenta o braço estabilizador, tornando a aeronave mais estável, porém mais “pesada” de nariz. Isso exige mais deflexão do profundor e aumenta levemente a velocidade de estol.",
+      "referencia": "Conteúdo programático de Teoria de Voo / Peso e Balanceamento (ANAC)"
+    },
+    {
+      "id": "PP-TEO-012",
+      "nivel": "PP",
+      "materia": "teoria_de_voo",
+      "enunciado": "Num monomotor com hélice que gira no sentido horário vista pelo piloto, em subida com alto ângulo de ataque, o fator P tende a provocar:",
+      "alternativas": {
+        "A": "Guinada para a direita, corrigida com pedal esquerdo",
+        "B": "Rolamento para a direita, corrigido com aileron esquerdo",
+        "C": "Arfagem para baixo, corrigida com profundor cabrado",
+        "D": "Guinada para a esquerda, corrigida com pedal direito"
+      },
+      "correta": "D",
+      "explicacao": "Em alto ângulo de ataque, a pá descendente (lado direito) tem ângulo de ataque maior e gera mais tração. O nariz guina para a esquerda, e a correção é pedal direito.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PP-TEO-013",
+      "nivel": "PP",
+      "materia": "teoria_de_voo",
+      "enunciado": "Pelo princípio de Bernoulli, em um escoamento, quando a velocidade do fluido aumenta, a pressão estática:",
+      "alternativas": {
+        "A": "Torna-se igual à pressão dinâmica",
+        "B": "Aumenta",
+        "C": "Diminui",
+        "D": "Permanece constante"
+      },
+      "correta": "C",
+      "explicacao": "Na conservação de energia do escoamento (Bernoulli), a soma da pressão estática com a dinâmica é constante. Se a velocidade aumenta, a pressão estática diminui.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PP-TEO-014",
+      "nivel": "PP",
+      "materia": "teoria_de_voo",
+      "enunciado": "A principal função do compensador (trim tab) é:",
+      "alternativas": {
+        "A": "Aliviar a força que o piloto precisa fazer nos comandos para manter uma atitude",
+        "B": "Aumentar a sustentação na decolagem",
+        "C": "Substituir o profundor em caso de pane",
+        "D": "Reduzir a velocidade de estol"
+      },
+      "correta": "A",
+      "explicacao": "O compensador ajusta a posição de equilíbrio da superfície de comando, eliminando a pressão contínua nos comandos.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PP-TEO-015",
+      "nivel": "PP",
+      "materia": "teoria_de_voo",
+      "enunciado": "A velocidade de melhor ângulo de subida (Vx) proporciona:",
+      "alternativas": {
+        "A": "O maior ganho de altura na menor distância horizontal",
+        "B": "A menor queima de combustível por hora",
+        "C": "A maior velocidade de cruzeiro",
+        "D": "O maior ganho de altura no menor tempo"
+      },
+      "correta": "A",
+      "explicacao": "Vx é usada para livrar obstáculos (maior altura por distância). Vy dá o maior ganho de altura por tempo (maior razão de subida).",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PP-TEC-001",
+      "nivel": "PP",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "A sequência correta dos tempos de um motor a pistão de quatro tempos é:",
+      "alternativas": {
+        "A": "Admissão, combustão, compressão e escapamento",
+        "B": "Escapamento, admissão, combustão e compressão",
+        "C": "Admissão, compressão, combustão/expansão e escapamento",
+        "D": "Compressão, admissão, escapamento e combustão"
+      },
+      "correta": "C",
+      "explicacao": "No ciclo Otto de quatro tempos, a mistura é admitida, comprimida, queimada (gerando o tempo motor) e os gases são expelidos.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos (ANAC)"
+    },
+    {
+      "id": "PP-TEC-002",
+      "nivel": "PP",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "Em motores aeronáuticos a pistão, o sistema de ignição por magnetos:",
+      "alternativas": {
+        "A": "É usado apenas na partida, sendo desligado em seguida",
+        "B": "Deixa de funcionar se o alternador falhar",
+        "C": "Funciona de forma independente da bateria e do alternador",
+        "D": "Depende da bateria para gerar a centelha durante todo o voo"
+      },
+      "correta": "C",
+      "explicacao": "O magneto gera a própria corrente para as velas. Por isso o motor continua funcionando mesmo com o sistema elétrico desligado. Há dois magnetos por redundância.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos (ANAC)"
+    },
+    {
+      "id": "PP-TEC-003",
+      "nivel": "PP",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "Por que se empobrece a mistura ao subir para altitudes maiores?",
+      "alternativas": {
+        "A": "Porque a densidade do ar diminui e a mistura fica excessivamente rica",
+        "B": "Porque a densidade do ar aumenta e a mistura fica pobre",
+        "C": "Para aumentar a temperatura do motor e evitar gelo",
+        "D": "Porque o combustível fica mais denso com a altitude"
+      },
+      "correta": "A",
+      "explicacao": "Com menos ar (em massa) para o mesmo fluxo de combustível, a mistura enriquece. Empobrecer restaura a proporção correta, melhora a potência e reduz o consumo.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos (ANAC)"
+    },
+    {
+      "id": "PP-TEC-004",
+      "nivel": "PP",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "Ao suspeitar de detonação no motor, uma ação corretiva adequada é:",
+      "alternativas": {
+        "A": "Aplicar aquecimento do carburador e aumentar a potência",
+        "B": "Empobrecer a mistura e aumentar a potência",
+        "C": "Enriquecer a mistura e reduzir a potência",
+        "D": "Desligar um dos magnetos"
+      },
+      "correta": "C",
+      "explicacao": "A detonação é a queima explosiva e descontrolada da mistura. Enriquecer a mistura (efeito refrigerante), reduzir a potência e melhorar o arrefecimento ajudam a cessá-la.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos (ANAC)"
+    },
+    {
+      "id": "PP-TEC-005",
+      "nivel": "PP",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "A pré-ignição é caracterizada por:",
+      "alternativas": {
+        "A": "Ignição da mistura antes da centelha da vela, provocada por pontos quentes no cilindro",
+        "B": "Combustão no sistema de escapamento",
+        "C": "Falha total de ignição por pane dos magnetos",
+        "D": "Queima explosiva da mistura após a centelha normal"
+      },
+      "correta": "A",
+      "explicacao": "Na pré-ignição, um ponto quente (carvão incandescente, vela superaquecida) acende a mistura antes do momento correto. A detonação é a queima explosiva após a ignição normal.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos (ANAC)"
+    },
+    {
+      "id": "PP-TEC-006",
+      "nivel": "PP",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "Ao aplicar o aquecimento do carburador em um motor sem gelo no carburador, espera-se:",
+      "alternativas": {
+        "A": "Parada do motor",
+        "B": "Nenhuma alteração de RPM",
+        "C": "Uma pequena queda de RPM, porque o ar quente é menos denso",
+        "D": "Um aumento imediato de RPM"
+      },
+      "correta": "C",
+      "explicacao": "O ar quente, menos denso, enriquece a mistura e reduz a potência. Se houver gelo, a RPM cai e depois sobe à medida que o gelo derrete.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos (ANAC)"
+    },
+    {
+      "id": "PP-TEC-007",
+      "nivel": "PP",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "Em uma aeronave com hélice de passo fixo, a potência do motor é indicada principalmente pelo:",
+      "alternativas": {
+        "A": "Indicador de temperatura dos gases de escapamento",
+        "B": "Manômetro de pressão de admissão",
+        "C": "Tacômetro (RPM)",
+        "D": "Manômetro de pressão de óleo"
+      },
+      "correta": "C",
+      "explicacao": "Na hélice de passo fixo, a manete de potência altera diretamente a RPM, e o tacômetro serve como indicação de potência. Em hélices de velocidade constante, usa-se também a pressão de admissão.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos (ANAC)"
+    },
+    {
+      "id": "PP-TEC-008",
+      "nivel": "PP",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "Qual instrumento utiliza tanto a pressão de impacto (tubo de Pitot) quanto a pressão estática?",
+      "alternativas": {
+        "A": "Indicador de atitude (horizonte artificial)",
+        "B": "Velocímetro",
+        "C": "Variômetro (indicador de velocidade vertical)",
+        "D": "Altímetro"
+      },
+      "correta": "B",
+      "explicacao": "O velocímetro mede a pressão dinâmica, isto é, a diferença entre a pressão do Pitot e a estática. Altímetro e variômetro usam apenas a estática, e o horizonte artificial é giroscópico.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos – Instrumentos (ANAC)"
+    },
+    {
+      "id": "PP-TEC-009",
+      "nivel": "PP",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "Se a tomada de pressão estática ficar obstruída durante uma subida, o altímetro:",
+      "alternativas": {
+        "A": "Indicará corretamente, pois usa apenas o Pitot",
+        "B": "Passará a indicar zero",
+        "C": "Oscilará continuamente entre valores altos e baixos",
+        "D": "Permanecerá indicando a altitude em que ocorreu a obstrução"
+      },
+      "correta": "D",
+      "explicacao": "Com a estática obstruída, a pressão aprisionada no instrumento não muda e o altímetro “congela”. O variômetro também passa a indicar zero.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos – Instrumentos (ANAC)"
+    },
+    {
+      "id": "PP-TEC-010",
+      "nivel": "PP",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "O funcionamento do indicador de atitude (horizonte artificial) baseia-se principalmente na propriedade giroscópica de:",
+      "alternativas": {
+        "A": "Rigidez no espaço",
+        "B": "Precessão",
+        "C": "Inércia térmica",
+        "D": "Pressão diferencial"
+      },
+      "correta": "A",
+      "explicacao": "O giroscópio do horizonte artificial mantém o plano de rotação fixo no espaço (rigidez), servindo de referência para a atitude. A precessão é a base do indicador de curva.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos – Instrumentos (ANAC)"
+    },
+    {
+      "id": "PP-TEC-011",
+      "nivel": "PP",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "O indicador de direção (giro direcional) deve ser periodicamente alinhado com a bússola magnética porque:",
+      "alternativas": {
+        "A": "Indica a proa verdadeira, e não a magnética",
+        "B": "Sofre desvio causado pela precessão do giroscópio",
+        "C": "Não funciona em curvas",
+        "D": "É afetado pelos erros de aceleração da bússola"
+      },
+      "correta": "B",
+      "explicacao": "Atrito e a rotação da Terra causam precessão aparente, fazendo o giro direcional derivar com o tempo. O realinhamento é feito em voo reto, nivelado e não acelerado.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos – Instrumentos (ANAC)"
+    },
+    {
+      "id": "PP-TEC-012",
+      "nivel": "PP",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "Com o ajuste QNH no altímetro, uma aeronave parada no solo indicará:",
+      "alternativas": {
+        "A": "A altitude-pressão do aeródromo",
+        "B": "A elevação do aeródromo",
+        "C": "Zero",
+        "D": "A altitude-densidade do aeródromo"
+      },
+      "correta": "B",
+      "explicacao": "O QNH faz o altímetro indicar altitude acima do nível médio do mar. No solo, mostra a elevação do aeródromo. Com QFE indicaria zero, e com 1013,2 hPa (QNE) indicaria a altitude-pressão.",
+      "referencia": "ICA 100-12; conteúdo programático de Instrumentos (ANAC)"
+    },
+    {
+      "id": "PP-TEC-013",
+      "nivel": "PP",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "No velocímetro, o limite inferior do arco branco corresponde a:",
+      "alternativas": {
+        "A": "Velocidade de estol na configuração de pouso (VSO)",
+        "B": "Velocidade nunca exceder (VNE)",
+        "C": "Velocidade máxima com flapes estendidos (VFE)",
+        "D": "Velocidade de estol na configuração limpa (VS1)"
+      },
+      "correta": "A",
+      "explicacao": "O arco branco é a faixa de operação com flapes: começa em VSO e termina em VFE. O arco verde começa em VS1. A linha vermelha marca a VNE.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos – Instrumentos (ANAC)"
+    },
+    {
+      "id": "PP-TEC-014",
+      "nivel": "PP",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "A gasolina de aviação AVGAS 100LL é identificada pela cor:",
+      "alternativas": {
+        "A": "Azul",
+        "B": "Incolor",
+        "C": "Vermelha",
+        "D": "Verde"
+      },
+      "correta": "A",
+      "explicacao": "A AVGAS 100LL (baixo teor de chumbo) é tingida de azul para identificação. Combustível de aviação a turbina (querosene) é incolor ou levemente amarelado.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos (ANAC); ASTM D910"
+    },
+    {
+      "id": "PP-TEC-015",
+      "nivel": "PP",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "Além de lubrificar, o óleo de um motor a pistão aeronáutico tem as funções de:",
+      "alternativas": {
+        "A": "Gerar a centelha nas velas",
+        "B": "Pressurizar o sistema de combustível",
+        "C": "Aumentar a octanagem do combustível",
+        "D": "Arrefecer, vedar e limpar o motor"
+      },
+      "correta": "D",
+      "explicacao": "O óleo reduz o atrito, ajuda a retirar calor das partes internas, auxilia a vedação entre anéis e cilindros e carrega impurezas até o filtro.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos (ANAC)"
+    },
+    {
+      "id": "PC-REG-001",
+      "nivel": "PC",
+      "materia": "regulamentacao",
+      "enunciado": "Para requerer a licença de Piloto Comercial – Avião (PCM), além da experiência de voo prevista no RBAC 61.101, o candidato deve:",
+      "alternativas": {
+        "A": "Ter 18 anos e CMA de 2ª classe, dispensada a licença de piloto privado",
+        "B": "Ter 21 anos, ensino superior e CMA de 2ª classe",
+        "C": "Ser titular de PP há pelo menos 2 anos e possuir CMA de 4ª classe",
+        "D": "Ser titular de licença de piloto privado na categoria, ter 18 anos, ter concluído o ensino médio e possuir CMA de 1ª classe válido"
+      },
+      "correta": "D",
+      "explicacao": "A Carta de Serviços da ANAC para a licença PCM exige ser titular de PP na categoria, ter 18 anos completos, ensino médio concluído e CMA de 1ª classe válido.",
+      "referencia": "RBAC 61 (Subparte F); Carta de Serviços ANAC – Licença PCM"
+    },
+    {
+      "id": "PC-REG-002",
+      "nivel": "PC",
+      "materia": "regulamentacao",
+      "enunciado": "Segundo o RBAC 61, uma habilitação de tipo tem validade de:",
+      "alternativas": {
+        "A": "36 meses, contados da emissão da habilitação",
+        "B": "24 meses, contados a partir do mês do último exame",
+        "C": "12 meses, contados a partir do mês da aprovação no último exame de proficiência",
+        "D": "6 meses, contados da data do último voo no tipo"
+      },
+      "correta": "C",
+      "explicacao": "Habilitações de tipo valem 12 meses e as de classe, 24 meses, a partir do mês da aprovação no último exame de proficiência.",
+      "referencia": "RBAC 61.19(b) (EMD 16)"
+    },
+    {
+      "id": "PC-REG-003",
+      "nivel": "PC",
+      "materia": "regulamentacao",
+      "enunciado": "Em aeronave não pressurizada, voando entre 12.500 ft e 14.000 ft MSL (inclusive), a tripulação mínima deve usar oxigênio suplementar:",
+      "alternativas": {
+        "A": "Somente se houver passageiros a bordo",
+        "B": "Durante todo o tempo de voo nessas altitudes",
+        "C": "Nas partes do voo nessas altitudes que durem mais de 30 minutos",
+        "D": "Apenas acima de 10.000 ft durante a noite"
+      },
+      "correta": "C",
+      "explicacao": "Na faixa de 12.500 a 14.000 ft MSL, o uso é obrigatório nos trechos com mais de 30 minutos. Acima de 14.000 ft MSL, o uso é contínuo.",
+      "referencia": "RBAC 91.211 (EMD 08)"
+    },
+    {
+      "id": "PC-REG-004",
+      "nivel": "PC",
+      "materia": "regulamentacao",
+      "enunciado": "Em uma emergência, o piloto em comando se desvia de uma regra do RBAC 91 na medida necessária para resolvê-la. Após o voo, ele deve:",
+      "alternativas": {
+        "A": "Nada, pois desvios em emergência dispensam qualquer registro",
+        "B": "Apenas comunicar verbalmente o controle de tráfego aéreo",
+        "C": "Solicitar autorização prévia da ANAC antes do próximo voo, sem registro no diário de bordo",
+        "D": "Registrar o desvio no diário de bordo e informá-lo por escrito à ANAC, com descrição e justificativa"
+      },
+      "correta": "D",
+      "explicacao": "O RBAC 91 permite o desvio em emergência que exija ação imediata, mas exige registro no diário de bordo e relatório escrito à ANAC no prazo previsto.",
+      "referencia": "RBAC 91.3(b)–(d) (EMD 08)"
+    },
+    {
+      "id": "PC-REG-005",
+      "nivel": "PC",
+      "materia": "regulamentacao",
+      "enunciado": "Para iniciar um voo VFR noturno em avião, a reserva mínima de combustível, além do necessário para chegar ao local previsto para o primeiro pouso, é de:",
+      "alternativas": {
+        "A": "45 minutos em velocidade normal de cruzeiro",
+        "B": "20 minutos mais 10% do tempo de voo",
+        "C": "30 minutos em velocidade normal de cruzeiro",
+        "D": "60 minutos em velocidade normal de cruzeiro"
+      },
+      "correta": "A",
+      "explicacao": "O RBAC 91 exige 30 minutos adicionais para VFR diurno e 45 minutos para VFR noturno em aviões.",
+      "referencia": "RBAC 91.151(a)(2) (EMD 08)"
+    },
+    {
+      "id": "PC-REG-006",
+      "nivel": "PC",
+      "materia": "regulamentacao",
+      "enunciado": "Em espaço aéreo classe C, os voos VFR:",
+      "alternativas": {
+        "A": "Não são permitidos",
+        "B": "Não recebem serviço de controle, apenas informação de voo quando solicitada",
+        "C": "São separados de todos os voos, IFR e VFR",
+        "D": "São separados dos voos IFR e recebem informação de tráfego sobre outros voos VFR"
+      },
+      "correta": "D",
+      "explicacao": "Na classe C, o IFR é separado de todos os voos. O VFR é separado do IFR e recebe informação de tráfego sobre outros VFR. Na classe A só se admite IFR.",
+      "referencia": "ICA 100-37 – Serviços de Tráfego Aéreo (classificação dos espaços aéreos)"
+    },
+    {
+      "id": "PC-REG-007",
+      "nivel": "PC",
+      "materia": "regulamentacao",
+      "enunciado": "Para operações VFR em aeródromo localizado em zona de controle (CTR) ou ATZ, os mínimos meteorológicos de teto e visibilidade são:",
+      "alternativas": {
+        "A": "Teto de 3.000 ft e visibilidade de 8 km",
+        "B": "Teto de 500 ft e visibilidade de 1.500 m",
+        "C": "Teto de 1.500 ft e visibilidade no solo de 5 km",
+        "D": "Teto de 1.000 ft e visibilidade de 3 km"
+      },
+      "correta": "C",
+      "explicacao": "Exceto quando houver autorização para VFR especial, o voo VFR não pode pousar, decolar, entrar na ATZ ou no circuito de tráfego com teto inferior a 1.500 ft ou visibilidade no solo inferior a 5 km.",
+      "referencia": "ICA 100-12 – Regras de voo visual"
+    },
+    {
+      "id": "PC-NAV-001",
+      "nivel": "PC",
+      "materia": "navegacao",
+      "enunciado": "O OBS do VOR está ajustado em 180°, a bandeira indica FROM e o CDI está centralizado. A aeronave está:",
+      "alternativas": {
+        "A": "Sobre a radial 090, a leste da estação",
+        "B": "Sobre a radial 180, ao sul da estação",
+        "C": "Sobre a radial 360, ao norte da estação",
+        "D": "Sobre a radial 180, ao norte da estação"
+      },
+      "correta": "B",
+      "explicacao": "Com FROM e CDI centralizado, a aeronave está na radial selecionada no OBS, independentemente da proa. A radial 180 fica ao sul do VOR.",
+      "referencia": "Conteúdo programático de Navegação Aérea – VOR (ANAC)"
+    },
+    {
+      "id": "PC-NAV-002",
+      "nivel": "PC",
+      "materia": "navegacao",
+      "enunciado": "Com TAS de 120 kt e vento de 20 kt soprando perpendicularmente à rota, pela direita, a correção de deriva aproximada é de:",
+      "alternativas": {
+        "A": "10° para a direita",
+        "B": "5° para a direita",
+        "C": "20° para a direita",
+        "D": "10° para a esquerda"
+      },
+      "correta": "A",
+      "explicacao": "Pela regra prática: ângulo de correção ≈ (vento de través ÷ TAS) × 60 = (20 ÷ 120) × 60 = 10°. A correção é para o lado de onde vem o vento.",
+      "referencia": "Triângulo de velocidades; regra 1:60"
+    },
+    {
+      "id": "PC-NAV-003",
+      "nivel": "PC",
+      "materia": "navegacao",
+      "enunciado": "Uma aeronave precisa descer 6.000 ft com razão de 500 ft/min e GS de 120 kt. A que distância do ponto de nivelamento deve iniciar a descida?",
+      "alternativas": {
+        "A": "12 NM",
+        "B": "50 NM",
+        "C": "24 NM",
+        "D": "36 NM"
+      },
+      "correta": "C",
+      "explicacao": "Tempo de descida = 6.000 ÷ 500 = 12 min. A 120 kt (2 NM/min), a distância é 12 × 2 = 24 NM.",
+      "referencia": "Cálculo de navegação (planejamento de descida)"
+    },
+    {
+      "id": "PC-NAV-004",
+      "nivel": "PC",
+      "materia": "navegacao",
+      "enunciado": "Após voar 60 NM, o piloto verifica que está 3 NM à direita da rota planejada. O erro de rota (ângulo) é de aproximadamente:",
+      "alternativas": {
+        "A": "1°",
+        "B": "3°",
+        "C": "20°",
+        "D": "6°"
+      },
+      "correta": "B",
+      "explicacao": "Pela regra 1:60, 1 NM de afastamento a cada 60 NM corresponde a 1°. Logo, 3 NM em 60 NM equivalem a cerca de 3°.",
+      "referencia": "Regra 1:60 – navegação estimada"
+    },
+    {
+      "id": "PC-NAV-005",
+      "nivel": "PC",
+      "materia": "navegacao",
+      "enunciado": "Para que um receptor GPS determine uma posição tridimensional (latitude, longitude e altitude), é necessário receber sinal de, no mínimo:",
+      "alternativas": {
+        "A": "3 satélites",
+        "B": "6 satélites",
+        "C": "2 satélites",
+        "D": "4 satélites"
+      },
+      "correta": "D",
+      "explicacao": "Há quatro incógnitas: três coordenadas e o erro do relógio do receptor. Para a função de integridade RAIM são necessários pelo menos 5 satélites.",
+      "referencia": "Conteúdo programático de Navegação Aérea – GNSS (ANAC)"
+    },
+    {
+      "id": "PC-NAV-006",
+      "nivel": "PC",
+      "materia": "navegacao",
+      "enunciado": "A distância indicada pelo DME é:",
+      "alternativas": {
+        "A": "A distância em milhas terrestres até a estação",
+        "B": "A distância até o próximo ponto de notificação",
+        "C": "A distância horizontal exata sobre o solo, sem erro",
+        "D": "A distância oblíqua (inclinada) entre a aeronave e a estação, com erro maior quando a aeronave está alta e próxima da estação"
+      },
+      "correta": "D",
+      "explicacao": "O DME mede a distância em linha reta (slant range). Sobre a estação, ele indica aproximadamente a altura da aeronave em NM, e não zero.",
+      "referencia": "Conteúdo programático de Navegação Aérea – DME (ANAC)"
+    },
+    {
+      "id": "PC-NAV-007",
+      "nivel": "PC",
+      "materia": "navegacao",
+      "enunciado": "Voo VFR diurno de avião com tempo estimado de 2 h até o destino e consumo de cruzeiro de 40 L/h. Qual a quantidade mínima de combustível regulamentar, desconsiderando táxi e alternativa?",
+      "alternativas": {
+        "A": "110 litros",
+        "B": "120 litros",
+        "C": "80 litros",
+        "D": "100 litros"
+      },
+      "correta": "D",
+      "explicacao": "Ao tempo de 2 h somam-se 30 minutos de reserva (VFR diurno), totalizando 2,5 h × 40 L/h = 100 L.",
+      "referencia": "RBAC 91.151(a)(1) (EMD 08)"
+    },
+    {
+      "id": "PC-MET-001",
+      "nivel": "PC",
+      "materia": "meteorologia",
+      "enunciado": "Num TAF, o grupo TEMPO indica:",
+      "alternativas": {
+        "A": "Mudança permanente e gradual das condições ao longo do período",
+        "B": "Flutuações temporárias, cada uma com duração inferior a 1 hora e que, somadas, cobrem menos da metade do período indicado",
+        "C": "Condições que ocorrerão com probabilidade de 30% ou 40%",
+        "D": "Condições observadas no momento da emissão do TAF"
+      },
+      "correta": "B",
+      "explicacao": "TEMPO descreve variações temporárias com os limites de duração definidos pela OACI. Mudanças regulares e permanentes usam BECMG, e a probabilidade usa PROB30/PROB40.",
+      "referencia": "MCA 105-16; ICAO Anexo 3"
+    },
+    {
+      "id": "PC-MET-002",
+      "nivel": "PC",
+      "materia": "meteorologia",
+      "enunciado": "Num TAF, o indicador BECMG significa:",
+      "alternativas": {
+        "A": "Mudança nas condições, de forma regular ou irregular, que ocorrerá dentro do período especificado e se manterá após ele",
+        "B": "Variação temporária com duração inferior a 1 hora",
+        "C": "Que o TAF foi corrigido após a emissão",
+        "D": "Probabilidade de 40% de ocorrência do fenômeno"
+      },
+      "correta": "A",
+      "explicacao": "BECMG (becoming) indica que as condições passam a ser outras dentro do intervalo indicado e permanecem assim após ele.",
+      "referencia": "MCA 105-16; ICAO Anexo 3"
+    },
+    {
+      "id": "PC-MET-003",
+      "nivel": "PC",
+      "materia": "meteorologia",
+      "enunciado": "O estágio de maturidade de uma trovoada caracteriza-se por:",
+      "alternativas": {
+        "A": "Predomínio de correntes descendentes e enfraquecimento da nuvem",
+        "B": "Apenas correntes ascendentes, sem precipitação",
+        "C": "Correntes ascendentes e descendentes simultâneas e início da precipitação na superfície",
+        "D": "Formação de nuvens cirrus sem atividade elétrica"
+      },
+      "correta": "C",
+      "explicacao": "A trovoada passa pelos estágios de cumulus (ascendentes), maturidade (ascendentes e descendentes, com chuva chegando ao solo, a fase mais intensa) e dissipação (predomínio de descendentes).",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PC-MET-004",
+      "nivel": "PC",
+      "materia": "meteorologia",
+      "enunciado": "Ao penetrar uma microexplosão (microburst) na aproximação final, a sequência típica de efeitos sobre a aeronave é:",
+      "alternativas": {
+        "A": "Aumento inicial de velocidade indicada (vento de proa), seguido de forte corrente descendente e vento de cauda com perda de desempenho",
+        "B": "Perda inicial de velocidade seguida de ganho de sustentação contínuo",
+        "C": "Ganho constante de altura durante toda a travessia",
+        "D": "Apenas turbulência leve, sem variação de velocidade"
+      },
+      "correta": "A",
+      "explicacao": "O vento de proa inicial pode levar o piloto a reduzir a potência. Logo depois vêm a descendente e o vento de cauda, que derrubam a velocidade e a altura. É um fenômeno muito perigoso próximo ao solo.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PC-MET-005",
+      "nivel": "PC",
+      "materia": "meteorologia",
+      "enunciado": "Na aproximação de uma frente quente, a sequência típica de nuvens observada por um observador no solo é:",
+      "alternativas": {
+        "A": "Nimbostratus, altostratus, cirrostratus e cirrus",
+        "B": "Cirrus, cirrostratus, altostratus e nimbostratus",
+        "C": "Cumulonimbus, cumulus e cirrus",
+        "D": "Cumulus, stratocumulus e cumulonimbus"
+      },
+      "correta": "B",
+      "explicacao": "O ar quente sobe suavemente sobre o ar frio. As primeiras nuvens a aparecer são as altas (Ci, Cs), seguidas das médias (As) e, perto da frente, do nimbostratus com chuva contínua.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PC-MET-006",
+      "nivel": "PC",
+      "materia": "meteorologia",
+      "enunciado": "A presença de nuvens altocumulus lenticularis a sotavento de uma cadeia de montanhas indica:",
+      "alternativas": {
+        "A": "Ondas de montanha, com possibilidade de turbulência forte, inclusive em rotores próximos ao solo",
+        "B": "Ar completamente calmo e estável, ideal para voo baixo",
+        "C": "Aproximação de uma frente quente",
+        "D": "Formação iminente de nevoeiro de radiação"
+      },
+      "correta": "A",
+      "explicacao": "As lenticulares se formam nas cristas das ondas orográficas. Abaixo delas pode haver rotores com turbulência severa e fortes correntes descendentes.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PC-MET-007",
+      "nivel": "PC",
+      "materia": "meteorologia",
+      "enunciado": "O gelo claro (liso/cristal) é mais provável quando:",
+      "alternativas": {
+        "A": "Grandes gotas super-resfriadas atingem a aeronave, típico de nuvens cumuliformes com temperaturas entre 0 °C e cerca de −10 °C",
+        "B": "A aeronave voa acima de nuvens com temperatura positiva",
+        "C": "Pequenas gotas congelam instantaneamente em nuvens estratiformes muito frias",
+        "D": "A aeronave voa em ar seco abaixo de −40 °C"
+      },
+      "correta": "A",
+      "explicacao": "Gotas grandes congelam lentamente, espalhando-se antes de solidificar e formando gelo transparente, pesado e aderente. Gotas pequenas congelam na hora e formam escarcha (gelo opaco).",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PC-MET-008",
+      "nivel": "PC",
+      "materia": "meteorologia",
+      "enunciado": "Uma inversão térmica próxima à superfície costuma estar associada a:",
+      "alternativas": {
+        "A": "Forte instabilidade e formação de CB",
+        "B": "Ar estável, com retenção de fumaça, poeira e névoa abaixo da inversão e redução de visibilidade",
+        "C": "Aumento da turbulência convectiva na camada abaixo da inversão",
+        "D": "Melhoria acentuada da visibilidade junto ao solo"
+      },
+      "correta": "B",
+      "explicacao": "Na inversão, a temperatura aumenta com a altitude, o que torna a camada muito estável e bloqueia os movimentos verticais. Os poluentes ficam presos e a visibilidade piora.",
+      "referencia": "Conteúdo programático de Meteorologia (ANAC)"
+    },
+    {
+      "id": "PC-TEO-001",
+      "nivel": "PC",
+      "materia": "teoria_de_voo",
+      "enunciado": "Um avião tem velocidade de estol de 60 kt em voo nivelado. Numa curva nivelada com 60° de inclinação, a velocidade de estol será de aproximadamente:",
+      "alternativas": {
+        "A": "60 kt",
+        "B": "120 kt",
+        "C": "85 kt",
+        "D": "70 kt"
+      },
+      "correta": "C",
+      "explicacao": "A velocidade de estol aumenta com a raiz quadrada do fator de carga. Com 60° de inclinação, n = 2, então Vs = 60 × √2 ≈ 85 kt.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PC-TEO-002",
+      "nivel": "PC",
+      "materia": "teoria_de_voo",
+      "enunciado": "O ângulo de diedro das asas contribui principalmente para a estabilidade:",
+      "alternativas": {
+        "A": "Longitudinal",
+        "B": "Lateral",
+        "C": "Do motor",
+        "D": "Direcional apenas"
+      },
+      "correta": "B",
+      "explicacao": "Ao glissar, a asa baixa recebe maior ângulo de ataque efetivo e gera mais sustentação, tendendo a nivelar as asas. Isso é estabilidade lateral.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PC-TEO-003",
+      "nivel": "PC",
+      "materia": "teoria_de_voo",
+      "enunciado": "Mantendo a mesma velocidade indicada (IAS), à medida que a altitude aumenta, a velocidade verdadeira (TAS):",
+      "alternativas": {
+        "A": "Aumenta, pois a densidade do ar diminui",
+        "B": "Diminui, pois a temperatura cai",
+        "C": "Diminui, pois a densidade do ar diminui",
+        "D": "Permanece igual à IAS"
+      },
+      "correta": "A",
+      "explicacao": "A IAS reflete a pressão dinâmica (½ρV²). Com menor densidade, é preciso mais velocidade verdadeira para a mesma pressão dinâmica, cerca de 2% a mais por 1.000 ft.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PC-TEO-004",
+      "nivel": "PC",
+      "materia": "teoria_de_voo",
+      "enunciado": "Ao iniciar uma curva para a direita apenas com ailerons, o nariz tende a guinar inicialmente para a esquerda. Esse fenômeno é a:",
+      "alternativas": {
+        "A": "Guinada adversa, causada pelo torque do motor",
+        "B": "Estabilidade direcional, causada pelo estabilizador vertical",
+        "C": "Glissagem, causada pelo excesso de leme",
+        "D": "Guinada adversa, causada pelo maior arrasto induzido da asa que sobe (aileron abaixado)"
+      },
+      "correta": "D",
+      "explicacao": "O aileron abaixado aumenta a sustentação e também o arrasto induzido da asa que sobe, puxando o nariz para fora da curva. Corrige-se coordenando com o leme.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PC-TEO-005",
+      "nivel": "PC",
+      "materia": "teoria_de_voo",
+      "enunciado": "Com a redução do peso da aeronave, a velocidade de manobra (VA):",
+      "alternativas": {
+        "A": "Torna-se igual à VNE",
+        "B": "Não se altera",
+        "C": "Diminui",
+        "D": "Aumenta"
+      },
+      "correta": "C",
+      "explicacao": "VA é a velocidade em que a deflexão total dos comandos leva ao estol antes de exceder o fator de carga limite. Uma aeronave mais leve atinge o fator de carga limite em velocidade menor, então VA diminui.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC)"
+    },
+    {
+      "id": "PC-TEO-006",
+      "nivel": "PC",
+      "materia": "teoria_de_voo",
+      "enunciado": "A turbulência de esteira é mais intensa quando a aeronave geradora está:",
+      "alternativas": {
+        "A": "Leve, com flapes estendidos e voando rápida",
+        "B": "Pesada, em configuração limpa e voando lenta",
+        "C": "Leve, em configuração limpa e voando rápida",
+        "D": "Pesada, com flapes estendidos e voando rápida"
+      },
+      "correta": "B",
+      "explicacao": "A intensidade dos vórtices de ponta de asa cresce com o ângulo de ataque e com a sustentação gerada. O pior caso é aeronave pesada, limpa e lenta.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC); ICA 100-37 (esteira de turbulência)"
+    },
+    {
+      "id": "PC-TEO-007",
+      "nivel": "PC",
+      "materia": "teoria_de_voo",
+      "enunciado": "Técnica geral de recuperação de parafuso em aviões leves (sempre respeitando o manual da aeronave):",
+      "alternativas": {
+        "A": "Reduzir a potência para marcha lenta, neutralizar ailerons, aplicar leme todo contrário à rotação e levar o profundor à frente para quebrar o estol",
+        "B": "Estender os flapes e cabrar até o nariz subir",
+        "C": "Aplicar potência máxima, aileron contra a rotação e profundor todo cabrado",
+        "D": "Aplicar leme a favor da rotação e aguardar a parada espontânea"
+      },
+      "correta": "A",
+      "explicacao": "O procedimento clássico tira a potência, para a rotação com leme oposto e quebra o estol com profundor à frente. Depois de cessada a rotação, neutraliza-se o leme e recupera-se do mergulho.",
+      "referencia": "Conteúdo programático de Teoria de Voo (ANAC); manual de voo da aeronave"
+    },
+    {
+      "id": "PC-TEC-001",
+      "nivel": "PC",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "Em aeronave com hélice de velocidade constante, a manete de potência e a manete de hélice controlam, respectivamente:",
+      "alternativas": {
+        "A": "A pressão de admissão e a RPM (por meio do governador)",
+        "B": "A RPM e a pressão de admissão",
+        "C": "A temperatura do óleo e a pressão de combustível",
+        "D": "A mistura e o passo fixo da hélice"
+      },
+      "correta": "A",
+      "explicacao": "Na hélice de velocidade constante, a manete de potência ajusta a pressão de admissão (lida no manômetro) e a manete de hélice seleciona a RPM, mantida pelo governador por meio da variação do passo.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos (ANAC)"
+    },
+    {
+      "id": "PC-TEC-002",
+      "nivel": "PC",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "A principal finalidade de um turbocompressor em motor a pistão é:",
+      "alternativas": {
+        "A": "Substituir o sistema de ignição por magnetos",
+        "B": "Comprimir o ar de admissão usando a energia dos gases de escapamento, mantendo a potência até a altitude crítica",
+        "C": "Aumentar a rotação da hélice além do limite do motor",
+        "D": "Resfriar o combustível antes da injeção"
+      },
+      "correta": "B",
+      "explicacao": "O turbo aproveita os gases de escapamento para girar uma turbina ligada a um compressor. Isso mantém a densidade do ar admitido e a potência em altitude, até a altitude crítica.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos (ANAC)"
+    },
+    {
+      "id": "PC-TEC-003",
+      "nivel": "PC",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "No velocímetro, o arco amarelo indica:",
+      "alternativas": {
+        "A": "Faixa de operação normal com flapes",
+        "B": "Faixa proibida em qualquer condição",
+        "C": "Faixa de velocidade de estol com trem baixado",
+        "D": "Faixa de precaução, a ser usada apenas em ar calmo, até a VNE"
+      },
+      "correta": "D",
+      "explicacao": "O arco amarelo vai da VNO à VNE. Deve ser usado só com ar calmo, pela possibilidade de exceder cargas estruturais em turbulência.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos – Instrumentos (ANAC)"
+    },
+    {
+      "id": "PC-TEC-004",
+      "nivel": "PC",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "No cheque de magnetos, ao selecionar apenas um magneto não ocorre nenhuma queda de RPM. Isso pode indicar:",
+      "alternativas": {
+        "A": "Mistura excessivamente pobre",
+        "B": "Magneto não aterrado (fio P desconectado), com risco de o motor funcionar se a hélice for girada com a chave desligada",
+        "C": "Gelo no carburador",
+        "D": "Funcionamento perfeito do sistema de ignição"
+      },
+      "correta": "B",
+      "explicacao": "Uma pequena queda de RPM é normal ao operar com um só magneto. Ausência total de queda sugere falha na seleção ou no aterramento. Nesse caso a hélice deve ser tratada como “viva” e a aeronave deve passar por manutenção.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos (ANAC)"
+    },
+    {
+      "id": "PC-TEC-005",
+      "nivel": "PC",
+      "materia": "conhecimentos_tecnicos",
+      "enunciado": "Em avião não pressurizado, ao selecionar a fonte alternativa de pressão estática localizada na cabine, normalmente o altímetro e o velocímetro passam a indicar:",
+      "alternativas": {
+        "A": "Valores ligeiramente maiores que os reais, pois a pressão na cabine costuma ser menor que a externa",
+        "B": "Zero, até que a fonte normal seja restabelecida",
+        "C": "Valores ligeiramente menores que os reais",
+        "D": "Valores exatos, sem qualquer variação"
+      },
+      "correta": "A",
+      "explicacao": "O escoamento ao redor da fuselagem tende a reduzir a pressão na cabine. Com pressão estática menor, altímetro e velocímetro indicam um pouco acima do real, e o variômetro mostra uma subida momentânea. Consulte as correções no manual de voo.",
+      "referencia": "Conteúdo programático de Conhecimentos Técnicos – Instrumentos (ANAC); manual de voo da aeronave"
+    },
+    {
+      "id": "PC-PER-001",
+      "nivel": "PC",
+      "materia": "performance",
+      "enunciado": "Peso vazio 600 kg (braço 2,00 m), piloto e passageiro 160 kg (braço 2,20 m) e combustível 100 kg (braço 2,50 m). Qual a posição aproximada do CG?",
+      "alternativas": {
+        "A": "2,00 m",
+        "B": "1,95 m",
+        "C": "2,10 m",
+        "D": "2,23 m"
+      },
+      "correta": "C",
+      "explicacao": "Momentos: 1.200 + 352 + 250 = 1.802 kg·m. Peso total: 860 kg. CG = 1.802 ÷ 860 ≈ 2,10 m. Não se pode simplesmente fazer a média dos braços.",
+      "referencia": "Conteúdo programático de Peso e Balanceamento (ANAC)"
+    },
+    {
+      "id": "PC-PER-002",
+      "nivel": "PC",
+      "materia": "performance",
+      "enunciado": "Numa aeronave de 1.000 kg, uma bagagem de 20 kg é deslocada 2 m para a frente. O CG se desloca:",
+      "alternativas": {
+        "A": "0,04 m para trás",
+        "B": "2 m para a frente",
+        "C": "0,4 m para a frente",
+        "D": "0,04 m para a frente"
+      },
+      "correta": "D",
+      "explicacao": "ΔCG = (peso deslocado × distância) ÷ peso total = (20 × 2) ÷ 1.000 = 0,04 m, no mesmo sentido do deslocamento da carga.",
+      "referencia": "Conteúdo programático de Peso e Balanceamento (ANAC)"
+    },
+    {
+      "id": "PC-PER-003",
+      "nivel": "PC",
+      "materia": "performance",
+      "enunciado": "Aeródromo com elevação de 2.000 ft e QNH 1003 hPa. Considerando 30 ft por hPa, a altitude-pressão é de aproximadamente:",
+      "alternativas": {
+        "A": "2.030 ft",
+        "B": "2.300 ft",
+        "C": "2.010 ft",
+        "D": "1.700 ft"
+      },
+      "correta": "B",
+      "explicacao": "Altitude-pressão = elevação + (1013 − QNH) × 30 = 2.000 + 10 × 30 = 2.300 ft. Pressão abaixo da padrão aumenta a altitude-pressão.",
+      "referencia": "Conteúdo programático de Performance (ANAC)"
+    },
+    {
+      "id": "PC-PER-004",
+      "nivel": "PC",
+      "materia": "performance",
+      "enunciado": "Em um dia quente, em aeródromo de elevação alta e com ar úmido (alta altitude-densidade), espera-se:",
+      "alternativas": {
+        "A": "Menor corrida de decolagem e maior razão de subida",
+        "B": "Nenhuma alteração de desempenho em aviões a pistão",
+        "C": "Menor velocidade verdadeira de decolagem",
+        "D": "Maior corrida de decolagem e menor razão de subida"
+      },
+      "correta": "D",
+      "explicacao": "Ar menos denso reduz a potência do motor, a tração da hélice e a sustentação. A aeronave precisa de mais pista (TAS maior para a mesma IAS) e sobe menos.",
+      "referencia": "Conteúdo programático de Performance (ANAC); manual de voo da aeronave"
+    },
+    {
+      "id": "PC-PER-005",
+      "nivel": "PC",
+      "materia": "performance",
+      "enunciado": "Qual das condições abaixo reduz a distância de decolagem?",
+      "alternativas": {
+        "A": "Temperatura acima da ISA",
+        "B": "Pista de grama molhada",
+        "C": "Vento de proa",
+        "D": "Pista em aclive"
+      },
+      "correta": "C",
+      "explicacao": "O vento de proa reduz a velocidade no solo necessária para atingir a velocidade de decolagem. Aclive, grama molhada e temperatura alta aumentam a distância.",
+      "referencia": "Conteúdo programático de Performance (ANAC); manual de voo da aeronave"
+    },
+    {
+      "id": "PC-PER-006",
+      "nivel": "PC",
+      "materia": "performance",
+      "enunciado": "Operar com o CG atrás do limite traseiro aprovado tende a:",
+      "alternativas": {
+        "A": "Não afetar o voo, desde que o peso esteja dentro do máximo",
+        "B": "Aumentar a estabilidade longitudinal e a velocidade de estol",
+        "C": "Reduzir a estabilidade longitudinal e dificultar a recuperação de estol e parafuso",
+        "D": "Tornar o nariz pesado e exigir mais força para arredondar"
+      },
+      "correta": "C",
+      "explicacao": "Com o CG muito atrás, a aeronave fica instável em arfagem e sensível aos comandos. A recuperação de estol e parafuso pode ficar difícil ou impossível.",
+      "referencia": "Conteúdo programático de Peso e Balanceamento (ANAC)"
+    }
+  ]
+}
