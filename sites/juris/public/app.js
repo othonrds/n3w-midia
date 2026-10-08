@@ -147,15 +147,15 @@ function abrirCheckout() {
     <div class="ot"><b>Pacote Juris Páginas</b><span class="pr">${brl(PRECO)}<small>pagamento único</small></span></div>
     <ul><li><b>3 páginas completas</b>: esta e mais 2 (uma para cada área ou serviço)</li><li>No ar em <b>jurispaginas.com/${esc(slug)}</b></li><li>12 meses de hospedagem e edições ilimitadas</li><li>Sem marca d'água · botão direto para o seu WhatsApp</li></ul>
   </div>
-  <label class="bump"><input type="checkbox" id="bump"><div><b>Sim! Quero 3 fotos profissionais por + ${brl(PRECO_FOTOS)}</b><span>Fotos de advocacia feitas a partir de uma selfie sua, para usar na página, no Instagram e no LinkedIn. <s>R$ 39,90</s> só neste pedido.</span></div></label>
+  <!-- bump desligado em 08/10 até o produto de fotos voltar (caixa "3 fotos por + R$ 29,90" removida) -->
   <label for="cEmail">Seu e-mail <small>para o recibo e o acesso ao painel</small><input id="cEmail" type="email" autocomplete="email" inputmode="email" value="${esc(v("#tEmail"))}"></label>
   <label for="cZap">Seu WhatsApp <input id="cZap" inputmode="tel" autocomplete="tel" value="${esc(v("#fZap"))}"></label>
   <div class="total"><span>Total</span><span id="tot">${brl(PRECO)}</span></div>
   <p class="err" id="errPay"></p>
   <button class="btn" type="button" id="pagar">Gerar Pix de ${brl(PRECO)}</button>
   <p class="note">Pagamento por Pix pelo Mercado Pago. A página vai ao ar assim que o Pix for confirmado, em segundos.</p>`);
-  const tot = () => { const t = PRECO + ($("#bump").checked ? PRECO_FOTOS : 0); $("#tot").textContent = brl(t); $("#pagar").textContent = "Gerar Pix de " + brl(t); };
-  $("#bump").onchange = tot;
+  // bump desligado em 08/10 até o produto de fotos voltar
+  const tot = () => { $("#tot").textContent = brl(PRECO); $("#pagar").textContent = "Gerar Pix de " + brl(PRECO); };
   $("#pagar").onclick = async () => {
     const err = $("#errPay"); err.textContent = "";
     const email = v("#cEmail"), whats = v("#cZap");
@@ -164,8 +164,8 @@ function abrirCheckout() {
     const b = $("#pagar"); b.disabled = true; b.textContent = "Gerando Pix…";
     try {
       await salvaRascunho();
-      const bump = $("#bump").checked;
-      const j = await api({ acao: "pedido", id: st.id, token: st.token, email, whats, bump, nome: v("#fNome") });
+      // bump desligado em 08/10 até o produto de fotos voltar
+      const j = await api({ acao: "pedido", id: st.id, token: st.token, email, whats, bump: false, nome: v("#fNome") });
       ls.set("jp_pedido", { ref: j.ref, id: j.id, valor: j.valor });
       ev("AddPaymentInfo", { value: j.valor, currency: "BRL" });
       telaPix(j);

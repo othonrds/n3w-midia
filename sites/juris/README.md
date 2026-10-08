@@ -1,5 +1,5 @@
 # jurispaginas.com — gerador de landing pages para advogados (v1, 08/10/2026)
-Dono: chat JURISPAGES (projeto Central N3w). Oferta: 3 páginas por R$ 39,90 (Pix) + bump 3 fotos profissionais R$ 29,90.
+Dono: chat JURISPAGES (projeto Central N3w). Oferta: 3 páginas por R$ 39,90 (Pix). Bump de 3 fotos (R$ 29,90) DESLIGADO em 08/10 até o produto de fotos voltar.
 
 ## Peças
 - `public/` site estático (sem build): `index.html` + `app.js` (gerador → prévia com marca d'água → personalizar → checkout Pix → painel), `lp.js` (desenho da página do advogado, usado no navegador e no servidor), `p.html` (página publicada renderizada no navegador, para prévias), termos e privacidade (rascunhos, falta revisão jurídica).

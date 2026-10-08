@@ -146,7 +146,8 @@ async function acao(b: any) {
       const email = txt(b.email, 120).toLowerCase(), whats = txt(b.whats, 20).replace(/\D/g, ""), nome = txt(b.nome || pag.dados?.nome, 80);
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return out(400, { erro: "Confira o e-mail" });
       if (whats.length < 10) return out(400, { erro: "WhatsApp com DDD" });
-      const bump = !!b.bump, valor = +(PRECO + (bump ? PRECO_FOTOS : 0)).toFixed(2);
+      // bump desligado em 08/10 até o produto de fotos voltar: ignora b.bump do cliente, cobra só R$ 39,90 e nunca grava em fotos_pedidos (tabela não existe).
+      const bump = false, valor = +(PRECO + (bump ? PRECO_FOTOS : 0)).toFixed(2);
       const ref = "JP" + rnd(5).toUpperCase(), token = rnd(16);
       let orderId = "TESTE-" + ref, qr = "00020126580014BR.GOV.BCB.PIX0136modo-teste-jurispaginas-" + ref, qr64: string | null = null;
       if (!TESTE) {
