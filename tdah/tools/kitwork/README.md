@@ -7,3 +7,4 @@ Pipeline usado em 08/10 para os 6 vídeos v1 (tdah/kit-ads/KIT_<JOGO>_v1.mp4).
 3. Editar: `python3 make_ad.py <jogo>` (gancho, zooms, end card, trilha via ../som.py, loudnorm -14 LUFS). Ajuste ganchos/textos no topo do arquivo.
 4. `mont.py`: folha de contato.
 Fontes: Anton/Archivo/Rubik (ver caminhos em make_ad.py; ajuste se mudar de máquina).
+Fontes: `cd ..; mkdir -p fonts && cd fonts && npm i @fontsource/anton @fontsource/archivo-black @fontsource/rubik && mv node_modules/@fontsource/* . ` (make_ad.py procura em ../fonts/fontsource-<nome>/files/; ajuste os caminhos se preciso).
