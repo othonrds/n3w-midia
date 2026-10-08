@@ -1,15 +1,20 @@
+# Config COMPLETA do Worker n3w-meta. Qualquer deploy (wrangler ou Workers Builds)
+# precisa usar ESTA pasta como raiz (ferramentas/n3w-meta-mcp), senão apaga bucket e variáveis.
+# Segredos ficam só no Cloudflare (não somem num `wrangler deploy`): META_TOKEN, CONNECTOR_KEY.
 name = "n3w-meta"
 main = "src/index.js"
-compatibility_date = "2026-09-01"
+compatibility_date = "2026-10-06"
+keep_vars = true
 
 [vars]
 GRAPH_VERSION = "v26.0"
 AD_ACCOUNT_ID = "1805973277429998"
 PAGE_ID = "1358861377303862"
 PUBLIC_BASE = "https://n3w-meta.othon-rdss.workers.dev"
-# Segredos (nunca aqui): META_TOKEN, CONNECTOR_KEY
 
-# Bucket de mídia (criar antes no Cloudflare: R2 > Create bucket > n3w-midia)
 [[r2_buckets]]
 binding = "MIDIA"
 bucket_name = "n3w-midia"
+
+[observability]
+enabled = true
