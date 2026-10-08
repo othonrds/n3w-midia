@@ -56,7 +56,7 @@ TOTAL = sum(s[1] for s in SEGS)
 
 # ---------------- voz ----------------
 def tts(text, path):
-    subprocess.run(['edge-tts', '--voice', VOICE, '--rate', RATE, '--text', text,
+    subprocess.run(['edge-tts', '--voice', VOICE, '--rate=' + RATE, '--text', text,
                     '--write-media', path + '.mp3'], check=True, capture_output=True)
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', path + '.mp3', '-ar', '44100', '-ac', '1', path],
                    check=True)
