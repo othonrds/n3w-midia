@@ -1,10 +1,10 @@
 // Grava uma partida "para video": bot espera as bolas certas chegarem ao meio da tela e destroi,
 // erra de proposito as vezes (drama), corta as gemas, mostra o "dedo" na tela.
-const fs = require('fs'); let pw; try { pw = require('playwright'); } catch (e) { pw = require('/opt/npm-tools/node_modules/playwright'); } const { chromium } = pw;
+const fs = require('fs'); let pw; try { pw = require('playwright'); } catch (e) { pw = require(fs.existsSync('/usr/local/lib/node_modules/playwright') ? '/usr/local/lib/node_modules/playwright' : '/opt/npm-tools/node_modules/playwright'); } const { chromium } = pw;
 const OUT = process.argv[2] || 'rec1';
 (async () => {
   const b = await chromium.launch();
-  const c = await b.newContext({ viewport: { width: 720, height: 1280 }, deviceScaleFactor: 1,
+  const c = await b.newContext({ viewport: { width: 405, height: 720 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true,
     recordVideo: { dir: OUT, size: { width: 720, height: 1280 } } });
   const p = await c.newPage();
   const src = process.env.GAME_HTML ? fs.readFileSync(process.env.GAME_HTML, 'utf8') : await (await fetch('https://adhd.xyzgames.app/?nc=' + Date.now())).text();
