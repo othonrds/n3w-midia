@@ -31,7 +31,7 @@ const FINE = 'New mode in development · Original game · Not affiliated with an
 const shell = (k, hook, sub, ui, dark = false, cta = 'Get early access →') =>
   `<body class="${dark ? 'dark' : ''}"><div class="bg" style="background-image:url(${art(k)})"></div><div class="veil"></div>
    <div class="tag">NEW MODE · COMING SOON</div><div class="hook">${hook}</div><div class="sub">${sub}</div>
-   <div class="phone"><div class="isl"></div><div class="scr" style="background-image:url(${art(k)});${k==='mystery'?'height:554px;margin-top:80px':''}">${ui}</div></div>
+   <div class="phone" style="${k==='mystery'?'top:500px':''}"><div class="isl"></div><div class="scr" style="background-image:url(${art(k)});${k==='mystery'?'height:554px':''}">${ui}</div></div>
    <div class="cta">${cta}</div><div class="logo">Dreamelle</div><div class="fine">${FINE}</div></body>`;
 const two = (a, b) => `<div class="ui" style="left:0;right:0;bottom:26px;display:flex;justify-content:center;gap:28px">
    <div class="ui chip" style="position:static;padding:16px 34px;font-size:34px">${a}</div><div class="ui btnp" style="position:static;padding:16px 34px;font-size:34px">${b}</div></div>`;
