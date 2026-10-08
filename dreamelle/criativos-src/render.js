@@ -26,7 +26,7 @@ async function capture(b) {
   await p.evaluate("Dreamelle.go('org')"); await W(1800);
   // file two docs correctly so the counters show progress
   for (const [doc, f] of [['d1', 'contracts'], ['d3', 'evidence']]) { await p.click('#doc-' + doc); await W(250); await p.click('#folder-' + f); await W(500); }
-  await S('org', ['.folders']);
+  await W(1800); await p.mouse.move(5, 5); await W(300); await S('org', ['.folders']);
   fs.writeFileSync(`${OUT}/shots/rects.json`, JSON.stringify(R));
   await c.close();
 }
