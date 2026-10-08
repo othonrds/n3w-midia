@@ -1,0 +1,21 @@
+:root{--bg:#0f1524;--ink:#141824;--mut:#5f6675;--gold:#f2b63c;--line:#e7e9ee;--ok:#1f9d55}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);background:#f6f7f9;line-height:1.5}
+.w{max-width:560px;margin:0 auto;padding:0 16px}
+header{background:var(--bg);color:#fff}.top{padding:14px 0;font-weight:700}.top a{color:#fff;text-decoration:none}
+.c{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin:16px 0}
+h1{font-size:24px;line-height:1.2;margin:18px 0 6px}h2{font-size:18px;margin:0 0 10px}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 4px}
+input{width:100%;font-size:16px;padding:13px 12px;border:1px solid #cfd3db;border-radius:10px;background:#fff}
+.btn{display:block;width:100%;border:0;background:var(--gold);color:#141824;font-weight:800;font-size:18px;padding:16px;border-radius:12px;cursor:pointer;margin-top:16px;text-align:center;text-decoration:none}
+.btn[disabled]{opacity:.55;cursor:wait}.btn.sec{background:#eef0f4;font-size:16px;padding:13px}
+.mut{color:var(--mut);font-size:14px}.err{color:#b42318;font-weight:600;min-height:1.2em;margin-top:10px}
+.resumo{display:flex;justify-content:space-between;align-items:center;font-weight:700}.resumo .v{font-size:22px}
+.pix img{display:block;width:230px;height:230px;margin:6px auto;image-rendering:pixelated}
+.cod{font-family:ui-monospace,monospace;font-size:12px;word-break:break-all;background:#f3f4f7;border-radius:8px;padding:10px;max-height:84px;overflow:auto}
+.esp{display:flex;align-items:center;gap:10px;margin-top:14px;font-weight:600}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--gold);animation:p 1.2s infinite}@keyframes p{50%{opacity:.25}}
+.ok{color:var(--ok);font-weight:800}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.chips label{margin:0;font-weight:500;border:1px solid #cfd3db;border-radius:999px;padding:8px 12px;cursor:pointer;font-size:14px}
+.chips input{display:none}.chips label:has(input:checked){background:var(--ink);color:#fff;border-color:var(--ink)}
+.hide{display:none}
