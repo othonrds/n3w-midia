@@ -18,6 +18,9 @@
 window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
+<!-- Hotjar (site 6792148) -->
+<script>(function(h,o,t,j,a,r){h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};h._hjSettings={hjid:6792148,hjsv:6};a=o.getElementsByTagName('head')[0];r=o.createElement('script');r.async=1;r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;a.appendChild(r);})(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');</script>
+<script>window.hj&&hj('event','lp_'+(window.AERO_LP||'A'))</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -388,7 +391,7 @@ var CHECKOUT_KIT = "https://payt.site/mNCDMaK";
 var CHECKOUT_PLANO = "https://payt.site/wGCBDlp";
 // repassa as UTMs do anúncio e marca a versão da página (utm_term=lp-a / lp-b) para ler na Payt
 function q(){var p=new URLSearchParams(location.search);p.delete('lp');p.set('utm_term','lp-'+(window.AERO_LP||'A').toLowerCase());return '?'+p.toString()}
-function tr(n,d){try{d=d||{};d.lp=window.AERO_LP;window.va('event',{name:n,data:d})}catch(e){}}
+function tr(n,d){try{window.hj&&hj('event',n);}catch(e){}try{d=d||{};d.lp=window.AERO_LP;window.va('event',{name:n,data:d})}catch(e){}}
 tr('lp_view');
 if(CHECKOUT_KIT){document.querySelectorAll('#cta-kit').forEach(function(a){a.href=CHECKOUT_KIT+q()})}
 function ic(){try{if(window.fbq)fbq('track','InitiateCheckout')}catch(e){}tr('checkout_click',{produto:this.id==='cta-plano'?'plano289':'kit67'})}
