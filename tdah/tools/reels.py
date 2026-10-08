@@ -50,6 +50,41 @@ elif MODE == 'asmr':
              (15.0, 'Did you catch it?', 'Did you catch it?'),
              (16.4, None, 'Play free.')]
     VOICE, RATE, CALM, FLIPS = 'en-US-AvaNeural', '-14%', True, [14.5]
+elif MODE in ('mib2', 'after2'):
+    base = MODE[:-1]
+    if base == 'mib':
+        HEAD = ('ADHD FOCUS TEST', 'STARE AT THE GREEN DOT', MINT)
+        SEGS = [('mib', 13.5, None), ('game2', 5.0, 'flip-3.2'), ('end', 2.6, None)]
+        LINES = [(0.2, 'Stare at the green dot.', 'Stare at the green dot.'),
+                 (2.6, "Don't look away.", "Don't look away."),
+                 (5.0, 'Keep staring...', 'Keep staring.'),
+                 (8.0, 'Did the yellow dots vanish?', 'Did the yellow dots just vanish?'),
+                 (11.0, 'Your brain hid them from you.', 'Your brain hid them from you.'),
+                 (13.6, 'Now try this one. The rule flips.', 'Now try this one. Watch, the rule flips.'),
+                 (18.6, None, 'Free. Sixty seconds.')]
+        FLIPS = [13.5, 16.7]
+    else:
+        HEAD = ('TRY NOT TO LOOK AWAY', 'STARE AT THE BLACK DOT', PINK)
+        SEGS = [('stare', 10.0, None), ('blank', 5.0, None), ('game2', 5.5, 'flip-3.5'), ('end', 2.6, None)]
+        LINES = [(0.2, 'Stare at the black dot. 10 seconds.', 'Stare at the black dot for ten seconds.'),
+                 (3.8, "Don't look away.", "Don't look away."),
+                 (7.0, 'Almost there...', 'Almost there.'),
+                 (10.1, 'Now... what color do you see?', 'Now. What color do you see?'),
+                 (13.2, 'GREEN. Green means GO.', 'Green. Green means go.'),
+                 (15.1, 'Tap the green... until the rule flips.', 'In the ADHD focus game, you tap the green, until the rule flips.'),
+                 (20.7, None, 'Play free.')]
+        FLIPS = [10.0, 18.5]
+    VOICE, RATE, CALM = 'en-US-AndrewNeural', '-3%', True
+elif MODE == 'tests':
+    HEAD = ('4 FOCUS TESTS', 'HOW MANY CAN YOU PASS?', YEL)
+    SEGS = [('stroop', 4.8, None), ('odd', 4.6, None), ('count', 4.4, None), ('game2', 6.2, 'flip-3.6'), ('end', 2.6, None)]
+    LINES = [(0.1, 'TEST 1: Say the COLOR, not the word.', 'Test one. Say the color, not the word.'),
+             (4.9, 'TEST 2: Find the Q.', 'Test two. Find the Q.'),
+             (9.5, 'TEST 3: How many GREEN dots?', 'Test three. How many green dots?'),
+             (12.6, 'Seven.', 'Seven.'),
+             (13.9, 'TEST 4: Tap green. The rule will flip.', 'Test four. The ADHD focus game. Tap the green, the rule will flip.'),
+             (20.2, None, 'Play free.')]
+    VOICE, RATE, CALM, FLIPS = 'en-US-AndrewNeural', '+4%', False, [4.8, 9.4, 13.8, 17.6]
 else:
     sys.exit('modo?')
 TOTAL = sum(s[1] for s in SEGS)
@@ -166,6 +201,63 @@ def frame_blank(t):
     d.ellipse([CX - 9, CY - 9, CX + 9, CY + 9], fill=(0, 0, 0))
     return img
 
+
+# ---- testes de foco (originais, genericos) ----
+import random as _r
+COLS = {'RED': (255, 70, 90), 'GREEN': (62, 230, 150), 'BLUE': (80, 140, 255), 'YELLOW': (255, 214, 60)}
+_r.seed(11)
+STROOP = []
+for i in range(9):
+    w = _r.choice(list(COLS)); c = _r.choice([k for k in COLS if k != w]); STROOP.append((w, c))
+def bar(d, frac, col):
+    d.rounded_rectangle([110, 1150, 610, 1166], 8, fill=(40, 46, 70))
+    d.rounded_rectangle([110, 1150, 110 + int(500 * max(0, frac)), 1166], 8, fill=col)
+def label(img, txt):
+    d = ImageDraw.Draw(img); f = font(30); tw = d.textlength(txt, font=f)
+    d.rounded_rectangle([W - tw - 52, 284, W - 20, 330], 12, fill=YEL); d.text((W - tw - 36, 289), txt, font=f, fill=(10, 14, 34))
+def frame_stroop(t):
+    img = Image.new('RGB', (W, H), (12, 16, 36)); d = ImageDraw.Draw(img); f = font(70)
+    n = min(9, 1 + int(t / 0.35))
+    for i in range(n):
+        w, c = STROOP[i]; x = 70 + (i % 3) * 200; y = 400 + (i // 3) * 140
+        tw = d.textlength(w, font=fit(d, w, 70, 190)); d.text((x + (190 - tw) / 2, y), w, font=fit(d, w, 70, 190), fill=COLS[c])
+    bar(d, 1 - t / 4.8, YEL); label(img, 'TEST 1/4'); return img
+_r.seed(5); ODD = (_r.randrange(9), _r.randrange(10))
+def frame_odd(t):
+    img = Image.new('RGB', (W, H), (12, 16, 36)); d = ImageDraw.Draw(img); f = font(54)
+    for gx in range(9):
+        for gy in range(10):
+            ch = 'Q' if (gx, gy) == ODD else 'O'; x = 52 + gx * 70; y = 350 + gy * 66
+            d.text((x, y), ch, font=f, fill=(230, 234, 255))
+    if t > 3.6:
+        x = 52 + ODD[0] * 70 + 20; y = 350 + ODD[1] * 66 + 30
+        d.ellipse([x - 40, y - 40, x + 40, y + 40], outline=YEL, width=7)
+    bar(d, 1 - t / 3.6, YEL); label(img, 'TEST 2/4'); return img
+_r.seed(9); DOTS = [(_r.randint(90, 630), _r.randint(380, 1050), i < 7) for i in range(16)]
+def frame_count(t):
+    img = Image.new('RGB', (W, H), (12, 16, 36)); d = ImageDraw.Draw(img)
+    if t < 1.3:
+        for x, y, g in DOTS:
+            d.ellipse([x - 30, y - 30, x + 30, y + 30], fill=MINT if g else PINK)
+    elif t < 3.0:
+        f = font(160); d.text((W / 2 - d.textlength('?', font=f) / 2, 560), '?', font=f, fill=WHITE)
+    else:
+        f = font(200); d.text((W / 2 - d.textlength('7', font=f) / 2, 520), '7', font=f, fill=MINT)
+    label(img, 'TEST 3/4'); return img
+
+def find_flip(path):
+    p = subprocess.run(['ffmpeg', '-v', 'error', '-i', path, '-vf', 'fps=4,scale=72:128,format=rgb24', '-f', 'rawvideo', '-'],
+                       capture_output=True).stdout
+    fr = 72 * 128 * 3; n = len(p) // fr
+    for i in range(n):
+        a = np.frombuffer(p[i * fr:(i + 1) * fr], np.uint8).reshape(-1, 3).astype(int)
+        if i / 4 > 8 and (a.max(1) - a.min(1)).mean() < 8: return i / 4
+    return 28.0
+def zoom(img, z):
+    if z <= 1.001: return img
+    w2, h2 = int(W / z), int(H / z); x0, y0 = (W - w2) // 2, (H - h2) // 2
+    return img.crop((x0, y0, x0 + w2, y0 + h2)).resize((W, H), Image.BILINEAR)
+
 # ---- video do jogo / cartao final ----
 def reader(path, start, dur, vf):
     p = subprocess.Popen(['ffmpeg', '-v', 'error', '-ss', str(start), '-t', str(dur), '-i', path,
@@ -182,9 +274,21 @@ enc = subprocess.Popen(['ffmpeg', '-v', 'error', '-y', '-f', 'rawvideo', '-pix_f
 t0 = 0.0
 for kind, dur, extra in SEGS:
     nfr = int(round(dur * FPS))
-    if kind in ('mib', 'stare', 'blank'):
-        fn = {'mib': frame_mib, 'stare': frame_stare, 'blank': frame_blank}[kind]
+    if kind in ('mib', 'stare', 'blank', 'stroop', 'odd', 'count'):
+        fn = {'mib': frame_mib, 'stare': frame_stare, 'blank': frame_blank,
+              'stroop': frame_stroop, 'odd': frame_odd, 'count': frame_count}[kind]
         frames = (fn(i / FPS) for i in range(nfr))
+    elif kind == 'game2':
+        st = extra
+        if isinstance(st, str) and st.startswith('flip'):
+            st = max(0.0, find_flip('gp3.mp4') + float(st[4:]))
+        flip_rel = find_flip('gp3.mp4') - st
+        def gen2(st=st, fr_=flip_rel):
+            for k, im in enumerate(reader('gp3.mp4', st, dur, 'scale=720:1280')):
+                tt = k / FPS; z = 1.0 + 0.06 * tt / max(dur, 0.1)
+                if abs(tt - fr_) < 0.35: z += 0.12 * (1 - abs(tt - fr_) / 0.35)
+                yield zoom(im, z)
+        frames = gen2()
     elif kind == 'game':
         frames = reader('raw.mp4', extra, dur, 'crop=1080:1920:0:209,scale=720:1280')
     else:
@@ -194,7 +298,7 @@ for kind, dur, extra in SEGS:
         t = t0 + i / FPS
         if kind != 'end':
             header(img)
-            caption(img, cap_at(t), 900 if kind != 'game' else 980)
+            caption(img, cap_at(t), 900 if kind not in ('game', 'game2') else 980)
             footer(img)
         enc.stdin.write(img.tobytes())
     t0 += dur
