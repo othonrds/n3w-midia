@@ -75,7 +75,7 @@ const ADS = [
   { id: 'C02', angulo: 'carreira-quiz', hook: 'Would you make a good lawyer?', html: () =>
     `${soft(A.C03_escritorio)}<div class="hook" style="top:96px">Would you make a <em>good lawyer?</em></div>
      <div class="sub" style="top:330px">Solve your first case in Sunset Bay.</div>
-     ${phone('case', -40, 440, 1080, -3)}${zoom('case', '.answers', 140, 900, 880)}<img class="pose" src="${A.P03_advogada}" style="left:-10px;top:760px;height:520px">${foot('Take the case →')}` },
+     ${phone('case', -40, 440, 1080, -3)}${zoom('case', '.answers', 100, 920, 880)}${foot('Take the case →')}` },
   { id: 'C03', angulo: 'identidade', hook: 'Which one are you?', html: () =>
     `<div class="bg" style="background:linear-gradient(160deg,#ffe3f1,#f1e6ff)"></div>
      <div class="hook" style="top:90px;text-align:center">Which one <em>are you?</em></div>
