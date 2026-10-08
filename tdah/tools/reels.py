@@ -19,7 +19,7 @@ MINT, PINK, YEL, WHITE = (62, 240, 195), (255, 92, 122), (255, 216, 77), (255, 2
 # seg: (tipo, duracao, extra)   linhas: (t, texto_tela, fala)
 if MODE == 'mib':
     HEAD = ('ADHD FOCUS TEST', 'STARE AT THE GREEN DOT', MINT)
-    SEGS = [('mib', 14.5, None), ('game', 3.5, 13.0), ('end', 2.6, None)]
+    SEGS = [('mib', 14.5, None), ('game', 3.5, 9.6), ('end', 2.6, None)]
     LINES = [(0.2, 'Stare at the green dot.', 'Stare at the green dot.'),
              (2.6, "Don't look away.", "Don't look away."),
              (5.0, 'Keep staring...', 'Keep staring.'),
@@ -30,7 +30,7 @@ if MODE == 'mib':
     VOICE, RATE, CALM, FLIPS = 'en-US-AndrewNeural', '-4%', True, [14.5]
 elif MODE == 'after':
     HEAD = ('TRY NOT TO LOOK AWAY', 'STARE AT THE BLACK DOT', PINK)
-    SEGS = [('stare', 10.0, None), ('blank', 5.5, None), ('game', 5.0, 13.0), ('end', 2.6, None)]
+    SEGS = [('stare', 10.0, None), ('blank', 5.5, None), ('game', 5.0, 9.4), ('end', 2.6, None)]
     LINES = [(0.2, 'Stare at the black dot. 10 seconds.', 'Stare at the black dot for ten seconds.'),
              (3.8, "Don't look away.", "Don't look away."),
              (7.0, 'Almost there...', 'Almost there.'),
@@ -41,15 +41,15 @@ elif MODE == 'after':
     VOICE, RATE, CALM, FLIPS = 'en-US-AndrewNeural', '-2%', True, [10.0]
 elif MODE == 'asmr':
     HEAD = ('ADHD FOCUS TEST', 'ASMR EDITION', MINT)
-    SEGS = [('game', 15.0, 19.0), ('end', 2.6, None)]
+    SEGS = [('game', 15.5, 16.0), ('end', 2.6, None)]
     LINES = [(0.2, "Let's see if this works on you...", "Let's see if this works on you."),
-             (2.8, 'Only tap the green ones.', 'Only tap the green ones.'),
-             (5.6, "Don't touch the red.", "Don't touch the red."),
-             (8.0, 'Good... keep going.', 'Good. Keep going.'),
-             (11.0, 'Now the rule flips.', 'Now. The rule flips.'),
-             (13.4, 'Did you catch it?', 'Did you catch it?'),
-             (15.2, None, 'The ADHD focus game. Free.')]
-    VOICE, RATE, CALM, FLIPS = 'en-US-AvaNeural', '-14%', True, [11.5]
+             (2.4, 'Only tap the green ones.', 'Only tap the green ones.'),
+             (5.0, "Don't touch the red.", "Don't touch the red."),
+             (9.0, 'Good... keep going.', 'Good. Keep going.'),
+             (13.3, 'Now the rule flips.', 'Now. The rule flips.'),
+             (15.0, 'Did you catch it?', 'Did you catch it?'),
+             (16.4, None, 'Play free.')]
+    VOICE, RATE, CALM, FLIPS = 'en-US-AvaNeural', '-14%', True, [14.5]
 else:
     sys.exit('modo?')
 TOTAL = sum(s[1] for s in SEGS)
