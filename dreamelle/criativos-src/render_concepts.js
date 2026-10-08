@@ -18,9 +18,9 @@ body{width:1080px;height:1350px;overflow:hidden;font-family:Nunito,sans-serif;co
 .dark .hook{color:#fff}.dark .sub{color:#ffd9ec}.dark .fine{color:rgba(255,255,255,.65)}
 .sub{position:absolute;left:72px;right:72px;top:318px;font-weight:800;font-size:38px;line-height:1.25;color:#6b3f68}
 .tag{position:absolute;left:72px;top:40px;padding:10px 22px;border-radius:999px;background:linear-gradient(90deg,#a98bf5,#ff5fa8);color:#fff;font-weight:900;font-size:24px;letter-spacing:2px}
-.phone{position:absolute;left:-30px;top:440px;background:#1d1220;border-radius:58px;padding:20px;box-shadow:0 40px 80px rgba(120,30,90,.35),inset 0 0 0 3px #3a2a3e;transform:rotate(-2deg)}
-.scr{width:1100px;height:508px;border-radius:40px;overflow:hidden;position:relative;background-size:cover;background-position:center}
-.isl{position:absolute;left:30px;top:50%;width:14px;height:90px;margin-top:-45px;border-radius:8px;background:#000;z-index:5}
+.phone{position:absolute;left:40px;top:420px;border-radius:46px;border:8px solid #fff;box-shadow:0 0 0 6px #ff8cc4,0 40px 80px rgba(120,30,90,.35)}
+.scr{width:984px;height:720px;border-radius:38px;overflow:hidden;position:relative;background-size:cover;background-position:center}
+.isl{display:none}
 .ui{position:absolute;font-family:Fredoka,sans-serif;font-weight:600}
 .chip{background:rgba(255,255,255,.94);border-radius:26px;box-shadow:0 8px 20px rgba(80,20,70,.25);color:#4a2547}
 .btnp{background:linear-gradient(180deg,#ff8cc4,#ff4f9e);color:#fff;border-radius:30px;box-shadow:0 8px 0 #d43c86,0 14px 24px rgba(120,30,90,.35)}
@@ -39,20 +39,20 @@ const tap = (x, y) => `<div style="position:absolute;left:${x}px;top:${y}px;widt
 
 const ADS = [
   { id: 'K1A', c: 'style', angulo: 'estilo-escolha', hook: 'Champagne or rose? <em>Pick her look.</em>', html: () =>
-    shell('style', 'Champagne or rose? <em>Pick her look.</em>', 'Style her for the biggest night in Sunset Bay.', two('A · Champagne', 'B · Rose') + tap(620, 410)) },
+    shell('style', 'Champagne or rose? <em>Pick her look.</em>', 'Style her for the biggest night in Sunset Bay.', two('A · Champagne', 'B · Rose') + tap(700, 590)) },
   { id: 'K1B', c: 'style', angulo: 'estilo-desafio', hook: 'Dress her for the gala in 30 seconds.', html: () =>
     shell('style', 'Dress her for the gala in <em>30 seconds.</em>', 'Gowns, shoes, jewelry. The clock is on.',
       `<div class="ui chip" style="right:26px;top:22px;padding:10px 24px;font-size:34px">⏱ 0:30</div>` + two('Gown', 'Shoes')) },
   { id: 'K2A', c: 'date', angulo: 'romance-escolha', hook: 'Rooftop date. Who does she choose?', html: () =>
-    shell('date', 'Rooftop date. <em>Who does she choose?</em>', 'Your choices write her love story.', two('💙 Ethan', '🤍 Leo') + tap(640, 410)) },
+    shell('date', 'Rooftop date. <em>Who does she choose?</em>', 'Your choices write her love story.', two('💙 Ethan', '🤍 Leo') + tap(600, 590)) },
   { id: 'K2B', c: 'date', angulo: 'romance-drama', hook: 'Two dates. One sunset. Your call.', html: () =>
     shell('date', 'Two dates. One sunset. <em>Your call.</em>', 'Romance, drama and surprises in Sunset Bay.',
       `<div class="ui chip" style="left:50%;transform:translateX(-50%);bottom:26px;padding:14px 30px;font-size:30px;max-width:900px;text-align:center">“So… who are you having dinner with tonight?”</div>`) },
   { id: 'K3A', c: 'home', angulo: 'casa-antes-depois', hook: 'From empty to dream apartment.', html: () =>
     shell('home', 'From empty to <em>dream apartment.</em>', 'Decorate her seaside home room by room.',
       `<div class="ui chip" style="left:30px;top:22px;padding:10px 22px;font-size:30px">BEFORE</div><div class="ui btnp" style="right:30px;top:22px;padding:10px 22px;font-size:30px">AFTER ✨</div>`) },
-  { id: 'K3B', c: 'home', angulo: 'casa-design', hook: 'Design her dream home by the sea.', html: () =>
-    shell('home', 'Design her <em>dream home</em> by the sea.', 'Sofas, lights, flowers. Every room is yours.',
+  { id: 'K3B', c: 'home', angulo: 'casa-design', hook: 'Design her dream home.', html: () =>
+    shell('home', 'Design her <em>dream home.</em>', 'Sofas, lights, flowers. Every room is yours.',
       `<div class="ui chip" style="left:50%;transform:translateX(-50%);bottom:26px;padding:12px 28px;font-size:30px;width:620px"><div style="display:flex;justify-content:space-between"><span>Living room</span><span>3/8 rooms</span></div><div style="height:14px;border-radius:7px;background:#f3d8e8;margin-top:8px"><div style="width:38%;height:100%;border-radius:7px;background:linear-gradient(90deg,#ff8cc4,#ff4f9e)"></div></div></div>`) },
   { id: 'K4A', c: 'influencer', angulo: 'fama-numero', hook: '0 to 1M followers. Can you?', html: () =>
     shell('influencer', '0 to 1M followers. <em>Can you?</em>', 'Post, pick trends, go viral in Sunset Bay.',
@@ -69,7 +69,7 @@ const ADS = [
     shell('spa', 'Spa night. <em>Pure satisfaction.</em>', 'A calm, cozy routine, one step at a time.',
       `<div class="ui" style="left:0;right:0;bottom:26px;display:flex;justify-content:center;gap:18px">${['Cleanse ✓', 'Mask ✓', 'Glow'].map((t, i) => `<div class="ui ${i === 2 ? 'btnp' : 'chip'}" style="position:static;padding:12px 26px;font-size:30px">${t}</div>`).join('')}</div>`) },
   { id: 'K6B', c: 'spa', angulo: 'spa-relax', hook: 'Your 5 most relaxing minutes today.', html: () =>
-    shell('spa', 'Your 5 most relaxing <em>minutes today.</em>', 'Candles, bubbles, rose mask. Breathe.', tap(560, 300)) },
+    shell('spa', 'Your 5 most relaxing <em>minutes today.</em>', 'Candles, bubbles, rose mask. Breathe.', tap(520, 330)) },
 ];
 
 (async () => {
