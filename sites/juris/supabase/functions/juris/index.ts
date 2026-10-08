@@ -1,5 +1,5 @@
 // Juris Páginas — backend único (Supabase Edge Function "juris", verify_jwt=false).
-// Ações (POST JSON {acao,...}): rascunho, midia, pedido, status, painel, salvar.
+// Ações (POST JSON {acao,...}): saude, rascunho, midia, pedido, status, painel, salvar.
 // Segredos: SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY (automáticos) e MP_ACCESS_TOKEN (Edge Functions → Secrets).
 // Sem MP_ACCESS_TOKEN a função roda em MODO TESTE: gera um Pix de mentira e aceita "simular pagamento".
 
@@ -59,7 +59,7 @@ function limpaDados(d: any) {
   };
 }
 function slugBase(nome: string) {
-  let s = nome.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/^(dr|dra)\.?\s+/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 50);
+  let s = nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/^(dr|dra)\.?\s+/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 50);
   if (s.length < 3 || RESERVADOS.has(s)) s = (s || "adv") + "-adv";
   return s;
 }
@@ -111,6 +111,11 @@ async function confirma(pd: any) {
 
 async function acao(b: any) {
   switch (b.acao) {
+    case "saude": { // diz se o Pix real está ligado, sem expor o token
+      if (TESTE) return out(200, { modo: "teste", mp: "sem token" });
+      const r = await mp("/users/me");
+      return out(200, { modo: "real", mp: r.ok ? "token válido" : "token recusado (" + r.status + ")", conta: r.ok ? (r.body?.site_id || null) : null });
+    }
     case "rascunho": {
       const dados = limpaDados(b.dados);
       if (b.id && b.token) {
@@ -146,7 +151,7 @@ async function acao(b: any) {
       const email = txt(b.email, 120).toLowerCase(), whats = txt(b.whats, 20).replace(/\D/g, ""), nome = txt(b.nome || pag.dados?.nome, 80);
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return out(400, { erro: "Confira o e-mail" });
       if (whats.length < 10) return out(400, { erro: "WhatsApp com DDD" });
-      const bump = !!b.bump, valor = +(PRECO + (bump ? PRECO_FOTOS : 0)).toFixed(2);
+      const bump = false /* bump de fotos desligado em 08/10: produto de fotos parado */, valor = +(PRECO + (bump ? PRECO_FOTOS : 0)).toFixed(2);
       const ref = "JP" + rnd(5).toUpperCase(), token = rnd(16);
       let orderId = "TESTE-" + ref, qr = "00020126580014BR.GOV.BCB.PIX0136modo-teste-jurispaginas-" + ref, qr64: string | null = null;
       if (!TESTE) {
