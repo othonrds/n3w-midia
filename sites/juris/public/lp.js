@@ -53,6 +53,8 @@ export const CSS = `
 .lp h2{font:700 clamp(22px,3.6cqi,30px)/1.2 "Playfair Display",Georgia,serif;margin:0 0 18px;color:var(--p);text-wrap:balance}
 .lp .lead{font-size:16px;opacity:.85;margin:0 0 22px;max-width:52ch}
 .lp .photo{aspect-ratio:4/5;width:100%;border-radius:10px;background:var(--soft);overflow:hidden;display:grid;place-items:center;color:#8a8f98;font-size:12px;text-align:center}
+.lp .photo .mono{font:700 clamp(48px,12cqi,96px)/1 "Playfair Display",Georgia,serif;color:#fff}
+.lp .photo:has(.mono){background:var(--p)}
 .lp .photo img{width:100%;height:100%;object-fit:cover;display:block}
 .lp section{padding:44px 6%}
 .lp .soft{background:var(--soft)}
@@ -86,7 +88,7 @@ export function renderLP(d, { previa = false, fotoVazia = "Sua foto aqui" } = {}
   const zap = String(d.zap||"").replace(/\D/g,"");
   const wa = zap ? `https://wa.me/55${zap}?text=${encodeURIComponent("Olá, vim pelo site e gostaria de agendar uma consulta.")}` : "#";
   const logo = d.logo ? `<img src="${esc(d.logo)}" alt="Logo ${esc(nome)}">` : `<span class="mark">${esc(iniciais(nome))}</span>`;
-  const foto = d.foto ? `<img src="${esc(d.foto)}" alt="${esc(nome)}" loading="eager">` : `<span>${esc(fotoVazia)}</span>`;
+  const foto = d.foto ? `<img src="${esc(d.foto)}" alt="${esc(nome)}" loading="eager">` : previa ? `<span>${esc(fotoVazia)}</span>` : `<span class="mono">${esc(iniciais(nome))}</span>`;
   const local = t.online ? "Atendimento online" : [d.cidade, d.uf].filter(Boolean).map(esc).join("/");
   const oab = `OAB/${esc(d.uf||"UF")} ${esc(d.oab||"")}`;
   const insta = d.insta ? String(d.insta).replace(/^@/,"") : "";
