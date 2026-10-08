@@ -84,5 +84,22 @@ Deno.serve(async (req) => {
     return json(req, { founder: !!hit });
   }
 
+  // Analytics: POST /e  {d:device, v:version, exp:{}, src:{}, ev:[{n,p,t}]}  (sendBeacon-friendly, text/plain ok)
+  if (path === "/e" && req.method === "POST") {
+    let b: any = {};
+    try { b = JSON.parse(await req.text()); } catch { return new Response(null, { status: 204, headers: cors(req) }); }
+    const device = cleanDevice(b.d);
+    const evs = Array.isArray(b.ev) ? b.ev.slice(0, 40) : [];
+    if (!device || !evs.length) return new Response(null, { status: 204, headers: cors(req) });
+    const small = (o: unknown, max = 1500) => { try { const t = JSON.stringify(o ?? {}); return t.length <= max && typeof o === "object" ? o : {}; } catch { return {}; } };
+    const exp = small(b.exp, 600), src = small(b.src, 800), v = String(b.v || "").slice(0, 12);
+    const rows = evs.filter((e: any) => e && typeof e.n === "string" && /^[a-z0-9_]{2,40}$/.test(e.n)).map((e: any) => ({
+      device, name: e.n, props: small(e.p), exp, src, v,
+      created_at: typeof e.t === "number" && Math.abs(Date.now() - e.t) < 864e5 ? new Date(e.t).toISOString() : new Date().toISOString(),
+    }));
+    if (rows.length) await db.from("dreamelle_events").insert(rows);
+    return new Response(null, { status: 204, headers: cors(req) });
+  }
+
   return json(req, { ok: true, service: "dreamelle" });
 });
