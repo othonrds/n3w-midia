@@ -1,5 +1,5 @@
 // Juris Páginas — app (gerador, personalização, checkout Pix e painel do cliente).
-import { AREAS, UFS, PALS, CSS, renderLP, slugDe, esc, areaCurta } from "./lp.js";
+import { AREAS, UFS, PALS, TPLS, CSS, renderLP, slugDe, esc, areaCurta } from "./lp.js";
 
 const FN = "https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/juris";
 const PRECO = 39.9;
@@ -10,6 +10,7 @@ const ls = { get(k){ try { return JSON.parse(localStorage.getItem(k) || "null");
 const ev = (...a) => { try { window.ev && window.ev(...a); } catch {} };
 
 $("#lpcss").textContent = CSS;
+$("#tpls").innerHTML = TPLS.map(t => `<button type="button" data-t="${t[0]}" class="${t[0] === "classico" ? "on" : ""}">${t[3] !== "base" ? `<i>${t[3] === "viral" ? "Viral" : "Top"}</i>` : ""}${t[1]}<small>${t[2]}</small></button>`).join("");
 $("#fArea").innerHTML = Object.entries(AREAS).map(([k, v]) => `<option value="${k}">${v.n}</option>`).join("");
 $("#fUf").innerHTML = UFS.map(u => `<option${u === "CE" ? " selected" : ""}>${u}</option>`).join("");
 $("#pal").innerHTML = PALS.map((p, i) => `<button type="button" data-i="${i}" class="${i ? "" : "on"}" style="background:linear-gradient(135deg,${p[0]} 50%,${p[1]} 50%)" aria-label="Paleta ${i + 1}"></button>`).join("");
@@ -26,13 +27,13 @@ async function api(body) {
 const v = id => $(id).value.trim();
 function dados() {
   return { nome: v("#fNome"), genero: v("#fGen"), area: v("#fArea"), cidade: v("#fCidade"), uf: v("#fUf"), oab: v("#fOab"), anos: v("#fAnos"), zap: v("#fZap"), atend: v("#fAtend"),
-    tpl: st.tpl, p: st.p, a: st.a, h1: v("#tH1"), sub: v("#tSub"), bio: v("#tBio"), end: v("#tEnd"), email: v("#tEmail"), insta: v("#tInsta"), foto: st.foto, logo: st.logo };
+    tpl: st.tpl, p: st.p, a: st.a, h1: v("#tH1"), sub: v("#tSub"), bio: v("#tBio"), end: v("#tEnd"), email: v("#tEmail"), insta: v("#tInsta"), escritorio: v("#tEscr"), foto: st.foto, logo: st.logo };
 }
 function preenche(d) {
   const set = (id, x) => { $(id).value = x || ""; };
   set("#fNome", d.nome); $("#fGen").value = d.genero || "a"; $("#fArea").value = d.area || "familia"; set("#fCidade", d.cidade); $("#fUf").value = d.uf || "CE";
   set("#fOab", d.oab); set("#fAnos", d.anos); set("#fZap", d.zap); $("#fAtend").value = d.atend || "Presencial e online";
-  set("#tH1", d.h1); set("#tSub", d.sub); set("#tBio", d.bio); set("#tEnd", d.end); set("#tEmail", d.email); set("#tInsta", d.insta);
+  set("#tH1", d.h1); set("#tSub", d.sub); set("#tBio", d.bio); set("#tEnd", d.end); set("#tEmail", d.email); set("#tInsta", d.insta); set("#tEscr", d.escritorio);
   st.tpl = d.tpl || "classico"; st.p = d.p || PALS[0][0]; st.a = d.a || PALS[0][1]; st.foto = d.foto || null; st.logo = d.logo || null; st.fotoLocal = st.logoLocal = null;
   $("#cP").value = st.p;
   $$("#tpls button").forEach(x => x.classList.toggle("on", x.dataset.t === st.tpl));
@@ -48,7 +49,7 @@ const urlPainel = (ref, t) => new URL(`./?ref=${ref}&t=${t}`, location.href).hre
 
 function render() {
   const d = dados();
-  const r = renderLP({ ...d, foto: st.fotoLocal || d.foto, logo: st.logoLocal || d.logo }, { previa: !PAINEL, fotoVazia: PAINEL ? "Envie sua foto em Visual" : "Sua foto aqui (envie em Personalizar)" });
+  const r = renderLP({ ...d, foto: st.fotoLocal || d.foto, logo: st.logoLocal || d.logo }, { previa: !PAINEL, app: true, fotoVazia: PAINEL ? "Envie sua foto em Visual" : "Sua foto aqui (envie em Personalizar)" });
   const lp = $("#lp"); lp.className = r.cls; lp.style.cssText = r.style; lp.innerHTML = r.html;
   const pg = PAINEL && st.painel && st.painel.atual !== "novo" ? st.painel.paginas[st.painel.atual] : null;
   $("#url").textContent = "jurispaginas.com/" + (pg?.slug || slugDe(d.nome) || "seu-nome");
@@ -100,7 +101,13 @@ $$(".tabs button").forEach(b => b.onclick = () => {
   $$(".tabs button").forEach(x => x.classList.toggle("on", x === b));
   ["vis", "txt", "dados", "base"].forEach(t => $("#tab-" + t).hidden = t !== b.dataset.tab);
 });
-$("#tpls").onclick = e => { const b = e.target.closest("button"); if (!b) return; st.tpl = b.dataset.t; $$("#tpls button").forEach(x => x.classList.toggle("on", x === b)); render(); agendaSalvar(); };
+$("#tpls").onclick = e => {
+  const b = e.target.closest("button"); if (!b) return; st.tpl = b.dataset.t; $$("#tpls button").forEach(x => x.classList.toggle("on", x === b));
+  // Cada modelo vem com a paleta sugerida, a menos que a pessoa já tenha escolhido uma cor própria.
+  const padrao = [...PALS, ...TPLS.map(t => t[4])].some(q => q[0] === st.p && q[1] === st.a), sug = TPLS.find(t => t[0] === st.tpl)?.[4];
+  if (padrao && sug) { st.p = sug[0]; st.a = sug[1]; $("#cP").value = sug[0]; $$("#pal button").forEach(x => x.classList.toggle("on", PALS[x.dataset.i][0] === st.p && PALS[x.dataset.i][1] === st.a)); }
+  render(); agendaSalvar();
+};
 $("#pal").onclick = e => { const b = e.target.closest("button"); if (!b) return; const p = PALS[b.dataset.i]; st.p = p[0]; st.a = p[1]; $("#cP").value = p[0]; $$("#pal button").forEach(x => x.classList.toggle("on", x === b)); render(); agendaSalvar(); };
 $("#cP").oninput = e => { st.p = e.target.value; render(); agendaSalvar(); };
 

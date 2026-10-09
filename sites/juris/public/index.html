@@ -50,8 +50,9 @@ textarea{resize:vertical}
 .swatches{display:flex;gap:8px;flex-wrap:wrap}
 .swatches button{width:32px;height:32px;border-radius:50%;border:2px solid var(--surface);outline:1px solid var(--line);cursor:pointer}
 .swatches button.on{outline:2px solid var(--ink)}
-.tpls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.tpls button{font:600 13px var(--body);padding:11px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);cursor:pointer}
+.tpls{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
+.tpls button small{display:block;font-weight:400;font-size:11px;opacity:.7;margin-top:2px}.tpls button i{font-style:normal;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:2px}
+.tpls button{text-align:left;font:600 13px var(--body);padding:10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);cursor:pointer}
 .tpls button.on{border-color:var(--accent);background:var(--accent-soft)}
 .check{font-size:13px;display:grid;gap:4px;background:var(--accent-soft);border-radius:6px;padding:10px 12px}
 .check b{font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--accent)}
@@ -177,8 +178,7 @@ footer.app a{color:inherit}
           <button data-tab="base" type="button" id="tabBase" hidden>Dados</button>
         </div>
         <div id="tab-vis" style="display:grid;gap:14px">
-          <div style="display:grid;gap:5px"><b style="font-size:13px">Modelo</b><div class="tpls" id="tpls">
-            <button type="button" data-t="classico" class="on">Clássico</button><button type="button" data-t="moderno">Moderno</button><button type="button" data-t="minimal">Minimal</button></div></div>
+          <div style="display:grid;gap:5px"><b style="font-size:13px">Modelo</b><div class="tpls" id="tpls"></div></div>
           <div style="display:grid;gap:5px"><b style="font-size:13px">Paleta</b><div class="swatches" id="pal"></div></div>
           <label for="cP">Cor principal <small>ou a do seu escritório</small><input type="color" id="cP" value="#1B2A41" style="height:44px;padding:4px"></label>
           <label for="upFoto">Sua foto profissional
@@ -194,6 +194,7 @@ footer.app a{color:inherit}
           <p class="note">Deixe em branco para usar o texto padrão da sua área. Evite prometer resultado e citar valores de honorários: a OAB proíbe.</p>
         </div>
         <div id="tab-dados" hidden style="display:grid;gap:14px">
+          <label for="tEscr">Nome do escritório <small>opcional</small><input id="tEscr" placeholder="Ex.: Souza Advocacia"></label>
           <label for="tEnd">Endereço do escritório <small>opcional</small><input id="tEnd" placeholder="Rua, número, sala, bairro"></label>
           <label for="tEmail">E-mail de contato <small>opcional</small><input id="tEmail" type="email" placeholder="contato@seuescritorio.adv.br"></label>
           <label for="tInsta">Instagram <small>opcional</small><input id="tInsta" placeholder="@seuperfil"></label>

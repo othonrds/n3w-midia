@@ -10,7 +10,7 @@ const TESTE = !MP;
 const PRECO = 39.9, PRECO_FOTOS = 29.9, CREDITOS = 3;
 const SITE = "https://jurispaginas.com";
 const RESERVADOS = new Set(["api","painel","p","termos","privacidade","index","www","admin","fotos","assets","lp","app","entrar","login","ajuda","blog","static","public","favicon","robots","sitemap"]);
-const AREAS = ["familia","trabalhista","previdenciario","criminal","consumidor","imobiliario","tributario","empresarial"];
+const AREAS = ["familia","trabalhista","previdenciario","criminal","consumidor","imobiliario","tributario","bancario","empresarial"];
 const UFS = "AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".split(" ");
 
 const cors = {
@@ -51,10 +51,10 @@ function limpaDados(d: any) {
     cidade: txt(d.cidade, 60), uf: UFS.includes(d.uf) ? d.uf : "SP",
     oab: txt(d.oab, 20), anos: txt(d.anos, 3), zap: txt(d.zap, 20),
     atend: ["Presencial e online", "Somente online, todo o Brasil", "Somente presencial"].includes(d.atend) ? d.atend : "Presencial e online",
-    tpl: ["classico", "moderno", "minimal"].includes(d.tpl) ? d.tpl : "classico",
+    tpl: ["classico", "moderno", "minimal", "bio", "hub", "impacto", "editorial"].includes(d.tpl) ? d.tpl : "classico",
     p: hex(d.p, "#1B2A41"), a: hex(d.a, "#C9A227"),
     h1: txt(d.h1, 160), sub: longo(d.sub, 400), bio: longo(d.bio, 900),
-    end: txt(d.end, 160), email: txt(d.email, 120), insta: txt(d.insta, 60),
+    end: txt(d.end, 160), email: txt(d.email, 120), insta: txt(d.insta, 60), escritorio: txt(d.escritorio, 80),
     foto: nossaMidia(d.foto), logo: nossaMidia(d.logo),
   };
 }
