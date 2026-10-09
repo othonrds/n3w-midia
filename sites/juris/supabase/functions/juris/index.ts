@@ -48,6 +48,7 @@ function limpaDados(d: any) {
     nome: txt(d.nome, 80) || "Seu Nome",
     genero: d.genero === "o" ? "o" : "a",
     area: AREAS.includes(d.area) ? d.area : "familia",
+    tese: /^[a-z0-9-]{1,30}$/.test(String(d.tese || "")) ? String(d.tese) : "",
     cidade: txt(d.cidade, 60), uf: UFS.includes(d.uf) ? d.uf : "SP",
     oab: txt(d.oab, 20), anos: txt(d.anos, 3), zap: txt(d.zap, 20),
     atend: ["Presencial e online", "Somente online, todo o Brasil", "Somente presencial"].includes(d.atend) ? d.atend : "Presencial e online",

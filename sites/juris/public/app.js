@@ -1,5 +1,5 @@
 // Juris Páginas — app (gerador, personalização, checkout Pix e painel do cliente).
-import { AREAS, UFS, PALS, TPLS, CSS, renderLP, slugDe, esc, areaCurta } from "./lp.js";
+import { AREAS, TESES, UFS, PALS, TPLS, CSS, renderLP, slugDe, esc, areaCurta } from "./lp.js";
 
 const FN = "https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/juris";
 const PRECO = 39.9;
@@ -12,6 +12,10 @@ const ev = (...a) => { try { window.ev && window.ev(...a); } catch {} };
 $("#lpcss").textContent = CSS;
 $("#tpls").innerHTML = TPLS.map(t => `<button type="button" data-t="${t[0]}" class="${t[0] === "classico" ? "on" : ""}">${t[3] !== "base" ? `<i>${t[3] === "viral" ? "Viral" : "Top"}</i>` : ""}${t[1]}<small>${t[2]}</small></button>`).join("");
 $("#fArea").innerHTML = Object.entries(AREAS).map(([k, v]) => `<option value="${k}">${v.n}</option>`).join("");
+const teses = (keep) => { const l = TESES[$("#fArea").value] || []; $("#lTese").hidden = !l.length;
+  $("#fTese").innerHTML = `<option value="">Área completa</option>` + l.map(t => `<option value="${t.id}">${t.n}</option>`).join("");
+  if (keep && l.some(t => t.id === keep)) $("#fTese").value = keep; };
+$("#fArea").addEventListener("change", () => teses()); teses();
 $("#fUf").innerHTML = UFS.map(u => `<option${u === "CE" ? " selected" : ""}>${u}</option>`).join("");
 $("#pal").innerHTML = PALS.map((p, i) => `<button type="button" data-i="${i}" class="${i ? "" : "on"}" style="background:linear-gradient(135deg,${p[0]} 50%,${p[1]} 50%)" aria-label="Paleta ${i + 1}"></button>`).join("");
 
@@ -26,12 +30,12 @@ async function api(body) {
 }
 const v = id => $(id).value.trim();
 function dados() {
-  return { nome: v("#fNome"), genero: v("#fGen"), area: v("#fArea"), cidade: v("#fCidade"), uf: v("#fUf"), oab: v("#fOab"), anos: v("#fAnos"), zap: v("#fZap"), atend: v("#fAtend"),
+  return { nome: v("#fNome"), genero: v("#fGen"), area: v("#fArea"), tese: v("#fTese"), cidade: v("#fCidade"), uf: v("#fUf"), oab: v("#fOab"), anos: v("#fAnos"), zap: v("#fZap"), atend: v("#fAtend"),
     tpl: st.tpl, p: st.p, a: st.a, h1: v("#tH1"), sub: v("#tSub"), bio: v("#tBio"), end: v("#tEnd"), email: v("#tEmail"), insta: v("#tInsta"), escritorio: v("#tEscr"), foto: st.foto, logo: st.logo };
 }
 function preenche(d) {
   const set = (id, x) => { $(id).value = x || ""; };
-  set("#fNome", d.nome); $("#fGen").value = d.genero || "a"; $("#fArea").value = d.area || "familia"; set("#fCidade", d.cidade); $("#fUf").value = d.uf || "CE";
+  set("#fNome", d.nome); $("#fGen").value = d.genero || "a"; $("#fArea").value = d.area || "familia"; teses(d.tese); set("#fCidade", d.cidade); $("#fUf").value = d.uf || "CE";
   set("#fOab", d.oab); set("#fAnos", d.anos); set("#fZap", d.zap); $("#fAtend").value = d.atend || "Presencial e online";
   set("#tH1", d.h1); set("#tSub", d.sub); set("#tBio", d.bio); set("#tEnd", d.end); set("#tEmail", d.email); set("#tInsta", d.insta); set("#tEscr", d.escritorio);
   st.tpl = d.tpl || "classico"; st.p = d.p || PALS[0][0]; st.a = d.a || PALS[0][1]; st.foto = d.foto || null; st.logo = d.logo || null; st.fotoLocal = st.logoLocal = null;
@@ -96,7 +100,7 @@ $("#back").onclick = () => setStep(2);
 $("#goPub2").onclick = () => abrirCheckout();
 $("#goPub").onclick = () => PAINEL ? salvarPainel() : abrirCheckout();
 
-["#fNome","#fGen","#fArea","#fCidade","#fUf","#fOab","#fAnos","#fZap","#fAtend","#tH1","#tSub","#tBio","#tEnd","#tEmail","#tInsta"].forEach(i => $(i).addEventListener("input", () => { render(); agendaSalvar(); }));
+["#fNome","#fGen","#fArea","#fTese","#fCidade","#fUf","#fOab","#fAnos","#fZap","#fAtend","#tH1","#tSub","#tBio","#tEnd","#tEmail","#tInsta"].forEach(i => $(i).addEventListener("input", () => { render(); agendaSalvar(); }));
 $$(".tabs button").forEach(b => b.onclick = () => {
   $$(".tabs button").forEach(x => x.classList.toggle("on", x === b));
   ["vis", "txt", "dados", "base"].forEach(t => $("#tab-" + t).hidden = t !== b.dataset.tab);
@@ -255,7 +259,12 @@ if (PAINEL) iniciaPainel();
 else {
   const r = ls.get("jp_rasc");
   if (r?.id) { st.id = r.id; st.token = r.token; preenche(r.dados || {}); setStep(2); }
-  else setStep(1);
+  else {
+    // Link de anúncio pode chegar com ?area=&tese=&tpl= para abrir o gerador já no tema do criativo.
+    if (AREAS[q.get("area")]) { $("#fArea").value = q.get("area"); teses(q.get("tese")); }
+    const tq = TPLS.find(t => t[0] === q.get("tpl")); if (tq) { st.tpl = tq[0]; st.p = tq[4][0]; st.a = tq[4][1]; $("#cP").value = st.p; $$("#tpls button").forEach(x => x.classList.toggle("on", x.dataset.t === st.tpl)); }
+    setStep(1);
+  }
   const pd = ls.get("jp_pedido");
   if (pd?.ref) api({ acao: "status", ref: pd.ref, id: pd.id }).then(s => { if (s.pago) sucesso(s); }).catch(() => {});
 }
