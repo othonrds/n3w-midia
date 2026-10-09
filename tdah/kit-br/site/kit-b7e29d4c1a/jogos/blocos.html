@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><meta name="robots" content="noindex">
+<title>Blocos · Kit Foco</title><link rel="stylesheet" href="../jogo.css">
+<style>
+canvas{display:block;margin:0 auto;height:min(56vh,460px);width:auto;background:#141831;border:1px solid var(--line);border-radius:12px;touch-action:none;max-height:58vh}
+#pad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 20px}
+#pad button{border:0;background:#262b4a;color:var(--ink);font:800 24px system-ui,sans-serif;padding:16px 0;border-radius:12px;touch-action:manipulation}
+</style></head>
+<body><div class="w">
+<div class="top"><a href="../index.html">‹ Kit</a><div class="hud"><span>Linhas <b id="l">0</b></span><span>★ <b id="s">0</b></span></div></div>
+<div id="intro" class="screen">
+  <h1>Blocos</h1>
+  <div class="rules">Encaixe as peças para completar linhas. Use os botões: ◀ ▶ mover, ⟳ girar, ▼ descer. Uma pausa leve entre tarefas.</div>
+  <p class="mute">Recorde: <b id="rec">–</b></p>
+  <button class="btn" id="go">Começar</button>
+</div>
+<div id="game" class="hidden"><canvas id="c" width="200" height="400"></canvas>
+<div id="pad"><button data-a="l">◀</button><button data-a="r">▶</button><button data-a="rot">⟳</button><button data-a="d">▼</button></div></div>
+<div id="end" class="screen hidden">
+  <h1>Fim!</h1><div class="big" id="final"></div><p class="mute" id="endmsg"></p>
+  <button class="btn" id="again">Jogar de novo</button><a class="btn sec" href="../index.html" style="text-decoration:none">Voltar ao kit</a>
+</div>
+</div>
+<script src="../jogo.js"></script>
+<script>
+var W=10,H=20,S=20,ctx=KF.$('#c').getContext('2d'),board,piece,score,lines,loop,running;
+var P=[[[1,1,1,1]],[[1,1],[1,1]],[[0,1,0],[1,1,1]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]],[[1,1,0],[0,1,1]],[[0,1,1],[1,1,0]]];
+var COL=['#3498db','#f1c40f','#9b59b6','#e67e22','#2ecc71','#e74c3c','#1abc9c'];
+KF.$('#rec').textContent=KF.best('blocos')??'–';
+function newPiece(){var i=Math.floor(Math.random()*7);return{m:P[i].map(function(r){return r.slice()}),c:i+1,x:3,y:0};}
+function fits(m,x,y){for(var r=0;r<m.length;r++)for(var c=0;c<m[r].length;c++)if(m[r][c]){var X=x+c,Y=y+r;if(X<0||X>=W||Y>=H||(Y>=0&&board[Y][X]))return false;}return true;}
+function rot(m){return m[0].map(function(_,c){return m.map(function(r){return r[c]}).reverse()});}
+function merge(){piece.m.forEach(function(r,ry){r.forEach(function(v,rx){if(v&&piece.y+ry>=0)board[piece.y+ry][piece.x+rx]=piece.c;})});
+  var n=0;for(var y=H-1;y>=0;y--){if(board[y].every(Boolean)){board.splice(y,1);board.unshift(Array(W).fill(0));n++;y++;}}
+  if(n){lines+=n;score+=[0,100,300,500,800][n];KF.$('#l').textContent=lines;KF.$('#s').textContent=score;}
+  piece=newPiece();if(!fits(piece.m,piece.x,piece.y))end();}
+function drop(){if(!running)return;if(fits(piece.m,piece.x,piece.y+1))piece.y++;else merge();draw();}
+function draw(){ctx.fillStyle='#141831';ctx.fillRect(0,0,200,400);
+  function cell(x,y,c){ctx.fillStyle=COL[c-1];ctx.fillRect(x*S+1,y*S+1,S-2,S-2);}
+  board.forEach(function(r,y){r.forEach(function(v,x){if(v)cell(x,y,v)})});
+  piece.m.forEach(function(r,ry){r.forEach(function(v,rx){if(v)cell(piece.x+rx,piece.y+ry,piece.c)})});}
+function act(a){if(!running)return;if(a==='l'&&fits(piece.m,piece.x-1,piece.y))piece.x--;
+  if(a==='r'&&fits(piece.m,piece.x+1,piece.y))piece.x++;
+  if(a==='d')drop();
+  if(a==='rot'){var m=rot(piece.m);if(fits(m,piece.x,piece.y))piece.m=m;else if(fits(m,piece.x-1,piece.y)){piece.m=m;piece.x--;}else if(fits(m,piece.x+1,piece.y)){piece.m=m;piece.x++;}}
+  draw();}
+document.querySelectorAll('#pad button').forEach(function(b){b.onpointerdown=function(e){e.preventDefault();act(b.dataset.a)}});
+document.addEventListener('keydown',function(e){var k={ArrowLeft:'l',ArrowRight:'r',ArrowUp:'rot',ArrowDown:'d'}[e.key];if(k){e.preventDefault();act(k)}});
+function start(){board=Array.from({length:H},function(){return Array(W).fill(0)});piece=newPiece();score=0;lines=0;running=true;
+  KF.$('#l').textContent=0;KF.$('#s').textContent=0;
+  KF.$('#intro').classList.add('hidden');KF.$('#end').classList.add('hidden');KF.$('#game').classList.remove('hidden');
+  draw();clearInterval(loop);loop=setInterval(function(){drop()},Math.max(180,600));
+  var speedUp=setInterval(function(){if(!running)return clearInterval(speedUp);clearInterval(loop);loop=setInterval(drop,Math.max(180,600-lines*15));},5000);}
+function end(){running=false;clearInterval(loop);KF.$('#game').classList.add('hidden');KF.$('#end').classList.remove('hidden');KF.$('#final').textContent=score;
+  var nb=KF.best('blocos',score);KF.$('#endmsg').textContent=nb?'Novo recorde!':'Recorde: '+KF.best('blocos');KF.$('#rec').textContent=KF.best('blocos');}
+KF.$('#go').onclick=start;KF.$('#again').onclick=start;
+</script></body></html>
