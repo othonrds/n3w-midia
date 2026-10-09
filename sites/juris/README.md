@@ -15,5 +15,11 @@ Variável opcional: `META_PIXEL_ID`.
 `MP_ACCESS_TOKEN` vai em Supabase → Edge Functions → Secrets (não na Vercel). Sem ele, o site roda em MODO TESTE (Pix simulado, botão "Simular pagamento"). Com ele, o modo teste some sozinho.
 A mesma conta Mercado Pago do fotos: o bump de fotos cria um pedido em `fotos_pedidos` com a mesma ref, e a página fotos.jurispaginas.com/pedido.html confere o pagamento por ela (precisa da tabela `fotos_pedidos`, SQL em sites/fotos/supabase).
 
+Webhook do Mercado Pago (Suas integrações → Webhooks, evento "Order"): `https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/juris?fonte=mp`. Confirma o pedido e publica as páginas mesmo se o cliente pagar no app do banco e não voltar ao site.
+
+## Purchase no servidor (Meta Conversions API)
+Quando o Pix é confirmado (webhook ou tela de pagamento), a função envia `Purchase` para o pixel 982748768192003 com `event_id` = ref do pedido (o mesmo `eventID` do pixel no navegador, então a Meta deduplica). Vai com e-mail e telefone em SHA-256, `_fbp`/`_fbc`, IP e navegador gravados no pedido. Envia uma vez só por pedido (`capi_sent_at`).
+Segredos da função: `JURIS_CAPI_TOKEN` (token do pixel; se faltar, usa `META_CAPI_TOKEN`), opcional `META_TEST_EVENT_CODE` (só durante o teste: com ele os eventos vão para a aba Test Events e não contam como venda). SQL das colunas: `supabase/002_juris_pedidos_capi.sql`.
+
 ## Painel do cliente
 Link privado `/?ref=JP…&t=…` mostrado depois do pagamento (sem senha na v1). Cria as páginas 2 e 3 e edita tudo.
