@@ -2,7 +2,13 @@
 import { AREAS, TESES, UFS, PALS, TPLS, CSS, renderLP, slugDe, esc, areaCurta } from "./lp.js";
 
 const FN = "https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/juris";
-const PRECO = 39.9;
+const PRECO = 39.9; // oferta de teste (anúncios F1/F2)
+// Oferta v2: pacotes. Abre com ?oferta=v2 e fica lembrada no navegador; ?oferta=v1 volta ao teste. Preços também estão no servidor.
+const PACOTES = [
+  { id: "p1", n: "Essencial", pg: 1, preco: 97, itens: ["1 página completa", "Todos os modelos e teses", "12 meses de hospedagem"] },
+  { id: "p3", n: "Profissional", pg: 3, preco: 199, top: true, itens: ["3 páginas completas (ex.: área + 2 teses)", "Todos os modelos e teses", "12 meses de hospedagem"] },
+  { id: "p10", n: "Escritório", pg: 10, preco: 397, itens: ["10 páginas (todas as teses que você atende)", "Domínio próprio configurado por nós", "12 meses de hospedagem"] },
+];
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const q = new URLSearchParams(location.search);
 const brl = n => "R$ " + Number(n).toFixed(2).replace(".", ",");
@@ -16,10 +22,18 @@ const teses = (keep) => { const l = TESES[$("#fArea").value] || []; $("#lTese").
   $("#fTese").innerHTML = `<option value="">Área completa</option>` + l.map(t => `<option value="${t.id}">${t.n}</option>`).join("");
   if (keep && l.some(t => t.id === keep)) $("#fTese").value = keep; };
 $("#fArea").addEventListener("change", () => teses()); teses();
+// Seções de venda: teses e tabela de pacotes
+$("#teses").innerHTML = Object.entries(TESES).map(([k, l]) => `<div><b>${AREAS[k].n}</b>${l.map(t => `<span>${t.n}</span>`).join("")}</div>`).join("");
+$("#precos").innerHTML = PACOTES.map(p => `<div class="preco${p.top ? " top" : ""}">${p.top ? '<span class="selo">Mais escolhido</span>' : ""}<h3>${p.n}</h3><div class="v">${brl(p.preco).replace(",00", "")}<small>pagamento único</small></div>
+  <ul>${p.itens.map(i => `<li>${i}</li>`).join("")}<li>Sem marca d'água e botão de WhatsApp</li><li>Edições ilimitadas</li></ul><a class="btn${p.top ? "" : " ghost"}" href="#formGen" data-pac="${p.id}">Gerar a minha grátis</a></div>`).join("");
+$("#precos").onclick = e => { const a = e.target.closest("[data-pac]"); if (a) st.pacote = a.dataset.pac; };
+$$('a[href="#formGen"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); if (st.step === 1) { $("#formGen").scrollIntoView({ behavior: "smooth", block: "start" }); setTimeout(() => $("#fNome").focus({ preventScroll: true }), 400); } else $("#steps").scrollIntoView({ behavior: "smooth", block: "start" }); }));
 $("#fUf").innerHTML = UFS.map(u => `<option${u === "CE" ? " selected" : ""}>${u}</option>`).join("");
 $("#pal").innerHTML = PALS.map((p, i) => `<button type="button" data-i="${i}" class="${i ? "" : "on"}" style="background:linear-gradient(135deg,${p[0]} 50%,${p[1]} 50%)" aria-label="Paleta ${i + 1}"></button>`).join("");
 
 const st = { step: 1, view: 1, tpl: "classico", p: PALS[0][0], a: PALS[0][1], foto: null, logo: null, fotoLocal: null, logoLocal: null, id: null, token: null, painel: null, teste: false };
+const V2 = (() => { const o = q.get("oferta"); if (o === "v2") { ls.set("jp_oferta", "v2"); return true; } if (o === "v1") { ls.del("jp_oferta"); return false; } return ls.get("jp_oferta") === "v2"; })();
+document.body.classList.toggle("v2", V2);
 const PAINEL = q.get("ref") && q.get("t") ? { ref: q.get("ref"), t: q.get("t") } : null;
 
 async function api(body) {
@@ -151,20 +165,28 @@ function abre(html, fechavel = true) { sheet.innerHTML = (fechavel ? `<button cl
 let poll = null;
 
 function abrirCheckout() {
-  setStep(4); ev("InitiateCheckout", { value: PRECO, currency: "BRL" });
   const nome = v("#fNome") || "Seu Nome", slug = slugDe(nome) || "seu-nome";
-  abre(`<h3>Publique sua página</h3>
-  <div class="offer">
+  if (!st.pacote) st.pacote = "p3";
+  const pac = () => V2 ? PACOTES.find(p => p.id === st.pacote) : { pg: 3, preco: PRECO };
+  setStep(4); ev("InitiateCheckout", { value: pac().preco, currency: "BRL" });
+  const oferta = V2 ? `<div class="pacs" id="pacs">${PACOTES.map(p => `<label class="pac${p.top ? " top" : ""}"><input type="radio" name="pac" value="${p.id}"${p.id === st.pacote ? " checked" : ""}>
+      <span class="pn">${p.top ? "<i>Mais escolhido</i>" : ""}<b>${p.n}</b><span>${p.itens.join(" · ")}</span></span><span class="pp">${brl(p.preco)}</span></label>`).join("")}</div>
+    <p class="note">Pagamento único no Pix. Todos incluem: sem marca d'água, botão direto para o seu WhatsApp, painel para editar quando quiser e endereço <b>jurispaginas.com/${esc(slug)}</b>.</p>`
+    : `<div class="offer">
     <div class="ot"><b>Pacote Juris Páginas</b><span class="pr">${brl(PRECO)}<small>pagamento único</small></span></div>
     <ul><li><b>3 páginas completas</b>: esta e mais 2 (uma para cada área ou serviço)</li><li>No ar em <b>jurispaginas.com/${esc(slug)}</b></li><li>12 meses de hospedagem e edições ilimitadas</li><li>Sem marca d'água · botão direto para o seu WhatsApp</li></ul>
-  </div>
+  </div>`;
+  abre(`<h3>Publique sua página</h3>
+  ${oferta}
   <label for="cEmail">Seu e-mail <small>para o recibo e o acesso ao painel</small><input id="cEmail" type="email" autocomplete="email" inputmode="email" value="${esc(v("#tEmail"))}"></label>
   <label for="cZap">Seu WhatsApp <input id="cZap" inputmode="tel" autocomplete="tel" value="${esc(v("#fZap"))}"></label>
-  <div class="total"><span>Total</span><span id="tot">${brl(PRECO)}</span></div>
+  <div class="total"><span>Total</span><span id="tot"></span></div>
   <p class="err" id="errPay"></p>
-  <button class="btn" type="button" id="pagar">Gerar Pix de ${brl(PRECO)}</button>
-  <p class="note">Pagamento por Pix pelo Mercado Pago. A página vai ao ar assim que o Pix for confirmado, em segundos.</p>`);
-  const tot = () => { $("#tot").textContent = brl(PRECO); $("#pagar").textContent = "Gerar Pix de " + brl(PRECO); };
+  <button class="btn" type="button" id="pagar"></button>
+  <p class="note">Pagamento por Pix pelo Mercado Pago. A página vai ao ar assim que o Pix for confirmado, em segundos.${V2 ? " Garantia de 7 dias: se não gostar, devolvemos o valor." : ""}</p>`);
+  const tot = () => { $("#tot").textContent = brl(pac().preco); $("#pagar").textContent = "Gerar Pix de " + brl(pac().preco); };
+  tot();
+  if (V2) $("#pacs").onchange = e => { st.pacote = e.target.value; tot(); };
   $("#pagar").onclick = async () => {
     const err = $("#errPay"); err.textContent = "";
     const email = v("#cEmail"), whats = v("#cZap");
@@ -173,7 +195,7 @@ function abrirCheckout() {
     const b = $("#pagar"); b.disabled = true; b.textContent = "Gerando Pix…";
     try {
       await salvaRascunho();
-      const j = await api({ acao: "pedido", id: st.id, token: st.token, email, whats, nome: v("#fNome") });
+      const j = await api({ acao: "pedido", id: st.id, token: st.token, email, whats, nome: v("#fNome"), ...(V2 ? { pacote: st.pacote } : {}) });
       ls.set("jp_pedido", { ref: j.ref, id: j.id, valor: j.valor });
       ev("AddPaymentInfo", { value: j.valor, currency: "BRL" });
       telaPix(j);
@@ -199,7 +221,7 @@ function telaPix(j) {
 
 function sucesso(s) {
   ls.del("jp_rasc"); ls.del("jp_pedido");
-  if (!ls.get("jp_px_" + s.ref)) { ev("Purchase", { value: Number(s.valor), currency: "BRL", content_name: "juris-3-paginas" }, s.ref); ls.set("jp_px_" + s.ref, 1); }
+  if (!ls.get("jp_px_" + s.ref)) { ev("Purchase", { value: Number(s.valor), currency: "BRL", content_name: "juris-" + (s.creditos || 3) + "-paginas" }, s.ref); ls.set("jp_px_" + s.ref, 1); }
   const pg = (s.paginas || []).find(p => p.slug) || {};
   const link = pg.slug ? urlPagina(pg.slug) : "";
   const painel = urlPainel(s.ref, s.token);
@@ -207,7 +229,7 @@ function sucesso(s) {
   $$("#steps li").forEach(li => li.className = "done");
   abre(`<h3>Sua página está no ar ✓</h3>
   ${link ? `<div class="live">${esc(link.replace(/^https?:\/\//, ""))}</div><a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Ver minha página</a>` : ""}
-  <div class="box"><b>Seu painel: guarde este link</b><p class="note">É por ele que você edita esta página e cria as outras 2 do seu pacote. Ele também vai no recibo.</p>
+  <div class="box"><b>Seu painel: guarde este link</b><p class="note">É por ele que você edita esta página${(s.creditos || 3) > 1 ? ` e cria as outras ${(s.creditos || 3) - 1} do seu pacote` : ""}. Ele também vai no recibo.</p>
     <a class="btn ghost" href="${esc(painel)}">Abrir meu painel</a>
     <a class="btn ghost" href="https://wa.me/?text=${encodeURIComponent("Meu painel do Juris Páginas: " + painel)}" target="_blank" rel="noopener">Enviar o link para o meu WhatsApp</a></div>
   ${s.fotos ? `<div class="box"><b>Suas 3 fotos profissionais</b><p class="note">Envie uma selfie e escolha os estilos. As fotos ficam prontas em até 12 horas e você troca a foto da página pelo painel.</p><a class="btn" href="${esc(s.fotos)}" target="_blank" rel="noopener">Enviar minha selfie</a></div>` : ""}`, true);
@@ -255,7 +277,7 @@ async function salvarPainel() {
 }
 
 /* ---------- início ---------- */
-if (PAINEL) iniciaPainel();
+if (PAINEL) { $("#vendas").hidden = true; iniciaPainel(); }
 else {
   const r = ls.get("jp_rasc");
   if (r?.id) { st.id = r.id; st.token = r.token; preenche(r.dados || {}); setStep(2); }
