@@ -1,0 +1,86 @@
+name: Dreamelle app (Android + iOS)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dreamelle/app/**'
+      - 'dreamelle/game/index.html'
+      - 'dreamelle/game/assets.json'
+      - '.github/workflows/dreamelle-app.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dreamelle-app
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: dreamelle/app
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '21' }
+      - name: Install
+        run: npm ci
+      - name: Bundle the game offline (www/)
+        run: npm run build:www
+      - name: App icon + splash
+        run: |
+          mkdir -p assets
+          curl -fsSL -o assets/icon-only.png https://d2ol7oe51mr4n9.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/c8dd10a7-1443-4225-bb7e-7dc94e6d56c2.png
+          npx --yes @capacitor/assets@3 generate --android --iconBackgroundColor '#ffd9ec' --splashBackgroundColor '#ffd9ec' || echo "icon generation skipped"
+      - name: Sync native project
+        run: npx cap sync android
+      - name: Build debug APK
+        working-directory: dreamelle/app/android
+        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+      - name: Publish APK to the "dreamelle-app-latest" release
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp dreamelle/app/android/app/build/outputs/apk/debug/app-debug.apk Dreamelle-debug.apk
+          gh release view dreamelle-app-latest >/dev/null 2>&1 || gh release create dreamelle-app-latest --title "Dreamelle app (test builds)" --notes "Automatic test builds of the Dreamelle native app. Not for store submission." --prerelease
+          gh release upload dreamelle-app-latest Dreamelle-debug.apk --clobber
+
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Install
+        run: npm ci
+      - name: Bundle the game offline (www/)
+        run: npm run build:www
+      - name: App icon + splash
+        run: |
+          mkdir -p assets
+          curl -fsSL -o assets/icon-only.png https://d2ol7oe51mr4n9.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/c8dd10a7-1443-4225-bb7e-7dc94e6d56c2.png
+          npx --yes @capacitor/assets@3 generate --ios --iconBackgroundColor '#ffd9ec' --splashBackgroundColor '#ffd9ec' || echo "icon generation skipped"
+      - name: Sync native project
+        run: npx cap sync ios
+      - name: Build for the iOS Simulator (compile check, unsigned)
+        working-directory: dreamelle/app/ios/App
+        run: |
+          xcodebuild -project App.xcodeproj -scheme App -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO build | tail -40
+      - name: Publish simulator build
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd dreamelle/app/ios/App/build/Build/Products/Debug-iphonesimulator && zip -qr "$GITHUB_WORKSPACE/Dreamelle-iOS-simulator.zip" App.app && cd "$GITHUB_WORKSPACE"
+          gh release view dreamelle-app-latest >/dev/null 2>&1 || gh release create dreamelle-app-latest --title "Dreamelle app (test builds)" --notes "Automatic test builds of the Dreamelle native app. Not for store submission." --prerelease
+          gh release upload dreamelle-app-latest Dreamelle-iOS-simulator.zip --clobber

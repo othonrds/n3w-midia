@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Dreamelle</string>
+    <string name="title_activity_main">Dreamelle</string>
+    <string name="package_name">app.dreamelle.game</string>
+    <string name="custom_url_scheme">app.dreamelle.game</string>
+</resources>

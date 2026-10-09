@@ -1,0 +1,22 @@
+{
+  "name": "dreamelle-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dreamelle native shell (iOS + Android) — the web game bundled offline",
+  "scripts": {
+    "build:www": "node scripts/build-www.mjs",
+    "sync": "npm run build:www && npx cap sync"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.0",
+    "@capacitor/core": "^7.4.0",
+    "@capacitor/haptics": "^7.0.0",
+    "@capacitor/ios": "^7.4.0",
+    "@capacitor/screen-orientation": "^7.0.0",
+    "@capacitor/splash-screen": "^7.0.0",
+    "@capacitor/status-bar": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.0"
+  }
+}
