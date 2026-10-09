@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><meta name="robots" content="noindex">
+<title>Separa-Cores · Kit Foco</title><link rel="stylesheet" href="../jogo.css">
+<style>
+#tubes{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:24px 0;touch-action:manipulation}
+.tube{width:46px;height:176px;border:3px solid #6b7199;border-top:0;border-radius:0 0 24px 24px;display:flex;flex-direction:column-reverse;overflow:hidden;padding:2px;cursor:pointer;transition:transform .12s}
+.tube.sel{transform:translateY(-14px);border-color:var(--acc)}
+.tube i{display:block;height:42px;flex:none}
+.tube i:first-child{border-radius:0 0 20px 20px}
+#msg{text-align:center;font-weight:800;min-height:26px}
+</style></head>
+<body><div class="w">
+<div class="top"><a href="../index.html">‹ Kit</a><div class="hud"><span>Fase <b id="lv">1</b></span><span>Jogadas <b id="mv">0</b></span></div></div>
+<p class="mute center" style="margin:0">Toque num tubo e depois em outro para despejar. Só dá para despejar em cima da mesma cor ou num tubo vazio. Deixe cada tubo com uma cor só.</p>
+<div id="tubes"></div><div id="msg"></div>
+<p class="center"><button class="btn sec" id="undo">Desfazer</button> <button class="btn sec" id="reset">Reiniciar fase</button></p>
+</div>
+<script src="../jogo.js"></script>
+<script>
+var PAL=['#e74c3c','#3498db','#2ecc71','#f1c40f','#9b59b6','#e67e22','#1abc9c','#ff6fb5'];
+var lv=1,tubes,start,sel=-1,moves,hist;
+try{lv=parseInt(localStorage.getItem('kf_sep_lv'))||1}catch(e){}
+function gen(){var n=Math.min(3+Math.floor((lv-1)/2),8),pool=[];for(var c=0;c<n;c++)for(var k=0;k<4;k++)pool.push(c);
+  var t;do{KF.shuffle(pool);t=[];for(var i=0;i<n;i++)t.push(pool.slice(i*4,i*4+4));}while(t.some(function(x){return x.every(function(v){return v===x[0]})}));
+  t.push([]);t.push([]);return t;}
+function render(){var w=KF.$('#tubes');w.innerHTML='';tubes.forEach(function(t,i){var d=document.createElement('div');d.className='tube'+(i===sel?' sel':'');
+  t.forEach(function(c){var s=document.createElement('i');s.style.background=PAL[c];d.appendChild(s)});
+  d.onclick=function(){tap(i)};w.appendChild(d);});KF.$('#lv').textContent=lv;KF.$('#mv').textContent=moves;}
+function tap(i){if(sel<0){if(tubes[i].length)sel=i;render();return;}
+  if(i===sel){sel=-1;render();return;}
+  var a=tubes[sel],b=tubes[i],top=a[a.length-1];
+  if(b.length<4&&(!b.length||b[b.length-1]===top)){hist.push(JSON.stringify(tubes));
+    while(a.length&&a[a.length-1]===top&&b.length<4)b.push(a.pop());moves++;}
+  else KF.vib(60);
+  sel=-1;render();check();}
+function check(){var ok=tubes.every(function(t){return !t.length||(t.length===4&&t.every(function(v){return v===t[0]}))});
+  if(ok){KF.$('#msg').textContent='Fase '+lv+' concluída!';lv++;try{localStorage.setItem('kf_sep_lv',lv)}catch(e){}setTimeout(newLevel,1100);}}
+function newLevel(){tubes=gen();start=JSON.stringify(tubes);moves=0;hist=[];sel=-1;KF.$('#msg').textContent='';render();}
+KF.$('#undo').onclick=function(){if(hist.length){tubes=JSON.parse(hist.pop());moves++;sel=-1;render();}};
+KF.$('#reset').onclick=function(){tubes=JSON.parse(start);moves=0;hist=[];sel=-1;render();};
+newLevel();
+</script></body></html>

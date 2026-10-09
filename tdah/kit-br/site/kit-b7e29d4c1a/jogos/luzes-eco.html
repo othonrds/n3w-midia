@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><meta name="robots" content="noindex">
+<title>Luzes em Eco · Kit Foco</title><link rel="stylesheet" href="../jogo.css">
+<style>
+#board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:360px;margin:20px auto;touch-action:manipulation}
+#board div{aspect-ratio:1;border-radius:16px;background:#232846;border:1px solid var(--line);transition:background .12s}
+#board div.on{background:var(--acc);box-shadow:0 0 24px rgba(255,210,63,.6)}
+#board div.tap{background:#7ef0c4}
+#msg{text-align:center;font-weight:800;font-size:18px;min-height:28px}
+</style></head>
+<body><div class="w">
+<div class="top"><a href="../index.html">‹ Kit</a><div class="hud"><span>Nível <b id="lv">3</b></span><span>♥ <b id="hp">3</b></span></div></div>
+<div id="intro" class="screen">
+  <h1>Luzes em Eco</h1>
+  <div class="rules">Observe as luzes acenderem e depois toque nos quadrados <b>na mesma ordem</b>. Começa com 3 luzes e aumenta a cada acerto. Você tem 3 vidas.</div>
+  <p class="mute">Recorde: <b id="rec">–</b> luzes</p>
+  <button class="btn" id="go">Começar</button>
+</div>
+<div id="game" class="hidden"><div id="msg"></div><div id="board"></div></div>
+<div id="end" class="screen hidden">
+  <h1>Fim!</h1><div class="big" id="final"></div><p class="mute" id="endmsg"></p>
+  <button class="btn" id="again">Jogar de novo</button><a class="btn sec" href="../index.html" style="text-decoration:none">Voltar ao kit</a>
+</div>
+</div>
+<script src="../jogo.js"></script>
+<script>
+var cells=[],seq=[],pos=0,len=3,hp=3,best=0,input=false;
+KF.$('#rec').textContent=KF.best('eco')??'–';
+for(var i=0;i<9;i++){(function(i){var d=document.createElement('div');d.onpointerdown=function(e){e.preventDefault();press(i)};KF.$('#board').appendChild(d);cells.push(d);})(i);}
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+async function round(){input=false;KF.$('#lv').textContent=len;KF.$('#hp').textContent=hp;KF.$('#msg').textContent='Observe…';
+  seq=[];for(var i=0;i<len;i++){var n;do{n=Math.floor(Math.random()*9)}while(i&&n===seq[i-1]);seq.push(n);}
+  await sleep(700);for(var j=0;j<seq.length;j++){cells[seq[j]].classList.add('on');await sleep(550);cells[seq[j]].classList.remove('on');await sleep(200);}
+  pos=0;input=true;KF.$('#msg').textContent='Sua vez';}
+function press(i){if(!input)return;var c=cells[i];c.classList.add('tap');setTimeout(function(){c.classList.remove('tap')},180);
+  if(i!==seq[pos]){input=false;hp--;KF.vib(120);KF.$('#msg').textContent='Ops!';if(hp<=0)return setTimeout(end,600);return setTimeout(round,900);}
+  pos++;if(pos===seq.length){input=false;best=Math.max(best,len);len++;KF.$('#msg').textContent='Boa!';setTimeout(round,700);}}
+function start(){len=3;hp=3;best=0;KF.$('#intro').classList.add('hidden');KF.$('#end').classList.add('hidden');KF.$('#game').classList.remove('hidden');round();}
+function end(){KF.$('#game').classList.add('hidden');KF.$('#end').classList.remove('hidden');KF.$('#final').textContent=best+' luzes';
+  var nb=KF.best('eco',best);KF.$('#endmsg').textContent=nb?'Novo recorde!':'Recorde: '+KF.best('eco')+' luzes';KF.$('#rec').textContent=KF.best('eco');}
+KF.$('#go').onclick=start;KF.$('#again').onclick=start;
+</script></body></html>
