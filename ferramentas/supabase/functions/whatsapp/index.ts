@@ -3,6 +3,8 @@
 //   GET  /whatsapp                 verificação do webhook (Meta)
 //   POST /whatsapp                 eventos da Meta (mensagens e status), assinatura X-Hub-Signature-256
 //   *    /whatsapp/admin/...       API da inbox (header x-n3w-key)
+// Aprovação de peças (09/10/2026): /admin/aprovacao manda a peça (imagem/vídeo + legenda) com botões
+// Aprovar/Refazer para o número aprovador; a resposta é gravada em wa_aprovacoes sem passar pela IA.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const env = (k: string) => Deno.env.get(k) ?? "";
@@ -24,6 +26,16 @@ async function chave(nome: string, envName: string) {
   return _k.v[nome] ?? "";
 }
 const phoneId = () => chave("phone_number_id", "WA_PHONE_NUMBER_ID");
+
+// ── aprovação de peças ──
+// Único número que pode aprovar (wa_id só com dígitos, como a Meta manda, ex.: 5548999998888).
+const soDigitos = (s: unknown) => String(s ?? "").replace(/\D/g, "");
+const aprovador = async () => soDigitos(await chave("aprovador", "WA_APROVADOR"));
+const TPL_APROVAR_IMAGEM = () => env("WA_TPL_APROVAR") || "peca_nova_aprovar";
+const TPL_APROVAR_VIDEO = () => env("WA_TPL_APROVAR_VIDEO") || "peca_nova_aprovar_video";
+const TPL_LANG = () => env("WA_TPL_LANG") || "pt_BR";
+const JANELA_MS = 24 * 60 * 60 * 1000 - 5 * 60 * 1000; // 24 h com 5 min de folga
+const corta = (s: string, n: number) => (s.length > n ? s.slice(0, n - 1) + "…" : s);
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -109,9 +121,16 @@ async function ingest(m: any, name?: string) {
   else if (type === "sticker") body = "[figurinha]";
   else body = `[${type}]`;
 
+  // id do botão clicado (mensagem interativa) ou payload do botão de template
+  const botao: string = m.interactive?.button_reply?.id ?? m.button?.payload ?? "";
+  const meta: Record<string, unknown> = {};
+  if (m.referral) meta.referral = m.referral;
+  if (botao) meta.botao = botao;
+  if (m.context?.id) meta.context = m.context.id;
+
   const { error } = await db.from("wa_messages").insert({
     wa_id: waId, direction: "in", sender: "cliente", type, body, media_id: mediaId, wamid: m.id,
-    meta: m.referral ? { referral: m.referral } : null,
+    meta: Object.keys(meta).length ? meta : null,
   });
   if (error) return; // duplicado (a Meta reenviou) ou falha: não processa de novo
 
@@ -121,8 +140,147 @@ async function ingest(m: any, name?: string) {
       await db.from("wa_messages").update({ transcript }).eq("wamid", m.id);
     } catch (e) { console.error("transcrição", e); }
   }
+
+  // aprovação de peças: tratada aqui e NUNCA segue para a IA de vendas
+  try {
+    if (await tratarAprovacao(waId, type, botao, transcript ?? body)) return;
+  } catch (e) { console.error("aprovação", e); return; }
+
   if (type === "reaction") return; // reação sozinha não pede resposta
   await respondLater(waId, m.id);
+}
+
+// ───────────────────────── aprovação de peças ─────────────────────────
+// Botões: id/payload "apv:<id da linha em wa_aprovacoes>:ok" ou "apv:<id>:refazer".
+// Devolve true quando a mensagem era da aprovação (e portanto não vai para a IA).
+async function tratarAprovacao(waId: string, type: string, botao: string, texto: string): Promise<boolean> {
+  const quem = await aprovador();
+  const ehAprovador = !!quem && soDigitos(waId) === quem;
+  const clique = /^apv:(\d+):(ok|refazer)$/.exec(botao);
+
+  if (clique) {
+    if (!ehAprovador) { // só o número do Othon aprova; clique de outro número é ignorado
+      console.warn("aprovação: clique de número não autorizado", waId);
+      return true;
+    }
+    const id = Number(clique[1]);
+    const { data: ap } = await db.from("wa_aprovacoes").select("*").eq("id", id).maybeSingle();
+    if (!ap || soDigitos(ap.wa_id) !== quem) {
+      await sendText(waId, "Não achei essa peça na fila de aprovação.", "sistema");
+      return true;
+    }
+    if (ap.status === "aprovado" || ap.status === "refazer") {
+      await sendText(waId, `A peça ${ap.peca} já estava marcada como "${ap.status}". Nada mudou.`, "sistema");
+      return true;
+    }
+    const agora = new Date().toISOString();
+    if (clique[2] === "ok") {
+      await db.from("wa_aprovacoes").update({ status: "aprovado", respondido_em: agora, sincronizado_em: null }).eq("id", id);
+      await sendText(waId, `Aprovada: ${ap.peca} (${ap.projeto}). Vai para o painel.`, "sistema");
+    } else {
+      // só uma peça por vez aguarda motivo: as anteriores ficam como "refazer" sem motivo
+      await db.from("wa_aprovacoes").update({ status: "refazer", respondido_em: agora, sincronizado_em: null })
+        .eq("wa_id", ap.wa_id).eq("status", "aguardando_motivo");
+      await db.from("wa_aprovacoes").update({ status: "aguardando_motivo", respondido_em: agora, sincronizado_em: null }).eq("id", id);
+      await sendText(waId, `Refazer ${ap.peca}: qual o motivo? Responda na próxima mensagem (texto ou áudio).`, "sistema");
+    }
+    return true;
+  }
+
+  if (!ehAprovador) return false;
+
+  // próxima mensagem do Othon depois de "Refazer" = motivo
+  if (type === "text" || type === "audio") {
+    const { data: ap } = await db.from("wa_aprovacoes").select("*").eq("wa_id", waId).eq("status", "aguardando_motivo")
+      .order("respondido_em", { ascending: false }).limit(1).maybeSingle();
+    if (!ap) return false;
+    const motivo = (texto || "").trim() || (type === "audio" ? "[áudio sem transcrição]" : "");
+    await db.from("wa_aprovacoes").update({ status: "refazer", motivo, sincronizado_em: null }).eq("id", ap.id);
+    await sendText(waId, `Anotado. ${ap.peca} volta para refazer com o motivo: "${corta(motivo, 300)}"`, "sistema");
+    return true;
+  }
+  return false;
+}
+
+// legenda padrão: código da peça + projeto + copy
+function legendaPeca(peca: string, projeto: string, copy: string) {
+  return corta(`Peça ${peca} · ${projeto}\n\n${copy || "(sem copy)"}`.trim(), 1000);
+}
+
+async function dentroDaJanela(waId: string) {
+  const { data } = await db.from("wa_contacts").select("last_inbound_at").eq("wa_id", waId).maybeSingle();
+  const t = data?.last_inbound_at ? new Date(data.last_inbound_at).getTime() : 0;
+  return t > 0 && Date.now() - t < JANELA_MS;
+}
+
+// Envia uma peça para aprovação. Dentro da janela de 24 h: 1 mensagem interativa (mídia no cabeçalho +
+// legenda + botões). Fora dela: template utilitário com a mídia no cabeçalho e os mesmos botões.
+async function enviarParaAprovacao(b: any) {
+  const quem = await aprovador();
+  if (!quem) throw new Error("defina o número aprovador (env WA_APROVADOR ou wa_config.chaves.aprovador)");
+  const waId = soDigitos(b.wa_id || quem);
+  if (waId !== quem) throw new Error("só o número aprovador pode receber peças para aprovar");
+  const peca = String(b.peca ?? "").trim(), projeto = String(b.projeto ?? "").trim();
+  const copy = String(b.copy ?? "").trim(), link = String(b.midia_url ?? "").trim();
+  const tipo = b.midia_tipo === "video" || b.midia_tipo === "vídeo" ? "video" : "image";
+  if (!peca || !projeto || !/^https:\/\//.test(link)) throw new Error("obrigatório: peca, projeto, midia_url (https)");
+
+  const { data: ap, error } = await db.from("wa_aprovacoes").insert({
+    wa_id: waId, peca, projeto, copy, midia_url: link, midia_tipo: tipo, evento_id: b.evento_id ?? null, status: "enviando",
+  }).select("id").single();
+  if (error || !ap) throw new Error("wa_aprovacoes: " + (error?.message ?? "insert falhou"));
+
+  const legenda = legendaPeca(peca, projeto, copy);
+  const janela = !b.forcar_template && (await dentroDaJanela(waId));
+  let d: any, via: string;
+  try {
+    if (janela) {
+      via = "interativa";
+      d = await graph(`${await phoneId()}/messages`, {
+        method: "POST",
+        body: JSON.stringify({
+          messaging_product: "whatsapp", recipient_type: "individual", to: waId, type: "interactive",
+          interactive: {
+            type: "button",
+            header: { type: tipo, [tipo]: { link } },
+            body: { text: legenda },
+            footer: { text: "Aprovar ou Refazer?" },
+            action: { buttons: [
+              { type: "reply", reply: { id: `apv:${ap.id}:ok`, title: "Aprovar" } },
+              { type: "reply", reply: { id: `apv:${ap.id}:refazer`, title: "Refazer" } },
+            ] },
+          },
+        }),
+      });
+    } else {
+      via = "template";
+      const param = (s: string, n: number) => ({ type: "text", text: corta(s.replace(/\s*[\r\n\t]+\s*/g, " / ").replace(/ {4,}/g, " ") || "-", n) });
+      d = await graph(`${await phoneId()}/messages`, {
+        method: "POST",
+        body: JSON.stringify({
+          messaging_product: "whatsapp", recipient_type: "individual", to: waId, type: "template",
+          template: {
+            name: tipo === "video" ? TPL_APROVAR_VIDEO() : TPL_APROVAR_IMAGEM(),
+            language: { code: TPL_LANG() },
+            components: [
+              { type: "header", parameters: [{ type: tipo, [tipo]: { link } }] },
+              { type: "body", parameters: [param(peca, 60), param(projeto, 60), param(copy || "(sem copy)", 700)] },
+              { type: "button", sub_type: "quick_reply", index: "0", parameters: [{ type: "payload", payload: `apv:${ap.id}:ok` }] },
+              { type: "button", sub_type: "quick_reply", index: "1", parameters: [{ type: "payload", payload: `apv:${ap.id}:refazer` }] },
+            ],
+          },
+        }),
+      });
+    }
+  } catch (e) {
+    await db.from("wa_aprovacoes").update({ status: "erro", motivo: String(e).slice(0, 500) }).eq("id", ap.id);
+    throw e;
+  }
+  const wamid = d?.messages?.[0]?.id ?? null;
+  await db.from("wa_aprovacoes").update({ status: "enviado", wamid, enviado_em: new Date().toISOString(), via }).eq("id", ap.id);
+  await logOut(waId, "sistema", via === "template" ? "template" : "interactive", legenda, wamid ?? undefined, undefined,
+    { aprovacao_id: ap.id, midia_url: link, midia_tipo: tipo });
+  return { id: ap.id, via, wamid };
 }
 
 // espera o cliente terminar de digitar e responde o bloco inteiro
@@ -272,7 +430,7 @@ async function typing(wamid: string, _kind: "text" | "audio" = "text") {
   } catch (e) { console.error("typing", e); }
 }
 
-async function sendText(waId: string, text: string, sender: "ia" | "humano") {
+async function sendText(waId: string, text: string, sender: "ia" | "humano" | "sistema") {
   const d = await graph(`${await phoneId()}/messages`, {
     method: "POST",
     body: JSON.stringify({ messaging_product: "whatsapp", recipient_type: "individual", to: waId, type: "text", text: { body: text, preview_url: true } }),
@@ -294,8 +452,20 @@ async function sendVoice(waId: string, text: string, voice: any, sender: "ia" | 
   await logOut(waId, sender, "audio", text, d?.messages?.[0]?.id, up.id);
 }
 
-async function logOut(waId: string, sender: string, type: string, body: string, wamid?: string, mediaId?: string) {
-  await db.from("wa_messages").insert({ wa_id: waId, direction: "out", sender, type, body, wamid: wamid ?? null, media_id: mediaId ?? null, status: "sent" });
+// imagem ou vídeo por link público (https); a legenda vai junto (máx. 1024 caracteres na Cloud API)
+async function sendMedia(waId: string, tipo: "image" | "video", link: string, legenda: string, sender: "ia" | "humano" | "sistema") {
+  if (!/^https:\/\//.test(link)) throw new Error("link da mídia precisa ser https");
+  const media: Record<string, string> = { link };
+  if (legenda) media.caption = corta(legenda, 1024);
+  const d = await graph(`${await phoneId()}/messages`, {
+    method: "POST",
+    body: JSON.stringify({ messaging_product: "whatsapp", recipient_type: "individual", to: waId, type: tipo, [tipo]: media }),
+  });
+  await logOut(waId, sender, tipo, legenda, d?.messages?.[0]?.id, undefined, { midia_url: link });
+}
+
+async function logOut(waId: string, sender: string, type: string, body: string, wamid?: string, mediaId?: string, meta?: Record<string, unknown>) {
+  await db.from("wa_messages").insert({ wa_id: waId, direction: "out", sender, type, body, wamid: wamid ?? null, media_id: mediaId ?? null, status: "sent", meta: meta ?? null });
   await db.from("wa_contacts").update({ last_outbound_at: new Date().toISOString() }).eq("wa_id", waId);
 }
 
@@ -340,7 +510,7 @@ async function admin(req: Request, url: URL, path: string) {
     if (path === "/status") {
       const keys = ["WA_TOKEN", "WA_APP_SECRET", "ANTHROPIC_API_KEY", "ELEVENLABS_API_KEY"];
       const { data: cfg } = await db.from("wa_config").select("ai_enabled,model,persona,voice").eq("id", "default").single();
-      return json({ segredos: Object.fromEntries(keys.map((k) => [k, !!env(k)])), phone_number_id: await phoneId(), config: cfg });
+      return json({ segredos: Object.fromEntries(keys.map((k) => [k, !!env(k)])), phone_number_id: await phoneId(), aprovador_definido: !!(await aprovador()), config: cfg });
     }
     if (path === "/conversas") {
       const { data } = await db.from("wa_contacts").select("*").order("last_inbound_at", { ascending: false, nullsFirst: false }).limit(200);
@@ -351,10 +521,29 @@ async function admin(req: Request, url: URL, path: string) {
       return json(data);
     }
     if (path === "/enviar") { // humano assume a conversa
-      if (body.audio) await sendVoice(body.wa_id, body.texto, (await db.from("wa_config").select("voice").eq("id", "default").single()).data?.voice, "humano");
+      // {wa_id, texto?, audio?, imagem?: url, video?: url, legenda?, peca?, projeto?, copy?, manter_ia?}
+      const link = body.imagem || body.video;
+      if (link) {
+        const legenda = body.legenda ?? (body.peca ? legendaPeca(String(body.peca), String(body.projeto ?? ""), String(body.copy ?? body.texto ?? "")) : String(body.texto ?? ""));
+        await sendMedia(body.wa_id, body.video ? "video" : "image", String(link), legenda, "humano");
+      } else if (body.audio) await sendVoice(body.wa_id, body.texto, (await db.from("wa_config").select("voice").eq("id", "default").single()).data?.voice, "humano");
       else await sendText(body.wa_id, body.texto, "humano");
       if (!body.manter_ia) await db.from("wa_contacts").update({ ai_paused: true }).eq("wa_id", body.wa_id);
       return json({ ok: true });
+    }
+    if (path === "/aprovacao") { // {peca, projeto, copy, midia_url, midia_tipo: "imagem"|"video", evento_id?, forcar_template?}
+      return json({ ok: true, ...(await enviarParaAprovacao(body)) });
+    }
+    if (path === "/aprovacoes") { // GET ?pendentes=1 → respostas ainda não gravadas no painel
+      let q = db.from("wa_aprovacoes").select("*").order("id", { ascending: false }).limit(200);
+      if (url.searchParams.get("pendentes")) q = q.in("status", ["aprovado", "refazer"]).is("sincronizado_em", null);
+      const { data } = await q;
+      return json(data);
+    }
+    if (path === "/aprovacoes/sincronizado") { // {ids: [..]} depois de gravar no painel
+      const ids = (body.ids ?? []).map(Number).filter(Boolean);
+      if (ids.length) await db.from("wa_aprovacoes").update({ sincronizado_em: new Date().toISOString() }).in("id", ids);
+      return json({ ok: true, ids });
     }
     if (path === "/ia") { // pausar/retomar IA de um contato ou geral
       if (body.wa_id) await db.from("wa_contacts").update({ ai_paused: !!body.pausar, needs_human: body.pausar ? undefined : false }).eq("wa_id", body.wa_id);
