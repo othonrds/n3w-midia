@@ -14,6 +14,8 @@ const q = new URLSearchParams(location.search);
 const brl = n => "R$ " + Number(n).toFixed(2).replace(".", ",");
 const ls = { get(k){ try { return JSON.parse(localStorage.getItem(k) || "null"); } catch { return null; } }, set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }, del(k){ try { localStorage.removeItem(k); } catch {} } };
 const ev = (...a) => { try { window.ev && window.ev(...a); } catch {} };
+// Cookies do pixel (_fbp/_fbc): vão no pedido para o servidor mandar o Purchase pela Conversions API.
+const cookie = n => { try { const m = document.cookie.match(new RegExp("(?:^|; )" + n + "=([^;]*)")); return m ? decodeURIComponent(m[1]) : null; } catch { return null; } };
 
 $("#lpcss").textContent = CSS;
 $("#tpls").innerHTML = TPLS.map(t => `<button type="button" data-t="${t[0]}" class="${t[0] === "classico" ? "on" : ""}">${t[3] !== "base" ? `<i>${t[3] === "viral" ? "Viral" : "Top"}</i>` : ""}${t[1]}<small>${t[2]}</small></button>`).join("");
@@ -195,7 +197,7 @@ function abrirCheckout() {
     const b = $("#pagar"); b.disabled = true; b.textContent = "Gerando Pix…";
     try {
       await salvaRascunho();
-      const j = await api({ acao: "pedido", id: st.id, token: st.token, email, whats, nome: v("#fNome"), ...(V2 ? { pacote: st.pacote } : {}) });
+      const j = await api({ acao: "pedido", id: st.id, token: st.token, email, whats, nome: v("#fNome"), fbp: cookie("_fbp"), fbc: cookie("_fbc"), ...(V2 ? { pacote: st.pacote } : {}) });
       ls.set("jp_pedido", { ref: j.ref, id: j.id, valor: j.valor });
       ev("AddPaymentInfo", { value: j.valor, currency: "BRL" });
       telaPix(j);
