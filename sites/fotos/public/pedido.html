@@ -1,0 +1,46 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seu pedido | JurisPáginas Fotos</title><meta name="robots" content="noindex"><link rel="stylesheet" href="/base.css"><script src="/px.js"></script></head><body>
+<header><div class="w top">JurisPáginas · Fotos</div></header>
+<main class="w">
+<div id="bloq" class="c hide"><h2>Ainda não encontramos o pagamento deste pedido</h2><p class="mut">Se você acabou de pagar, aguarde alguns segundos e recarregue a página. Guarde este link: ele é o acesso ao seu pedido.</p><button class="btn sec" onclick="location.reload()">Conferir de novo</button></div>
+<div id="ok" class="hide">
+<h1>✓ Pagamento confirmado</h1><p class="mut">Pedido <b id="ref"></b> · guarde este link, ele é o acesso privado ao seu pedido.</p>
+<div class="c" id="caixa">
+<h2>1. Envie de 1 a 4 selfies</h2>
+<p class="mut">De frente, rosto inteiro visível, boa luz natural, sem óculos escuros e sem filtro. Quanto mais variadas (ângulo, roupa), melhor.</p>
+<input type="file" id="arq" accept="image/*" multiple>
+<div class="grid" id="prev"></div>
+<h2 style="margin-top:20px">2. Escolha os estilos</h2>
+<div class="chips" id="est"></div>
+<label for="obs" style="margin-top:14px">Alguma preferência? (opcional)</label><input id="obs" placeholder="Ex.: terno azul, fundo de escritório, sem gravata">
+<button class="btn" id="env" type="button">Enviar selfies</button>
+<div class="err" id="err"></div>
+</div>
+<div class="c hide" id="fim"><h2 class="ok">Recebemos suas selfies!</h2><p>Suas fotos ficam prontas em até 12 horas (normalmente bem antes). Você recebe o link no e-mail e no WhatsApp informados, e elas também aparecem aqui nesta página.</p></div>
+</div>
+</main>
+<script>
+var q=new URLSearchParams(location.search),ref=q.get('ref'),id=q.get('id');
+var ESTILOS=['Advocacia (terno)','Escritório moderno','Fundo neutro (LinkedIn)','Biblioteca jurídica','Casual executivo','Preto e branco','Ao ar livre','Palestrante'];
+ESTILOS.forEach(function(s,i){var l=document.createElement('label');l.innerHTML='<input type="checkbox" value="'+s+'"'+(i<3?' checked':'')+'>'+s;est.appendChild(l)});
+fetch('/api/status?ref='+encodeURIComponent(ref)+'&id='+encodeURIComponent(id)).then(function(r){return r.json()}).then(function(j){
+  if(j.pago){ok.classList.remove('hide');document.getElementById('ref').textContent=ref;try{if(localStorage.getItem('env_'+ref)){caixa.classList.add('hide');fim.classList.remove('hide')}}catch(e){}}
+  else bloq.classList.remove('hide');
+}).catch(function(){bloq.classList.remove('hide')});
+var fotos=[];
+arq.onchange=function(){fotos=[];prev.innerHTML='';Array.prototype.slice.call(arq.files,0,4).forEach(function(f){
+  reduzir(f,function(d){fotos.push(d);var i=new Image();i.src=d;prev.appendChild(i)})})};
+function reduzir(f,cb){var r=new FileReader();r.onload=function(){var i=new Image();i.onload=function(){var m=1600,s=Math.min(1,m/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=Math.round(i.width*s);c.height=Math.round(i.height*s);c.getContext('2d').drawImage(i,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',0.88))};i.src=r.result};r.readAsDataURL(f)}
+env.onclick=function(){
+  err.textContent='';if(!fotos.length){err.textContent='Escolha pelo menos 1 selfie.';return}
+  var es=[].slice.call(est.querySelectorAll('input:checked')).map(function(x){return x.value});if(!es.length){err.textContent='Escolha pelo menos 1 estilo.';return}
+  env.disabled=true;var n=0;
+  (function prox(){if(n>=fotos.length)return fecha();env.textContent='Enviando selfie '+(n+1)+' de '+fotos.length+'…';
+    fetch('/api/selfie',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ref:ref,id:id,n:n+1,img:fotos[n]})})
+    .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.erro||'Erro no envio');n++;prox()})})
+    .catch(function(x){err.textContent=x.message;env.disabled=false;env.textContent='Tentar de novo'})})();
+  function fecha(){fetch('/api/finalizar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ref:ref,id:id,selfies:fotos.length,estilos:es.join(', ')+(obs.value?' | '+obs.value:'')})})
+    .then(function(){try{localStorage.setItem('env_'+ref,'1')}catch(e){}caixa.classList.add('hide');fim.classList.remove('hide');window.scrollTo(0,0)})
+    .catch(function(){err.textContent='Falha ao concluir, toque de novo.';env.disabled=false;env.textContent='Enviar selfies'})}
+};
+</script></body></html>

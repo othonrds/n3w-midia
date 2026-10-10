@@ -1,0 +1,59 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pagamento PIX | JurisPáginas Fotos</title><meta name="robots" content="noindex"><link rel="stylesheet" href="/base.css"><script src="/px.js"></script></head><body>
+<header><div class="w top"><a href="/">← JurisPáginas · Fotos</a></div></header>
+<main class="w">
+<section id="passo1">
+<h1>Falta pouco para suas fotos profissionais</h1>
+<div class="c"><div class="resumo"><span id="pnome">3 fotos profissionais</span><span class="v" id="pvalor">R$ 39,90</span></div><div class="mut">Pagamento único no PIX · sem assinatura</div></div>
+<form class="c" id="f" novalidate>
+<label for="nome">Seu nome</label><input id="nome" autocomplete="name" required>
+<label for="email">E-mail (para receber o link das fotos)</label><input id="email" type="email" autocomplete="email" inputmode="email" required>
+<label for="whats">WhatsApp com DDD</label><input id="whats" type="tel" autocomplete="tel" inputmode="tel" placeholder="(85) 99999-9999" required>
+<button class="btn" id="go" type="submit">Gerar PIX</button>
+<div class="err" id="err"></div>
+<p class="mut">🔒 Pagamento processado pelo Mercado Pago. Suas selfies ficam privadas.</p>
+</form>
+</section>
+<section id="passo2" class="hide">
+<h1>Pague com PIX para liberar o envio das selfies</h1>
+<div class="c pix">
+<div class="resumo"><span>Total</span><span class="v" id="pvalor2"></span></div>
+<img id="qr" alt="QR Code PIX">
+<p class="mut" style="text-align:center">Abra o app do seu banco → PIX → Ler QR Code<br>ou copie o código abaixo:</p>
+<div class="cod" id="cod"></div>
+<button class="btn" id="copiar" type="button">Copiar código PIX</button>
+<div class="esp" id="esp"><span class="dot"></span>Aguardando pagamento… esta página atualiza sozinha.</div>
+</div>
+<p class="mut">Pagou e a página não mudou? Espere alguns segundos ou <a href="#" id="jap">toque aqui para conferir</a>. O código vale por 24 horas.</p>
+</section>
+</main>
+<script>
+var PAC={'3':{n:'3 fotos profissionais',v:'39.90'},'15':{n:'15 fotos profissionais',v:'89.00'}};
+var p=new URLSearchParams(location.search).get('p');if(!PAC[p])p='3';
+var brl=function(v){return 'R$ '+Number(v).toFixed(2).replace('.',',')};
+document.getElementById('pnome').textContent=PAC[p].n;document.getElementById('pvalor').textContent=brl(PAC[p].v);
+ev('InitiateCheckout',{value:+PAC[p].v,currency:'BRL',content_name:PAC[p].n});
+var ped=null,timer=null;
+try{var s=JSON.parse(sessionStorage.getItem('pedido')||'null');if(s&&s.pacote==p&&Date.now()-s.t<23*3600e3){ped=s;mostrar()}}catch(e){}
+document.getElementById('f').onsubmit=function(e){e.preventDefault();
+  var b=document.getElementById('go'),er=document.getElementById('err');er.textContent='';b.disabled=true;b.textContent='Gerando PIX…';
+  fetch('/api/pedido',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pacote:p,nome:nome.value,email:email.value,whats:whats.value,utm:window.utm()})})
+  .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.erro||'Erro');return j})})
+  .then(function(j){ped=j;ped.pacote=p;ped.t=Date.now();try{sessionStorage.setItem('pedido',JSON.stringify(ped))}catch(e){}
+    ev('AddPaymentInfo',{value:+j.valor,currency:'BRL'},j.ref);mostrar()})
+  .catch(function(x){er.textContent=x.message;b.disabled=false;b.textContent='Gerar PIX'})};
+function mostrar(){
+  passo1.classList.add('hide');passo2.classList.remove('hide');window.scrollTo(0,0);
+  pvalor2.textContent=brl(ped.valor);qr.src='data:image/png;base64,'+ped.qr64;cod.textContent=ped.qr;
+  clearInterval(timer);timer=setInterval(conferir,4000);conferir();
+}
+copiar.onclick=function(){var t=ped.qr;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).catch(function(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()});copiar.textContent='Código copiado ✓';setTimeout(function(){copiar.textContent='Copiar código PIX'},2500)};
+jap.onclick=function(e){e.preventDefault();conferir()};
+function conferir(){fetch('/api/status?ref='+ped.ref+'&id='+encodeURIComponent(ped.id)).then(function(r){return r.json()}).then(function(j){
+  if(!j.pago)return;clearInterval(timer);
+  var k='pur_'+ped.ref,ja=false;try{ja=localStorage.getItem(k);localStorage.setItem(k,'1')}catch(e){}
+  if(!ja)ev('Purchase',{value:+ped.valor,currency:'BRL',content_name:PAC[p].n},ped.ref);
+  esp.innerHTML='<span class="ok">✓ Pagamento confirmado!</span> Indo para o envio das selfies…';
+  setTimeout(function(){location.href='/pedido.html?ref='+ped.ref+'&id='+encodeURIComponent(ped.id)+'&f='+(PAC[p].n.split(' ')[0])},1500);
+}).catch(function(){})}
+</script></body></html>

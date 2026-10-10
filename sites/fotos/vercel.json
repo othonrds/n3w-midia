@@ -1,0 +1,2 @@
+{"rewrites":[{"source":"/m/hero.png","destination":"https://n3w-meta.othon-rdss.workers.dev/m/fotosadv/criativos/FOTOSADV_antes-depois_H01_v1/FOTOSADV_antes-depois_H01_v1.png"}],
+ "headers":[{"source":"/(.*)","headers":[{"key":"Cache-Control","value":"public, max-age=300"}]}]}

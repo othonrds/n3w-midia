@@ -1,0 +1,2 @@
+{"redirects":[{"source":"/:path*","has":[{"type":"host","value":"aero-planodevoo.vercel.app"}],"destination":"https://www.aerosectorfly.com/:path*","permanent":false}],
+"headers":[{"source":"/(.*)","headers":[{"key":"Cache-Control","value":"public, max-age=300"}]}]}

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Advocacia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600;800&display=swap">
+<style>body{margin:0;background:#fff}.msg{font:16px/1.5 system-ui,sans-serif;padding:60px 20px;text-align:center;color:#555}.selo{font:12px system-ui,sans-serif;text-align:center;padding:10px;color:#888;background:#fafafa}.selo a{color:inherit}</style>
+<style id="lpcss"></style>
+</head><body>
+<div class="lp" id="lp"><p class="msg">Carregando…</p></div>
+<div class="selo">Página criada com <a href="./">Juris Páginas</a></div>
+<script type="module">
+// Página publicada, renderizada no navegador (usada nas prévias; no domínio final o servidor entrega pronta em /nome).
+import { CSS, renderLP, textos, AREAS } from "./lp.js";
+const SB = "https://cdtfglylekiyxdmrgbne.supabase.co", KEY = "sb_publishable_CVZTk5jPKg5XAQo6QUJeTQ_YxMAUX7h";
+document.getElementById("lpcss").textContent = CSS;
+const slug = new URLSearchParams(location.search).get("s") || "";
+const lp = document.getElementById("lp");
+try {
+  if (!/^[a-z0-9-]{3,60}$/.test(slug)) throw 0;
+  const r = await fetch(`${SB}/rest/v1/juris_paginas?slug=eq.${slug}&select=dados`, { headers: { apikey: KEY, Authorization: "Bearer " + KEY } });
+  const [p] = await r.json(); if (!p) throw 0;
+  const d = p.dados, o = renderLP(d), t = textos(d);
+  lp.className = o.cls; lp.style.cssText = o.style; lp.innerHTML = o.html;
+  document.title = `${d.nome} · ${(AREAS[d.area] || AREAS.familia).n.replace("Direito ", "Advocacia ")}${d.cidade ? " em " + d.cidade + "/" + d.uf : ""}`;
+  const m = document.createElement("meta"); m.name = "description"; m.content = t.sub; document.head.appendChild(m);
+} catch { lp.innerHTML = '<p class="msg">Página não encontrada.</p>'; }
+</script>
+</body></html>

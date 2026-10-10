@@ -1,0 +1,10 @@
+{
+  "cleanUrls": false,
+  "rewrites": [
+    { "source": "/", "missing": [{ "type": "host", "value": "(.*\\.)?(jurispaginas\\.com|vercel\\.app|localhost)" }], "destination": "/api/lp?dominio=1" },
+    { "source": "/:slug([a-z0-9-]{3,60})", "destination": "/api/lp?s=:slug" }
+  ],
+  "headers": [
+    { "source": "/(.*)\\.(js|css)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=300" }] }
+  ]
+}

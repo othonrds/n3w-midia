@@ -1,0 +1,44 @@
+{
+ "conta": "tomazsilva.fotos",
+ "data": "2026-10-07",
+ "hipotese": "h017",
+ "obs": "MP4/JPG hospedados no CDN Higgsfield (o proxy deste ambiente bloqueia o CDN, binarios nao copiados para o repo). Roteiros/configs em src/, render: python3 render.py rN.json out_rN (Pillow+ffmpeg+edge-tts pt-BR-AntonioNeural, loudnorm -16 LUFS).",
+ "reels": [
+  {
+   "id": "tomas-r1",
+   "titulo": "POV: voce mandou uma selfie e recebeu isso",
+   "duracao_s": 23.5,
+   "mp4": "https://d2ol7oe51mr4n9.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/c0d5b3e0-b2cf-44ae-8cbc-1a5eb3166c92.mp4",
+   "capa": "https://d2ol7oe51mr4n9.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/bcf4c1a8-ffe5-497b-9ed6-666df5c05ae3.jpg",
+   "lufs": -15.9,
+   "when": "2026-10-08T19:00-03:00"
+  },
+  {
+   "id": "tomas-r2",
+   "titulo": "3 erros que deixam sua foto de perfil amadora",
+   "duracao_s": 22.3,
+   "mp4": "https://d2ol7oe51mr4n9.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/62270bf8-6374-451a-9cfc-0db9fbf90350.mp4",
+   "capa": "https://d2ol7oe51mr4n9.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/6d82c626-9ad7-4b00-8c70-09cd66457d06.jpg",
+   "lufs": -15.9,
+   "when": "2026-10-10T19:00-03:00"
+  },
+  {
+   "id": "tomas-r3",
+   "titulo": "Mesma pessoa, 3 luzes diferentes",
+   "duracao_s": 20.8,
+   "mp4": "https://d2ol7oe51mr4n9.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/b0f0022e-a90e-4d88-875e-2f3c6153856e.mp4",
+   "capa": "https://d2ol7oe51mr4n9.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/6f6d7153-ea69-4feb-a03c-7910330199a6.jpg",
+   "lufs": -16.0,
+   "when": "2026-10-11T19:00-03:00"
+  }
+ ],
+ "clientes_ficticios_ia": {
+  "s1_selfie_luz_teto": "https://d8j0ntlcm91z4.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/hf_20261007_080125_e087fcc0-7e69-4407-ae38-2e1f987477b3.png",
+  "s2_selfie_fundo": "https://d8j0ntlcm91z4.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/hf_20261007_080133_794d9e72-c292-46ec-86ec-189dba67309c.png",
+  "s3_festa": "https://d8j0ntlcm91z4.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/hf_20261007_080135_ebfe42d9-6f65-4e9b-af63-06507e8d25ee.png",
+  "p1_retrato": "https://d8j0ntlcm91z4.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/hf_20261007_080215_05f11b77-d796-4513-9a03-44adbbb6f336.png",
+  "p2_retrato": "https://d8j0ntlcm91z4.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/hf_20261007_080218_b2b0954d-6371-42a5-a253-8e2dbca62fe0.png",
+  "p3_retrato": "https://d8j0ntlcm91z4.cloudfront.net/user_38lL1t3zHzVQDjU5qT29V8iXM0u/hf_20261007_080220_2a6b9b66-1653-4567-b9f2-b29a41f0292e.png"
+ },
+ "custo_creditos": 1.86
+}
