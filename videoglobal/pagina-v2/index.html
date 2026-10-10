@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>AI Photo &amp; Video Kit</title>
+<meta name="description" content="Create pro photos and videos of yourself or your product with AI. No camera, no studio, no editing experience. Copy-paste prompts included.">
+<!--
+  PROPOSTA v2 — NÃO PUBLICADA. Rascunho do Criador de Produtos (2026-10-10).
+  Itens marcados com data-estimate / "ESTIMATIVA" são valores a validar no teste
+  (âncora US$ 47, valor de cada item, quantidade de prompts). Antes de ir ao ar:
+  1) o pacote de 150+ prompts e o checklist anti-cara-de-IA precisam EXISTIR no entregável;
+  2) trocar #CHECKOUT_HOTMART pelo link real (é o mesmo placeholder da página atual);
+  3) remover a faixa .draft-note.
+-->
+<style>
+:root{--bg:#0d0d12;--card:#17171f;--card2:#1e1e29;--line:#2a2a36;--text:#f4f4f7;--muted:#a3a3b2;--accent:#7cf2c5;--accent2:#8b7bff;--warn:#ffcf5c;--bad:#ff7a7a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+.draft-note{background:var(--warn);color:#1a1400;font-size:13px;text-align:center;padding:8px 16px;font-weight:600}
+header{padding:52px 0 40px;text-align:center}
+.tag{display:inline-block;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);border:1px solid var(--line);border-radius:99px;padding:6px 14px;margin-bottom:22px}
+h1{font-size:clamp(30px,7vw,50px);line-height:1.08;letter-spacing:-.02em;margin-bottom:18px}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{color:var(--muted);font-size:19px;max-width:600px;margin:0 auto 28px}
+.btn{display:inline-block;background:var(--accent);color:#0d0d12;font-weight:700;font-size:18px;text-decoration:none;padding:16px 30px;border-radius:12px;max-width:100%}
+.btn:hover{filter:brightness(1.08)}
+.small{font-size:14px;color:var(--muted);margin-top:12px}
+.anchor{margin-top:14px;font-size:16px;color:var(--muted)}
+.anchor s{color:var(--muted)}
+.anchor b{color:var(--text)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+.chips span{font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 12px;color:var(--muted)}
+section{padding:44px 0;border-top:1px solid var(--line)}
+h2{font-size:clamp(24px,5vw,32px);line-height:1.2;margin-bottom:18px;letter-spacing:-.01em}
+h3{font-size:18px;margin-bottom:6px}
+p+p{margin-top:14px}
+.muted{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+.card b{display:block;margin-bottom:6px}
+.card span{color:var(--muted);font-size:15px}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.ba div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:15px}
+.ba .before{color:var(--bad)}
+.ba .after{color:var(--accent)}
+.ba small{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.fix{list-style:none;margin-top:18px}
+.fix li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.fix li b{display:block}
+.fix li span{color:var(--muted);font-size:15px}
+.steps{counter-reset:s;list-style:none;margin-top:18px}
+.steps li{counter-increment:s;position:relative;padding:0 0 18px 52px}
+.steps li:before{content:counter(s);position:absolute;left:0;top:0;width:36px;height:36px;border-radius:50%;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;font-weight:700;color:var(--accent)}
+.price{text-align:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px 18px}
+.stack{list-style:none;text-align:left;max-width:480px;margin:18px auto 8px}
+.stack li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.stack li span:last-child{color:var(--muted);white-space:nowrap}
+.stack li.bonus span:first-child:before{content:"BONUS · ";color:var(--accent2);font-weight:700;font-size:13px}
+.total{max-width:480px;margin:6px auto 0;display:flex;justify-content:space-between;color:var(--muted)}
+.amt{font-size:52px;font-weight:800;letter-spacing:-.02em;margin-top:14px}
+.amt-sub{color:var(--muted);margin-bottom:22px}
+.guarantee{display:flex;gap:16px;align-items:flex-start;background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:20px}
+.seal{flex:0 0 64px;height:64px;border-radius:50%;border:2px solid var(--accent);display:grid;place-items:center;text-align:center;font-weight:800;font-size:13px;line-height:1.1;color:var(--accent)}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-top:10px}
+summary{cursor:pointer;font-weight:600}
+details p{margin-top:10px;color:var(--muted)}
+footer{padding:36px 0 60px;text-align:center;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+@media (max-width:420px){.ba{grid-template-columns:1fr}.guarantee{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="draft-note">DRAFT v2 — not live. Values marked "estimate" are to be validated before publishing.</div>
+<div class="wrap">
+
+<!-- 1. HERO: resultado, não habilidade -->
+<header>
+  <div class="tag">Copy-paste AI system · works on your phone</div>
+  <h1>Pro photos and videos of <em>you or your product</em> — without a camera</h1>
+  <p class="lead">Make pro-looking portraits, product shots and ready-to-post Reels in an afternoon. You copy a prompt, paste it into a free AI tool, and follow the fix list so the result doesn't look like AI.</p>
+  <a class="btn" href="#CHECKOUT_HOTMART">Get the kit — US$ 9.90</a>
+  <!-- ESTIMATIVA A VALIDAR: âncora US$ 47 = soma dos itens do bloco de preço -->
+  <p class="anchor" data-estimate="anchor"><s>US$ 47 value</s> → <b>US$ 9.90 today</b>, one-time</p>
+  <p class="small">Secure checkout by Hotmart · Instant access by email · 7-day money-back guarantee</p>
+  <div class="chips">
+    <span>No camera</span><span>No studio</span><span>No editing experience</span><span>Free tools first</span>
+  </div>
+</header>
+
+<!-- 2. O QUE VOCÊ SAI FAZENDO (resultados concretos) -->
+<section>
+  <h2>What you'll have by the end of the weekend</h2>
+  <div class="grid">
+    <div class="card"><b>A new set of profile photos</b><span>Headshots and lifestyle portraits for LinkedIn, Instagram or your website, from a few phone selfies.</span></div>
+    <div class="card"><b>Product photos without a shoot</b><span>Clean catalog shots and styled scenes for your store or ads, from one photo of the product.</span></div>
+    <div class="card"><b>Ready-to-post short videos</b><span>Reels, TikToks and Shorts cut, reframed and captioned in minutes, not hours.</span></div>
+    <div class="card"><b>Still images that move</b><span>Turn a photo into a short animated clip for a scroll-stopping first second.</span></div>
+  </div>
+</section>
+
+<!-- 3. A PROVA: o próprio anúncio -->
+<section>
+  <h2>The ad you just watched was made this way</h2>
+  <p>The person in our ad does not exist. The face, the voice and the whole video were created with AI, using the same workflow in this kit.</p>
+  <p class="muted">We show it on purpose: the ad itself is the demonstration. No paid actors, no film crew.</p>
+</section>
+
+<!-- 4. ANTI "LOOKS LIKE AI" -->
+<section id="real">
+  <h2>"Won't it look fake?" Not if you know the 6 tells.</h2>
+  <p class="muted">Most AI content gets ignored because people spot it in a second. The kit includes a fix list for each giveaway, with the exact prompt change that solves it.</p>
+  <div class="ba">
+    <div class="before"><small>Looks like AI</small>Plastic, poreless skin and glowing eyes</div>
+    <div class="after"><small>Looks real</small>Natural texture, real light direction, slight imperfections</div>
+  </div>
+  <ul class="fix">
+    <li><b>1. Plastic skin</b><span>Add texture and camera cues to the prompt instead of "beautiful, perfect".</span></li>
+    <li><b>2. Wrong hands, teeth and text</b><span>Frame and crop around them, then regenerate only that area.</span></li>
+    <li><b>3. Too-perfect lighting</b><span>Name a real light source ("window light from the left, overcast day").</span></li>
+    <li><b>4. A face that changes between shots</b><span>Use one reference image and lock it across every scene.</span></li>
+    <li><b>5. Morphing in video</b><span>Keep clips short, limit camera moves, and cut before the drift starts.</span></li>
+    <li><b>6. Robotic captions and voice</b><span>Write captions the way people talk and edit pacing to real speech.</span></li>
+  </ul>
+</section>
+
+<!-- 5. COMO FUNCIONA -->
+<section>
+  <h2>How it works</h2>
+  <ol class="steps">
+    <li><b>Pick the result you want.</b> <span class="muted">Profile photos, product shots, a Reel or an animated still.</span></li>
+    <li><b>Copy the matching prompt.</b> <span class="muted">Paste it into the tool we point to. Free options are listed first.</span></li>
+    <li><b>Run the fix list.</b> <span class="muted">Check the 6 tells, apply the fixes, export and post.</span></li>
+  </ol>
+</section>
+
+<!-- 6. OFERTA COM ÂNCORA E BÔNUS CONTADO -->
+<section id="buy">
+  <div class="price">
+    <div class="muted">AI Photo &amp; Video Kit</div>
+    <!-- ESTIMATIVA A VALIDAR: valores por item e quantidade de prompts. Os bônus precisam existir no entregável antes de publicar. -->
+    <ul class="stack" data-estimate="value-stack">
+      <li><span>Step-by-step guide: AI photos, video edits, captions, animation</span><span>US$ 19</span></li>
+      <li class="bonus"><span>150+ copy-paste prompts (portraits, products, Reels, motion)</span><span>US$ 17</span></li>
+      <li class="bonus"><span>"Doesn't look like AI" fix list: 6 tells + prompt fixes</span><span>US$ 7</span></li>
+      <li class="bonus"><span>Tool cost map: what's free, what's paid, what each one costs</span><span>US$ 4</span></li>
+    </ul>
+    <div class="total"><span>Total value</span><span><s>US$ 47</s></span></div>
+    <div class="amt">US$ 9.90</div>
+    <div class="amt-sub">one-time payment · no subscription · lifetime access to this version</div>
+    <a class="btn" href="#CHECKOUT_HOTMART">Get the kit — US$ 9.90</a>
+    <p class="small">Prices in USD. Taxes may apply depending on your country.</p>
+  </div>
+</section>
+
+<!-- 7. GARANTIA -->
+<section>
+  <div class="guarantee">
+    <div class="seal">7-DAY<br>REFUND</div>
+    <div>
+      <h3>Try it for 7 days</h3>
+      <p class="muted">Open the kit, use the prompts, make your first photos and videos. If it's not for you, request a full refund through Hotmart within 7 days of purchase. No questions asked.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8. FAQ -->
+<section>
+  <h2>FAQ</h2>
+  <details><summary>Will this make me money?</summary><p>The kit helps you create photos and videos with AI. It does not promise income or results. What you do with them is up to you.</p></details>
+  <details><summary>Do I need to pay for AI tools?</summary><p>You can start with free plans. Some features (longer videos, higher resolution, more generations) need paid plans from the tool providers. The tool cost map tells you which is which and what it costs before you sign up for anything.</p></details>
+  <details><summary>Will my photos look fake?</summary><p>Default AI output often does. That's why the kit includes the fix list for the 6 most common giveaways. Results still depend on the tool and on the photos you start from.</p></details>
+  <details><summary>Do I need a good computer or camera?</summary><p>No. Most tools run in the browser or on a phone. A stable internet connection is enough.</p></details>
+  <details><summary>Is this for beginners?</summary><p>Yes. It assumes no editing experience. If you already edit professionally, much of it will be basic for you.</p></details>
+  <details><summary>How do I receive it?</summary><p>Right after payment, Hotmart emails you the access link.</p></details>
+  <details><summary>Can I make photos of other people?</summary><p>Use your own face, your own products, or fictional characters. Don't use AI to imitate real people without their consent, and follow each platform's rules on labeling AI content.</p></details>
+  <details><summary>What if I don't like it?</summary><p>Request a full refund within 7 days through Hotmart.</p></details>
+</section>
+
+<section style="text-align:center">
+  <h2>Your next photo shoot costs US$ 9.90</h2>
+  <a class="btn" href="#CHECKOUT_HOTMART">Get the kit — US$ 9.90</a>
+  <p class="small">7-day money-back guarantee · Instant access</p>
+</section>
+</div>
+<footer>
+  <div class="wrap">
+    <p>Digital product sold and delivered by Hotmart. Results depend on individual effort and on the AI tools used; no income is promised.</p>
+    <p style="margin-top:8px">The person shown in our ads is AI-generated and fictional.</p>
+  </div>
+</footer>
+</body>
+</html>
