@@ -50,8 +50,9 @@ textarea{resize:vertical}
 .swatches{display:flex;gap:8px;flex-wrap:wrap}
 .swatches button{width:32px;height:32px;border-radius:50%;border:2px solid var(--surface);outline:1px solid var(--line);cursor:pointer}
 .swatches button.on{outline:2px solid var(--ink)}
-.tpls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.tpls button{font:600 13px var(--body);padding:11px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);cursor:pointer}
+.tpls{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
+.tpls button small{display:block;font-weight:400;font-size:11px;opacity:.7;margin-top:2px}.tpls button i{font-style:normal;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:2px}
+.tpls button{text-align:left;font:600 13px var(--body);padding:10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);cursor:pointer}
 .tpls button.on{border-color:var(--accent);background:var(--accent-soft)}
 .check{font-size:13px;display:grid;gap:4px;background:var(--accent-soft);border-radius:6px;padding:10px 12px}
 .check b{font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--accent)}
@@ -75,6 +76,50 @@ textarea{resize:vertical}
 .err{color:var(--bad);font-size:14px;margin:0}
 .err:empty{display:none}
 .saved{font:12px var(--mono);color:var(--muted)}
+/* seções de venda */
+.vend{margin-top:56px;display:grid;gap:56px;grid-template-columns:minmax(0,1fr)}
+.vend>section{min-width:0}
+.vend h2{font:600 clamp(26px,3.4vw,38px)/1.1 var(--display);letter-spacing:-.015em;margin:0 0 8px;text-wrap:balance}
+.vend .lead{color:var(--muted);font-size:16px;margin:0 0 22px;max-width:64ch}
+.kick{font:600 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:10px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:800px){.g3{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:6px;align-content:start}
+.card b{font-size:16px}.card p{margin:0;color:var(--muted);font-size:14px}
+.card .n{font:600 26px/1 var(--display);color:var(--accent)}
+.galeria{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow-x:auto}
+.galeria img{display:block;height:420px;width:auto;max-width:none}
+@media (max-width:700px){.galeria img{height:300px}}
+.cap{font-size:12px;color:var(--muted);margin:8px 0 0}
+.teses{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:18px}
+.teses div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px}
+.teses b{display:block;font-size:14px;margin-bottom:6px}
+.teses span{display:inline-block;font-size:12px;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:4px 9px;margin:0 4px 4px 0}
+.precos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch}
+@media (max-width:800px){.precos{grid-template-columns:minmax(0,1fr)}}
+.preco{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;display:grid;gap:12px;align-content:start;position:relative}
+.preco.top{border:2px solid var(--accent);box-shadow:0 12px 30px rgba(14,94,80,.12)}
+.preco .selo{position:absolute;top:-12px;left:22px;background:var(--accent);color:var(--accent-ink);font:600 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;padding:6px 9px;border-radius:4px}
+.preco h3{margin:0;font:600 22px/1 var(--display)}
+.preco .v{font:700 38px/1 var(--display)}.preco .v small{font:500 13px var(--body);color:var(--muted);margin-left:4px}
+.preco ul{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:14px}
+.preco li::before{content:"✓ ";color:var(--ok);font-weight:700}
+.unico{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:22px;display:grid;gap:12px;max-width:520px}
+body.v2 .so-v1,body:not(.v2) .so-v2{display:none!important}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:8px}
+.faq summary{font-weight:600;cursor:pointer}
+.faq p{margin:10px 0 0;color:var(--muted);font-size:14px}
+.final{background:var(--ink);color:#fff;border-radius:14px;padding:34px 24px;text-align:center;display:grid;gap:14px;justify-items:center}
+.final h2{color:#fff;margin:0}
+.final p{margin:0;color:#c9d4d1}
+.final .btn{max-width:320px}
+.pacs{display:grid;gap:8px}
+.pac{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;font-weight:400}
+.pac:has(input:checked){border:2px solid var(--accent);background:var(--accent-soft)}
+.pac input{width:20px;height:20px;margin:0;accent-color:var(--accent)}
+.pac .pn b{display:block;font-size:15px}.pac .pn span{font-size:12px;color:var(--muted)}
+.pac .pn i{font:600 10px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-style:normal;display:block;margin-bottom:3px}
+.pac .pp{font:700 20px/1 var(--display);white-space:nowrap}
 /* modal */
 .modal{position:fixed;inset:0;background:rgba(5,12,10,.55);display:grid;place-items:center;padding:12px;z-index:50}
 .modal[hidden]{display:none}
@@ -144,6 +189,7 @@ footer.app a{color:inherit}
         <label for="fNome">Nome profissional <input id="fNome" placeholder="Ex.: Dra. Mariana Couto" autocomplete="name" required></label>
         <label for="fGen">Você é <select id="fGen"><option value="a">Advogada</option><option value="o">Advogado</option></select></label>
         <label for="fArea">Área de atuação principal <select id="fArea"></select></label>
+        <label for="fTese" id="lTese" hidden>Foco da página <small>opcional</small><select id="fTese"></select></label>
         <div class="row2">
           <label for="fCidade">Cidade <input id="fCidade" placeholder="Ex.: Fortaleza" autocomplete="address-level2"></label>
           <label for="fUf">UF <select id="fUf"></select></label>
@@ -177,8 +223,7 @@ footer.app a{color:inherit}
           <button data-tab="base" type="button" id="tabBase" hidden>Dados</button>
         </div>
         <div id="tab-vis" style="display:grid;gap:14px">
-          <div style="display:grid;gap:5px"><b style="font-size:13px">Modelo</b><div class="tpls" id="tpls">
-            <button type="button" data-t="classico" class="on">Clássico</button><button type="button" data-t="moderno">Moderno</button><button type="button" data-t="minimal">Minimal</button></div></div>
+          <div style="display:grid;gap:5px"><b style="font-size:13px">Modelo</b><div class="tpls" id="tpls"></div></div>
           <div style="display:grid;gap:5px"><b style="font-size:13px">Paleta</b><div class="swatches" id="pal"></div></div>
           <label for="cP">Cor principal <small>ou a do seu escritório</small><input type="color" id="cP" value="#1B2A41" style="height:44px;padding:4px"></label>
           <label for="upFoto">Sua foto profissional
@@ -194,6 +239,7 @@ footer.app a{color:inherit}
           <p class="note">Deixe em branco para usar o texto padrão da sua área. Evite prometer resultado e citar valores de honorários: a OAB proíbe.</p>
         </div>
         <div id="tab-dados" hidden style="display:grid;gap:14px">
+          <label for="tEscr">Nome do escritório <small>opcional</small><input id="tEscr" placeholder="Ex.: Souza Advocacia"></label>
           <label for="tEnd">Endereço do escritório <small>opcional</small><input id="tEnd" placeholder="Rua, número, sala, bairro"></label>
           <label for="tEmail">E-mail de contato <small>opcional</small><input id="tEmail" type="email" placeholder="contato@seuescritorio.adv.br"></label>
           <label for="tInsta">Instagram <small>opcional</small><input id="tInsta" placeholder="@seuperfil"></label>
@@ -216,6 +262,66 @@ footer.app a{color:inherit}
     </div>
   </div>
 
+
+  <div class="vend" id="vendas">
+    <section>
+      <div class="kick">Como você usa</div>
+      <h2>Uma página que trabalha por você em todo lugar em que o cliente te procura</h2>
+      <p class="lead">Depois do Pix a página vai ao ar na hora, com um endereço seu. É só colar o link onde o cliente já está.</p>
+      <div class="g3">
+        <div class="card"><span class="n">01</span><b>Link na bio do Instagram</b><p>Quem vê um post seu toca no link e chega a uma página com a sua área, a sua foto e o botão do WhatsApp.</p></div>
+        <div class="card"><span class="n">02</span><b>Google e WhatsApp Business</b><p>Coloque o link no perfil do Google do escritório e no catálogo do WhatsApp. Quem te pesquisa encontra algo profissional.</p></div>
+        <div class="card"><span class="n">03</span><b>Destino dos seus anúncios</b><p>Uma página por tese, cada uma com o seu link, para anunciar BPC/LOAS, horas extras ou voo cancelado sem misturar assuntos.</p></div>
+      </div>
+      <p class="cap">Guia rápido: <a href="guia.html">como colocar a sua página no Instagram, no Google e no WhatsApp</a>.</p>
+    </section>
+
+    <section>
+      <div class="kick">7 modelos prontos</div>
+      <h2>Do link da bio ao site completo, com a estrutura já pronta</h2>
+      <p class="lead">Escolha o modelo, troque a foto e as cores. Os textos já vêm escritos para a sua área e você ajusta o que quiser.</p>
+      <div class="galeria"><img src="img/modelos.jpg" alt="Os 7 modelos: Clássico, Moderno, Minimal, Bio Link, Hub, Impacto e Editorial" loading="lazy" width="2922" height="934"></div>
+      <p class="cap">Exemplos ilustrativos com nome fictício. Role para o lado para ver todos.</p>
+    </section>
+
+    <section>
+      <div class="kick">Páginas por tese</div>
+      <h2>Uma página para cada problema que o seu cliente pesquisa</h2>
+      <p class="lead">Além da página da área, você pode publicar páginas focadas numa tese, com título, serviços e dúvidas frequentes próprios.</p>
+      <div class="teses" id="teses"></div>
+    </section>
+
+    <section id="planos">
+      <div class="kick">Preço</div>
+      <div class="so-v2">
+        <h2>Escolha quantas páginas você quer no ar</h2>
+        <p class="lead">Pagamento único no Pix. Gere e veja a sua página antes de pagar.</p>
+        <div class="precos" id="precos"></div>
+      </div>
+      <div class="so-v1">
+        <h2>3 páginas completas por R$ 39,90</h2>
+        <div class="unico"><ul style="margin:0;padding:0;list-style:none;display:grid;gap:6px"><li>✓ 3 páginas (área ou teses)</li><li>✓ 12 meses de hospedagem e edições ilimitadas</li><li>✓ Sem marca d'água, botão direto para o seu WhatsApp</li></ul>
+        <a class="btn" href="#formGen">Gerar a minha grátis</a></div>
+      </div>
+    </section>
+
+    <section class="faq">
+      <div class="kick">Dúvidas</div>
+      <h2>Perguntas frequentes</h2>
+      <details><summary>Preciso contratar hospedagem ou entender de site?</summary><p>Não. A hospedagem de 12 meses já está incluída. Você preenche os dados, escolhe o modelo e publica com um Pix. Para editar depois, use o link do seu painel.</p></details>
+      <details><summary>A página segue as regras da OAB?</summary><p>Os textos são informativos e foram escritos com base no Provimento 205/2021: sem promessa de resultado, sem divulgar honorários e com nome e número da OAB visíveis. Como responsável pela publicidade, você revisa e pode ajustar tudo.</p></details>
+      <details><summary>Posso usar o meu próprio domínio?</summary><p><span class="so-v2">Sim. No pacote Escritório nós configuramos o seu domínio (por exemplo, seunome.adv.br). Nos outros pacotes a página fica em jurispaginas.com/seu-nome.</span><span class="so-v1">Sua página fica em jurispaginas.com/seu-nome. Domínio próprio estará disponível em breve.</span> Domínios .adv.br são registrados por você no Registro.br, com o seu CPF e a sua OAB.</p></details>
+      <details><summary>Posso editar depois de publicar?</summary><p>Sim, quantas vezes quiser: textos, foto, cores e modelo. As mudanças vão ao ar quando você salva.</p></details>
+      <details><summary>E depois de 12 meses?</summary><p>Avisamos antes do vencimento para você decidir se renova. Nada é cobrado automaticamente.</p></details>
+      <details><summary>Como funciona o pagamento?</summary><p>Pagamento único por Pix, processado pelo Mercado Pago. A página vai ao ar assim que o Pix é confirmado, em segundos. Se não gostar, você tem 7 dias para pedir o reembolso.</p></details>
+    </section>
+
+    <section class="final">
+      <h2>Veja a sua página antes de pagar</h2>
+      <p>Leva 30 segundos e não pede cadastro.</p>
+      <a class="btn" href="#formGen">Gerar a minha grátis</a>
+    </section>
+  </div>
   <footer class="app"><span>Juris Páginas · N3w Digital</span><a href="termos.html">Termos de uso</a><a href="privacidade.html">Privacidade</a></footer>
 </div>
 

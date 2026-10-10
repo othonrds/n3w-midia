@@ -8,9 +8,15 @@ const SK = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const MP = Deno.env.get("MP_ACCESS_TOKEN") || "";
 const TESTE = !MP;
 const PRECO = 39.9, PRECO_FOTOS = 29.9, CREDITOS = 3;
+// Oferta v2 (pacotes). Preço e nº de páginas definidos aqui, nunca pelo navegador. Sem pacote = oferta de teste (3 por R$ 39,90).
+const PACOTES: Record<string, { preco: number; paginas: number; nome: string }> = {
+  p1: { preco: 97, paginas: 1, nome: "Essencial (1 página)" },
+  p3: { preco: 199, paginas: 3, nome: "Profissional (3 páginas)" },
+  p10: { preco: 397, paginas: 10, nome: "Escritório (10 páginas + domínio próprio)" },
+};
 const SITE = "https://jurispaginas.com";
 const RESERVADOS = new Set(["api","painel","p","termos","privacidade","index","www","admin","fotos","assets","lp","app","entrar","login","ajuda","blog","static","public","favicon","robots","sitemap"]);
-const AREAS = ["familia","trabalhista","previdenciario","criminal","consumidor","imobiliario","tributario","empresarial"];
+const AREAS = ["familia","trabalhista","previdenciario","criminal","consumidor","imobiliario","tributario","bancario","empresarial"];
 const UFS = "AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".split(" ");
 
 const cors = {
@@ -48,13 +54,14 @@ function limpaDados(d: any) {
     nome: txt(d.nome, 80) || "Seu Nome",
     genero: d.genero === "o" ? "o" : "a",
     area: AREAS.includes(d.area) ? d.area : "familia",
+    tese: /^[a-z0-9-]{1,30}$/.test(String(d.tese || "")) ? String(d.tese) : "",
     cidade: txt(d.cidade, 60), uf: UFS.includes(d.uf) ? d.uf : "SP",
     oab: txt(d.oab, 20), anos: txt(d.anos, 3), zap: txt(d.zap, 20),
     atend: ["Presencial e online", "Somente online, todo o Brasil", "Somente presencial"].includes(d.atend) ? d.atend : "Presencial e online",
-    tpl: ["classico", "moderno", "minimal"].includes(d.tpl) ? d.tpl : "classico",
+    tpl: ["classico", "moderno", "minimal", "bio", "hub", "impacto", "editorial"].includes(d.tpl) ? d.tpl : "classico",
     p: hex(d.p, "#1B2A41"), a: hex(d.a, "#C9A227"),
     h1: txt(d.h1, 160), sub: longo(d.sub, 400), bio: longo(d.bio, 900),
-    end: txt(d.end, 160), email: txt(d.email, 120), insta: txt(d.insta, 60),
+    end: txt(d.end, 160), email: txt(d.email, 120), insta: txt(d.insta, 60), escritorio: txt(d.escritorio, 80),
     foto: nossaMidia(d.foto), logo: nossaMidia(d.logo),
   };
 }
@@ -151,7 +158,9 @@ async function acao(b: any) {
       const email = txt(b.email, 120).toLowerCase(), whats = txt(b.whats, 20).replace(/\D/g, ""), nome = txt(b.nome || pag.dados?.nome, 80);
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return out(400, { erro: "Confira o e-mail" });
       if (whats.length < 10) return out(400, { erro: "WhatsApp com DDD" });
-      const bump = false /* bump de fotos desligado em 08/10: produto de fotos parado */, valor = +(PRECO + (bump ? PRECO_FOTOS : 0)).toFixed(2);
+      const pac = PACOTES[b.pacote] || null;
+      const bump = false /* bump de fotos desligado em 08/10: produto de fotos parado */, valor = +((pac ? pac.preco : PRECO) + (bump ? PRECO_FOTOS : 0)).toFixed(2);
+      const creditos = pac ? pac.paginas : CREDITOS;
       const ref = "JP" + rnd(5).toUpperCase(), token = rnd(16);
       let orderId = "TESTE-" + ref, qr = "00020126580014BR.GOV.BCB.PIX0136modo-teste-jurispaginas-" + ref, qr64: string | null = null;
       if (!TESTE) {
@@ -159,7 +168,7 @@ async function acao(b: any) {
           method: "POST", headers: { "X-Idempotency-Key": crypto.randomUUID() },
           body: JSON.stringify({
             type: "online", processing_mode: "automatic", external_reference: ref, total_amount: valor.toFixed(2),
-            description: bump ? "Juris Páginas: 3 páginas + 3 fotos profissionais" : "Juris Páginas: 3 páginas",
+            description: pac ? "Juris Páginas: " + pac.nome : bump ? "Juris Páginas: 3 páginas + 3 fotos profissionais" : "Juris Páginas: 3 páginas",
             payer: { email, first_name: nome.replace(/^(dr|dra)\.?\s+/i, "").split(" ")[0] },
             transactions: { payments: [{ amount: valor.toFixed(2), payment_method: { id: "pix", type: "bank_transfer" } }] },
           }),
@@ -168,10 +177,10 @@ async function acao(b: any) {
         const pm = r.body.transactions?.payments?.[0]?.payment_method || {};
         orderId = r.body.id; qr = pm.qr_code; qr64 = pm.qr_code_base64;
       }
-      const ins = await db("juris_pedidos", { method: "POST", prefer: "return=minimal", body: { ref, mp_order_id: orderId, valor, bump_fotos: bump, email, nome, whats, token, creditos: CREDITOS, teste: TESTE, utm: pag.utm } });
+      const ins = await db("juris_pedidos", { method: "POST", prefer: "return=minimal", body: { ref, mp_order_id: orderId, valor, bump_fotos: bump, email, nome, whats, token, creditos, teste: TESTE, utm: { ...(pag.utm || {}), pacote: pac ? b.pacote : "teste-3x3990" } } });
       if (!ins.ok) return out(500, { erro: "Falha ao registrar o pedido" });
       await db(`juris_paginas?id=eq.${pag.id}`, { method: "PATCH", prefer: "return=minimal", body: { pedido_ref: ref } });
-      return out(200, { ref, id: orderId, valor, qr, qr64, teste: TESTE });
+      return out(200, { ref, id: orderId, valor, creditos, qr, qr64, teste: TESTE });
     }
     case "status": {
       const pd = await pedidoPorRef(b.ref);
@@ -180,7 +189,7 @@ async function acao(b: any) {
       if (!pago) return out(200, { pago: false });
       const primeira = pd.status === "pago" ? false : await confirma(pd);
       const pags = (await db(`juris_paginas?pedido_ref=eq.${pd.ref}&select=*&order=criado_em`)).data || [];
-      return out(200, { pago: true, primeira, valor: pd.valor, ref: pd.ref, token: pd.token, paginas: pags.map(vistaPagina), fotos: fotosUrl(pd), painel: `${SITE}/painel.html?ref=${pd.ref}&t=${pd.token}` });
+      return out(200, { pago: true, primeira, valor: pd.valor, creditos: pd.creditos, ref: pd.ref, token: pd.token, paginas: pags.map(vistaPagina), fotos: fotosUrl(pd), painel: `${SITE}/painel.html?ref=${pd.ref}&t=${pd.token}` });
     }
     case "painel": {
       const pd = await pedidoPorRef(b.ref);

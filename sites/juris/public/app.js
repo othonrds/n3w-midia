@@ -1,8 +1,14 @@
 // Juris Páginas — app (gerador, personalização, checkout Pix e painel do cliente).
-import { AREAS, UFS, PALS, CSS, renderLP, slugDe, esc, areaCurta } from "./lp.js";
+import { AREAS, TESES, UFS, PALS, TPLS, CSS, renderLP, slugDe, esc, areaCurta } from "./lp.js";
 
 const FN = "https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/juris";
-const PRECO = 39.9;
+const PRECO = 39.9; // oferta de teste (anúncios F1/F2)
+// Oferta v2: pacotes. Abre com ?oferta=v2 e fica lembrada no navegador; ?oferta=v1 volta ao teste. Preços também estão no servidor.
+const PACOTES = [
+  { id: "p1", n: "Essencial", pg: 1, preco: 97, itens: ["1 página completa", "Todos os modelos e teses", "12 meses de hospedagem"] },
+  { id: "p3", n: "Profissional", pg: 3, preco: 199, top: true, itens: ["3 páginas completas (ex.: área + 2 teses)", "Todos os modelos e teses", "12 meses de hospedagem"] },
+  { id: "p10", n: "Escritório", pg: 10, preco: 397, itens: ["10 páginas (todas as teses que você atende)", "Domínio próprio configurado por nós", "12 meses de hospedagem"] },
+];
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const q = new URLSearchParams(location.search);
 const brl = n => "R$ " + Number(n).toFixed(2).replace(".", ",");
@@ -10,11 +16,24 @@ const ls = { get(k){ try { return JSON.parse(localStorage.getItem(k) || "null");
 const ev = (...a) => { try { window.ev && window.ev(...a); } catch {} };
 
 $("#lpcss").textContent = CSS;
+$("#tpls").innerHTML = TPLS.map(t => `<button type="button" data-t="${t[0]}" class="${t[0] === "classico" ? "on" : ""}">${t[3] !== "base" ? `<i>${t[3] === "viral" ? "Viral" : "Top"}</i>` : ""}${t[1]}<small>${t[2]}</small></button>`).join("");
 $("#fArea").innerHTML = Object.entries(AREAS).map(([k, v]) => `<option value="${k}">${v.n}</option>`).join("");
+const teses = (keep) => { const l = TESES[$("#fArea").value] || []; $("#lTese").hidden = !l.length;
+  $("#fTese").innerHTML = `<option value="">Área completa</option>` + l.map(t => `<option value="${t.id}">${t.n}</option>`).join("");
+  if (keep && l.some(t => t.id === keep)) $("#fTese").value = keep; };
+$("#fArea").addEventListener("change", () => teses()); teses();
+// Seções de venda: teses e tabela de pacotes
+$("#teses").innerHTML = Object.entries(TESES).map(([k, l]) => `<div><b>${AREAS[k].n}</b>${l.map(t => `<span>${t.n}</span>`).join("")}</div>`).join("");
+$("#precos").innerHTML = PACOTES.map(p => `<div class="preco${p.top ? " top" : ""}">${p.top ? '<span class="selo">Mais escolhido</span>' : ""}<h3>${p.n}</h3><div class="v">${brl(p.preco).replace(",00", "")}<small>pagamento único</small></div>
+  <ul>${p.itens.map(i => `<li>${i}</li>`).join("")}<li>Sem marca d'água e botão de WhatsApp</li><li>Edições ilimitadas</li></ul><a class="btn${p.top ? "" : " ghost"}" href="#formGen" data-pac="${p.id}">Gerar a minha grátis</a></div>`).join("");
+$("#precos").onclick = e => { const a = e.target.closest("[data-pac]"); if (a) st.pacote = a.dataset.pac; };
+$$('a[href="#formGen"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); if (st.step === 1) { $("#formGen").scrollIntoView({ behavior: "smooth", block: "start" }); setTimeout(() => $("#fNome").focus({ preventScroll: true }), 400); } else $("#steps").scrollIntoView({ behavior: "smooth", block: "start" }); }));
 $("#fUf").innerHTML = UFS.map(u => `<option${u === "CE" ? " selected" : ""}>${u}</option>`).join("");
 $("#pal").innerHTML = PALS.map((p, i) => `<button type="button" data-i="${i}" class="${i ? "" : "on"}" style="background:linear-gradient(135deg,${p[0]} 50%,${p[1]} 50%)" aria-label="Paleta ${i + 1}"></button>`).join("");
 
 const st = { step: 1, view: 1, tpl: "classico", p: PALS[0][0], a: PALS[0][1], foto: null, logo: null, fotoLocal: null, logoLocal: null, id: null, token: null, painel: null, teste: false };
+const V2 = (() => { const o = q.get("oferta"); if (o === "v2") { ls.set("jp_oferta", "v2"); return true; } if (o === "v1") { ls.del("jp_oferta"); return false; } return ls.get("jp_oferta") === "v2"; })();
+document.body.classList.toggle("v2", V2);
 const PAINEL = q.get("ref") && q.get("t") ? { ref: q.get("ref"), t: q.get("t") } : null;
 
 async function api(body) {
@@ -25,14 +44,14 @@ async function api(body) {
 }
 const v = id => $(id).value.trim();
 function dados() {
-  return { nome: v("#fNome"), genero: v("#fGen"), area: v("#fArea"), cidade: v("#fCidade"), uf: v("#fUf"), oab: v("#fOab"), anos: v("#fAnos"), zap: v("#fZap"), atend: v("#fAtend"),
-    tpl: st.tpl, p: st.p, a: st.a, h1: v("#tH1"), sub: v("#tSub"), bio: v("#tBio"), end: v("#tEnd"), email: v("#tEmail"), insta: v("#tInsta"), foto: st.foto, logo: st.logo };
+  return { nome: v("#fNome"), genero: v("#fGen"), area: v("#fArea"), tese: v("#fTese"), cidade: v("#fCidade"), uf: v("#fUf"), oab: v("#fOab"), anos: v("#fAnos"), zap: v("#fZap"), atend: v("#fAtend"),
+    tpl: st.tpl, p: st.p, a: st.a, h1: v("#tH1"), sub: v("#tSub"), bio: v("#tBio"), end: v("#tEnd"), email: v("#tEmail"), insta: v("#tInsta"), escritorio: v("#tEscr"), foto: st.foto, logo: st.logo };
 }
 function preenche(d) {
   const set = (id, x) => { $(id).value = x || ""; };
-  set("#fNome", d.nome); $("#fGen").value = d.genero || "a"; $("#fArea").value = d.area || "familia"; set("#fCidade", d.cidade); $("#fUf").value = d.uf || "CE";
+  set("#fNome", d.nome); $("#fGen").value = d.genero || "a"; $("#fArea").value = d.area || "familia"; teses(d.tese); set("#fCidade", d.cidade); $("#fUf").value = d.uf || "CE";
   set("#fOab", d.oab); set("#fAnos", d.anos); set("#fZap", d.zap); $("#fAtend").value = d.atend || "Presencial e online";
-  set("#tH1", d.h1); set("#tSub", d.sub); set("#tBio", d.bio); set("#tEnd", d.end); set("#tEmail", d.email); set("#tInsta", d.insta);
+  set("#tH1", d.h1); set("#tSub", d.sub); set("#tBio", d.bio); set("#tEnd", d.end); set("#tEmail", d.email); set("#tInsta", d.insta); set("#tEscr", d.escritorio);
   st.tpl = d.tpl || "classico"; st.p = d.p || PALS[0][0]; st.a = d.a || PALS[0][1]; st.foto = d.foto || null; st.logo = d.logo || null; st.fotoLocal = st.logoLocal = null;
   $("#cP").value = st.p;
   $$("#tpls button").forEach(x => x.classList.toggle("on", x.dataset.t === st.tpl));
@@ -48,7 +67,7 @@ const urlPainel = (ref, t) => new URL(`./?ref=${ref}&t=${t}`, location.href).hre
 
 function render() {
   const d = dados();
-  const r = renderLP({ ...d, foto: st.fotoLocal || d.foto, logo: st.logoLocal || d.logo }, { previa: !PAINEL, fotoVazia: PAINEL ? "Envie sua foto em Visual" : "Sua foto aqui (envie em Personalizar)" });
+  const r = renderLP({ ...d, foto: st.fotoLocal || d.foto, logo: st.logoLocal || d.logo }, { previa: !PAINEL, app: true, fotoVazia: PAINEL ? "Envie sua foto em Visual" : "Sua foto aqui (envie em Personalizar)" });
   const lp = $("#lp"); lp.className = r.cls; lp.style.cssText = r.style; lp.innerHTML = r.html;
   const pg = PAINEL && st.painel && st.painel.atual !== "novo" ? st.painel.paginas[st.painel.atual] : null;
   $("#url").textContent = "jurispaginas.com/" + (pg?.slug || slugDe(d.nome) || "seu-nome");
@@ -95,12 +114,18 @@ $("#back").onclick = () => setStep(2);
 $("#goPub2").onclick = () => abrirCheckout();
 $("#goPub").onclick = () => PAINEL ? salvarPainel() : abrirCheckout();
 
-["#fNome","#fGen","#fArea","#fCidade","#fUf","#fOab","#fAnos","#fZap","#fAtend","#tH1","#tSub","#tBio","#tEnd","#tEmail","#tInsta"].forEach(i => $(i).addEventListener("input", () => { render(); agendaSalvar(); }));
+["#fNome","#fGen","#fArea","#fTese","#fCidade","#fUf","#fOab","#fAnos","#fZap","#fAtend","#tH1","#tSub","#tBio","#tEnd","#tEmail","#tInsta"].forEach(i => $(i).addEventListener("input", () => { render(); agendaSalvar(); }));
 $$(".tabs button").forEach(b => b.onclick = () => {
   $$(".tabs button").forEach(x => x.classList.toggle("on", x === b));
   ["vis", "txt", "dados", "base"].forEach(t => $("#tab-" + t).hidden = t !== b.dataset.tab);
 });
-$("#tpls").onclick = e => { const b = e.target.closest("button"); if (!b) return; st.tpl = b.dataset.t; $$("#tpls button").forEach(x => x.classList.toggle("on", x === b)); render(); agendaSalvar(); };
+$("#tpls").onclick = e => {
+  const b = e.target.closest("button"); if (!b) return; st.tpl = b.dataset.t; $$("#tpls button").forEach(x => x.classList.toggle("on", x === b));
+  // Cada modelo vem com a paleta sugerida, a menos que a pessoa já tenha escolhido uma cor própria.
+  const padrao = [...PALS, ...TPLS.map(t => t[4])].some(q => q[0] === st.p && q[1] === st.a), sug = TPLS.find(t => t[0] === st.tpl)?.[4];
+  if (padrao && sug) { st.p = sug[0]; st.a = sug[1]; $("#cP").value = sug[0]; $$("#pal button").forEach(x => x.classList.toggle("on", PALS[x.dataset.i][0] === st.p && PALS[x.dataset.i][1] === st.a)); }
+  render(); agendaSalvar();
+};
 $("#pal").onclick = e => { const b = e.target.closest("button"); if (!b) return; const p = PALS[b.dataset.i]; st.p = p[0]; st.a = p[1]; $("#cP").value = p[0]; $$("#pal button").forEach(x => x.classList.toggle("on", x === b)); render(); agendaSalvar(); };
 $("#cP").oninput = e => { st.p = e.target.value; render(); agendaSalvar(); };
 
@@ -140,20 +165,28 @@ function abre(html, fechavel = true) { sheet.innerHTML = (fechavel ? `<button cl
 let poll = null;
 
 function abrirCheckout() {
-  setStep(4); ev("InitiateCheckout", { value: PRECO, currency: "BRL" });
   const nome = v("#fNome") || "Seu Nome", slug = slugDe(nome) || "seu-nome";
-  abre(`<h3>Publique sua página</h3>
-  <div class="offer">
+  if (!st.pacote) st.pacote = "p3";
+  const pac = () => V2 ? PACOTES.find(p => p.id === st.pacote) : { pg: 3, preco: PRECO };
+  setStep(4); ev("InitiateCheckout", { value: pac().preco, currency: "BRL" });
+  const oferta = V2 ? `<div class="pacs" id="pacs">${PACOTES.map(p => `<label class="pac${p.top ? " top" : ""}"><input type="radio" name="pac" value="${p.id}"${p.id === st.pacote ? " checked" : ""}>
+      <span class="pn">${p.top ? "<i>Mais escolhido</i>" : ""}<b>${p.n}</b><span>${p.itens.join(" · ")}</span></span><span class="pp">${brl(p.preco)}</span></label>`).join("")}</div>
+    <p class="note">Pagamento único no Pix. Todos incluem: sem marca d'água, botão direto para o seu WhatsApp, painel para editar quando quiser e endereço <b>jurispaginas.com/${esc(slug)}</b>.</p>`
+    : `<div class="offer">
     <div class="ot"><b>Pacote Juris Páginas</b><span class="pr">${brl(PRECO)}<small>pagamento único</small></span></div>
     <ul><li><b>3 páginas completas</b>: esta e mais 2 (uma para cada área ou serviço)</li><li>No ar em <b>jurispaginas.com/${esc(slug)}</b></li><li>12 meses de hospedagem e edições ilimitadas</li><li>Sem marca d'água · botão direto para o seu WhatsApp</li></ul>
-  </div>
+  </div>`;
+  abre(`<h3>Publique sua página</h3>
+  ${oferta}
   <label for="cEmail">Seu e-mail <small>para o recibo e o acesso ao painel</small><input id="cEmail" type="email" autocomplete="email" inputmode="email" value="${esc(v("#tEmail"))}"></label>
   <label for="cZap">Seu WhatsApp <input id="cZap" inputmode="tel" autocomplete="tel" value="${esc(v("#fZap"))}"></label>
-  <div class="total"><span>Total</span><span id="tot">${brl(PRECO)}</span></div>
+  <div class="total"><span>Total</span><span id="tot"></span></div>
   <p class="err" id="errPay"></p>
-  <button class="btn" type="button" id="pagar">Gerar Pix de ${brl(PRECO)}</button>
-  <p class="note">Pagamento por Pix pelo Mercado Pago. A página vai ao ar assim que o Pix for confirmado, em segundos.</p>`);
-  const tot = () => { $("#tot").textContent = brl(PRECO); $("#pagar").textContent = "Gerar Pix de " + brl(PRECO); };
+  <button class="btn" type="button" id="pagar"></button>
+  <p class="note">Pagamento por Pix pelo Mercado Pago. A página vai ao ar assim que o Pix for confirmado, em segundos.${V2 ? " Garantia de 7 dias: se não gostar, devolvemos o valor." : ""}</p>`);
+  const tot = () => { $("#tot").textContent = brl(pac().preco); $("#pagar").textContent = "Gerar Pix de " + brl(pac().preco); };
+  tot();
+  if (V2) $("#pacs").onchange = e => { st.pacote = e.target.value; tot(); };
   $("#pagar").onclick = async () => {
     const err = $("#errPay"); err.textContent = "";
     const email = v("#cEmail"), whats = v("#cZap");
@@ -162,7 +195,7 @@ function abrirCheckout() {
     const b = $("#pagar"); b.disabled = true; b.textContent = "Gerando Pix…";
     try {
       await salvaRascunho();
-      const j = await api({ acao: "pedido", id: st.id, token: st.token, email, whats, nome: v("#fNome") });
+      const j = await api({ acao: "pedido", id: st.id, token: st.token, email, whats, nome: v("#fNome"), ...(V2 ? { pacote: st.pacote } : {}) });
       ls.set("jp_pedido", { ref: j.ref, id: j.id, valor: j.valor });
       ev("AddPaymentInfo", { value: j.valor, currency: "BRL" });
       telaPix(j);
@@ -188,7 +221,7 @@ function telaPix(j) {
 
 function sucesso(s) {
   ls.del("jp_rasc"); ls.del("jp_pedido");
-  if (!ls.get("jp_px_" + s.ref)) { ev("Purchase", { value: Number(s.valor), currency: "BRL", content_name: "juris-3-paginas" }, s.ref); ls.set("jp_px_" + s.ref, 1); }
+  if (!ls.get("jp_px_" + s.ref)) { ev("Purchase", { value: Number(s.valor), currency: "BRL", content_name: "juris-" + (s.creditos || 3) + "-paginas" }, s.ref); ls.set("jp_px_" + s.ref, 1); }
   const pg = (s.paginas || []).find(p => p.slug) || {};
   const link = pg.slug ? urlPagina(pg.slug) : "";
   const painel = urlPainel(s.ref, s.token);
@@ -196,7 +229,7 @@ function sucesso(s) {
   $$("#steps li").forEach(li => li.className = "done");
   abre(`<h3>Sua página está no ar ✓</h3>
   ${link ? `<div class="live">${esc(link.replace(/^https?:\/\//, ""))}</div><a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Ver minha página</a>` : ""}
-  <div class="box"><b>Seu painel: guarde este link</b><p class="note">É por ele que você edita esta página e cria as outras 2 do seu pacote. Ele também vai no recibo.</p>
+  <div class="box"><b>Seu painel: guarde este link</b><p class="note">É por ele que você edita esta página${(s.creditos || 3) > 1 ? ` e cria as outras ${(s.creditos || 3) - 1} do seu pacote` : ""}. Ele também vai no recibo.</p>
     <a class="btn ghost" href="${esc(painel)}">Abrir meu painel</a>
     <a class="btn ghost" href="https://wa.me/?text=${encodeURIComponent("Meu painel do Juris Páginas: " + painel)}" target="_blank" rel="noopener">Enviar o link para o meu WhatsApp</a></div>
   ${s.fotos ? `<div class="box"><b>Suas 3 fotos profissionais</b><p class="note">Envie uma selfie e escolha os estilos. As fotos ficam prontas em até 12 horas e você troca a foto da página pelo painel.</p><a class="btn" href="${esc(s.fotos)}" target="_blank" rel="noopener">Enviar minha selfie</a></div>` : ""}`, true);
@@ -244,11 +277,16 @@ async function salvarPainel() {
 }
 
 /* ---------- início ---------- */
-if (PAINEL) iniciaPainel();
+if (PAINEL) { $("#vendas").hidden = true; iniciaPainel(); }
 else {
   const r = ls.get("jp_rasc");
   if (r?.id) { st.id = r.id; st.token = r.token; preenche(r.dados || {}); setStep(2); }
-  else setStep(1);
+  else {
+    // Link de anúncio pode chegar com ?area=&tese=&tpl= para abrir o gerador já no tema do criativo.
+    if (AREAS[q.get("area")]) { $("#fArea").value = q.get("area"); teses(q.get("tese")); }
+    const tq = TPLS.find(t => t[0] === q.get("tpl")); if (tq) { st.tpl = tq[0]; st.p = tq[4][0]; st.a = tq[4][1]; $("#cP").value = st.p; $$("#tpls button").forEach(x => x.classList.toggle("on", x.dataset.t === st.tpl)); }
+    setStep(1);
+  }
   const pd = ls.get("jp_pedido");
   if (pd?.ref) api({ acao: "status", ref: pd.ref, id: pd.id }).then(s => { if (s.pago) sucesso(s); }).catch(() => {});
 }
