@@ -1,0 +1,29 @@
+{
+  "_como_registrar": "POST https://graph.facebook.com/v23.0/<WABA_ID>/message_templates (Authorization: Bearer WA_TOKEN), um corpo por template abaixo; ou no Gerenciador do WhatsApp (business.facebook.com/latest/whatsapp_manager/message_templates) > Criar modelo > Utilidade. A Meta pede uma mídia de exemplo no cabeçalho (header_handle via Resumable Upload; no Gerenciador basta subir um arquivo).",
+  "peca_nova_aprovar": {
+    "name": "peca_nova_aprovar",
+    "language": "pt_BR",
+    "category": "UTILITY",
+    "components": [
+      { "type": "HEADER", "format": "IMAGE", "example": { "header_handle": ["<handle da imagem de exemplo>"] } },
+      { "type": "BODY",
+        "text": "Nova peça para sua aprovação.\nCódigo: {{1}}\nProjeto: {{2}}\nCopy: {{3}}\n\nToque em Aprovar ou em Refazer.",
+        "example": { "body_text": [["FOTOSADV-E12", "fotosadv", "Suas fotos profissionais em 24 h, sem sair de casa."]] } },
+      { "type": "FOOTER", "text": "Central N3w - aprovação de anúncios" },
+      { "type": "BUTTONS", "buttons": [ { "type": "QUICK_REPLY", "text": "Aprovar" }, { "type": "QUICK_REPLY", "text": "Refazer" } ] }
+    ]
+  },
+  "peca_nova_aprovar_video": {
+    "name": "peca_nova_aprovar_video",
+    "language": "pt_BR",
+    "category": "UTILITY",
+    "components": [
+      { "type": "HEADER", "format": "VIDEO", "example": { "header_handle": ["<handle do vídeo de exemplo>"] } },
+      { "type": "BODY",
+        "text": "Nova peça para sua aprovação.\nCódigo: {{1}}\nProjeto: {{2}}\nCopy: {{3}}\n\nToque em Aprovar ou em Refazer.",
+        "example": { "body_text": [["TDAH-R04", "tdah", "6 brain games para treinar o foco em 5 minutos por dia."]] } },
+      { "type": "FOOTER", "text": "Central N3w - aprovação de anúncios" },
+      { "type": "BUTTONS", "buttons": [ { "type": "QUICK_REPLY", "text": "Aprovar" }, { "type": "QUICK_REPLY", "text": "Refazer" } ] }
+    ]
+  }
+}
