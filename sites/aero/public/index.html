@@ -393,9 +393,12 @@ var CHECKOUT_PLANO = "https://payt.site/wGCBDlp";
 function q(){var p=new URLSearchParams(location.search);p.delete('lp');p.set('utm_term','lp-'+(window.AERO_LP||'A').toLowerCase());return '?'+p.toString()}
 function tr(n,d){try{window.hj&&hj('event',n);}catch(e){}try{d=d||{};d.lp=window.AERO_LP;window.va('event',{name:n,data:d})}catch(e){}}
 tr('lp_view');
-if(CHECKOUT_KIT){document.querySelectorAll('#cta-kit').forEach(function(a){a.href=CHECKOUT_KIT+q()})}
-function ic(){try{if(window.fbq)fbq('track','InitiateCheckout')}catch(e){}tr('checkout_click',{produto:this.id==='cta-plano'?'plano289':'kit67'})}
-document.querySelectorAll('#cta-kit,#cta-plano').forEach(function(a){a.addEventListener('click',ic)});
+// 09/10: todos os botões "Quero o kit" vão DIRETO ao checkout (antes desciam até #oferta e exigiam um 2º toque)
+var KITS=document.querySelectorAll('#cta-kit, a.cta[href="#oferta"]');
+if(CHECKOUT_KIT){KITS.forEach(function(a){a.href=CHECKOUT_KIT+q()})}
+function ic(){try{if(window.fbq)fbq('track','InitiateCheckout')}catch(e){}tr('checkout_click',{produto:this.id==='cta-plano'?'plano289':'kit67',pos:this.closest('.sticky')?'sticky':(this.id||'hero')})}
+KITS.forEach(function(a){a.addEventListener('click',ic)});
+document.getElementById('cta-plano').addEventListener('click',ic);
 if(CHECKOUT_PLANO){document.getElementById('cta-plano').href=CHECKOUT_PLANO+q()}
 document.querySelectorAll('.yt').forEach(function(b){b.addEventListener('click',function(){var id=b.getAttribute('data-id');b.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';tr('video_play',{id:id})},{once:true})});
 document.querySelectorAll('a[href="#oferta"]').forEach(function(a){a.addEventListener('click',function(){tr('cta_oferta')})});
