@@ -1,6 +1,7 @@
 // KIT ADHD — checkout sem atrito (Supabase Edge Function "kit", projeto reflex).
 // POST /kit/stripe   webhook da Stripe (assinatura validada com STRIPE_WEBHOOK_SECRET)
 //   checkout.session.completed / async_payment_succeeded (paid) -> grava compra aprovada + e-mail com o link do kit
+//                                                                 + Purchase na Conversions API (event_id = session id)
 //   charge.refunded / charge.dispute.created                    -> marca revogada
 // GET  /kit/check?session_id=cs_...  -> { paid } (a página do kit pode confirmar a compra)
 //
@@ -9,10 +10,13 @@
 //   STRIPE_SECRET_KEY      sk_live_... (opcional: só para /check)
 //   RESEND_API_KEY         re_...      (opcional: e-mail de entrega; sem ele a entrega é pelo redirecionamento do Payment Link)
 //   KIT_FROM_EMAIL         ex.: "ADHD Focus Kit <kit@xyzgames.app>"
+//   META_CAPI_TOKEN        token de acesso da Conversions API do pixel 1585625179768343 (opcional: sem ele, só o pixel do navegador)
+//   META_TEST_EVENT_CODE   ex.: TEST12345 (opcional: manda para "Eventos de teste" do Events Manager; obrigatório para compras em modo de teste)
 // Igual à Hotmart hoje: a entrega é o link da área do kit (KIT_URL). Sem fila, sem conta de usuário.
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const KIT_URL = "https://adhd.xyzgames.app/kit-5345843cc6/";
+const PIXEL_ID = "1585625179768343";
 const TOLERANCE_S = 300;
 const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 const enc = new TextEncoder();
@@ -42,6 +46,53 @@ export async function verifyStripe(payload: string, header: string | null, secre
   const mac = new Uint8Array(await crypto.subtle.sign("HMAC", key, enc.encode(`${t}.${payload}`)));
   const hex = [...mac].map((b) => b.toString(16).padStart(2, "0")).join("");
   return sigs.some((s) => timingSafeEqual(s, hex));
+}
+
+async function sha256(v: string) {
+  const d = new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode(v.trim().toLowerCase())));
+  return [...d].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+// Purchase server-side. event_id = id da Checkout Session = eventID do pixel em /purchase-pixel.js -> o Meta deduplica.
+// Compra em modo de teste só vai com META_TEST_EVENT_CODE (aba "Eventos de teste"), para não sujar as conversões reais.
+async function sendCapiPurchase(o: Record<string, any>, email: string | null, livemode: boolean) {
+  const token = Deno.env.get("META_CAPI_TOKEN");
+  const testCode = Deno.env.get("META_TEST_EVENT_CODE") || "";
+  if (!token) return "skipped";
+  if (!livemode && !testCode) return "skipped (test mode)";
+  const user_data: Record<string, string[]> = {};
+  if (email) user_data.em = [await sha256(email)];
+  const country = o.customer_details?.address?.country;
+  if (country) user_data.country = [await sha256(String(country))];
+  const zip = o.customer_details?.address?.postal_code;
+  if (zip) user_data.zp = [await sha256(String(zip))];
+  const body: Record<string, unknown> = {
+    data: [{
+      event_name: "Purchase",
+      event_time: Math.floor(Date.now() / 1000),
+      event_id: o.id,
+      action_source: "website",
+      event_source_url: KIT_URL,
+      user_data,
+      custom_data: {
+        value: o.amount_total != null ? o.amount_total / 100 : 9.9,
+        currency: String(o.currency || "usd").toUpperCase(),
+        content_name: "The ADHD Focus Kit",
+        content_type: "product",
+      },
+    }],
+  };
+  if (testCode) body.test_event_code = testCode;
+  try {
+    const r = await fetch(`https://graph.facebook.com/v21.0/${PIXEL_ID}/events?access_token=${encodeURIComponent(token)}`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    return r.ok ? "sent" : `error ${r.status}`;
+  } catch (_e) {
+    return "error fetch";
+  }
 }
 
 async function sendKitEmail(to: string) {
@@ -91,7 +142,9 @@ Deno.serve(async (req) => {
         mail = await sendKitEmail(email);
         if (mail === "sent") await db.from("kit_purchases").update({ emailed: true }).eq("transaction", o.id);
       }
-      return json({ ok: true, status: "approved", mail });
+      // Purchase na CAPI só na primeira vez que a sessão aparece (reentrega da Stripe não duplica; o Meta também deduplica pelo event_id).
+      const capi = prev?.[0] ? "already" : await sendCapiPurchase(o, email, !!ev.livemode);
+      return json({ ok: true, status: "approved", mail, capi });
     }
 
     if (ev.type === "charge.refunded" || ev.type === "charge.dispute.created") {

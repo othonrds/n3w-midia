@@ -8,7 +8,8 @@ Este código fica aqui porque o repo `othonrds/adhd-reflex` não estava liberado
 |---|---|---|
 | `lp/checkout-split.js` | `adhd-reflex/checkout-split.js` (raiz pública) + `<script src="/checkout-split.js" defer></script>` no fim da `focus-kit/index.html` | sorteio 50/50, cookie `chk_arm`, `utm_content=chk_hotmart / chk_stripe`, `client_reference_id=chk_stripe__<visitante>` |
 | `lp/api/checkout-config.js` | `adhd-reflex/api/checkout-config.js` | flag: sem `CHK_NEW_URL` na Vercel = 100% Hotmart |
-| `supabase/functions/kit/index.ts` | edge function `kit` no Supabase reflex (verify_jwt = false) | webhook Stripe com assinatura validada → `kit_purchases` + e-mail com o link do kit (Resend, opcional) |
+| `lp/purchase-pixel.js` | `adhd-reflex/purchase-pixel.js` + script no fim de `kit-5345843cc6/index.html` | Purchase do pixel (9.90 USD, eventID = session_id) |
+| `supabase/functions/kit/index.ts` | edge function `kit` no Supabase reflex (verify_jwt = false) | webhook Stripe com assinatura validada → `kit_purchases` + e-mail com o link do kit (Resend, opcional) + Purchase na CAPI |
 | `supabase/migrations/20261009_kit_purchases.sql` | migration no reflex | tabela de compras (RLS ligado, sem acesso anon) |
 
 ## Entrega (igual à Hotmart hoje)
@@ -27,3 +28,9 @@ Este código fica aqui porque o repo `othonrds/adhd-reflex` não estava liberado
 - Cliques por braço: `fbq CheckoutArm {arm}` e o atributo `data-chk` no `<html>`.
 
 Atenção: se o botão da LP não for um `<a href="https://pay.hotmart.com/...">` (ex.: `onclick` com `location.href`), troque por `<a>` ou chame `window.__chk.arm` no handler.
+
+## Medição de compra (Purchase pixel + CAPI) — 10/10
+- `lp/purchase-pixel.js` → `adhd-reflex/purchase-pixel.js` + `<script src="/purchase-pixel.js" defer></script>` no fim de `kit-5345843cc6/index.html` (depois do `fbq('init','1585625179768343')`). Dispara `Purchase` 9.90 USD só com `?src=stripe&session_id=cs_...`, uma vez por sessão, com `eventID = session_id`.
+- Edge function `kit`: na primeira vez que a sessão paga chega, manda `Purchase` à Conversions API com `event_id = session id` (mesmo id do pixel → o Meta deduplica), e-mail/país/ZIP em SHA-256.
+- Secrets novos (opcionais): `META_CAPI_TOKEN` (Events Manager → pixel → Configurações → Gerar token) e `META_TEST_EVENT_CODE` (aba Eventos de teste). Compra em modo de teste da Stripe só vai para a CAPI com o código de teste; em live vai normal.
+- Teste (modo de teste da Stripe): Payment Link de teste → cartão 4242 4242 4242 4242 → cai em `kit-5345843cc6/?src=stripe&session_id=cs_test_...` → Events Manager → Eventos de teste mostra `Purchase` do navegador e do servidor, deduplicados.
