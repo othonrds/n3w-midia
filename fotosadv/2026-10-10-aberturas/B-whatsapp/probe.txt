@@ -1,1 +1,1 @@
-format|duration=26.500000|size=5683257
+format|duration=26.500000|size=5677233
