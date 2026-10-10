@@ -2,9 +2,17 @@
 // POST /dreamelle/hotmart?k=<key in table dreamelle_config>  Hotmart webhook v2 -> store purchase
 // GET  /dreamelle/unlock?device=<id>      -> { founder }
 // POST /dreamelle/restore {email, transaction, device} -> { founder }
+// POST /dreamelle/stripe                   Stripe webhook (assinatura com o secret STRIPE_WEBHOOK_SECRET_DREAMELLE)
+//   checkout.session.completed / async_payment_succeeded (paid) -> compra aprovada; aparelho = client_reference_id "dg<id>"
+//   charge.refunded / charge.dispute.created                    -> revogada
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const PRODUCT_ID = "8686995";
+const STRIPE_PRODUCT_ID = "stripe:dreamelle-founder"; // product_id gravado nas compras Stripe
+const FOUNDER_PRODUCTS = [PRODUCT_ID, STRIPE_PRODUCT_ID];
+const STRIPE_LINKS = new Set(["plink_1UOu0PLF1DEi8ag88g0JPvK5"]); // Payment Link do Founder's Pass (US$ 4,99)
+const TOLERANCE_S = 300;
+const enc = new TextEncoder();
 const OK_EVENTS = new Set(["PURCHASE_APPROVED", "PURCHASE_COMPLETE"]);
 const REVOKE_EVENTS = new Set(["PURCHASE_REFUNDED", "PURCHASE_CHARGEBACK", "PURCHASE_CANCELED", "PURCHASE_PROTEST"]);
 const ORIGINS = ["https://dreamelle.vercel.app", "https://dreamelle.app", "https://www.dreamelle.app"];
@@ -24,8 +32,29 @@ const json = (req: Request, body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json", ...cors(req) } });
 const cleanDevice = (d: unknown) => (typeof d === "string" && /^[a-z0-9]{8,40}$/i.test(d) ? d.toLowerCase() : null);
 
+function timingSafeEqual(a: string, b: string) {
+  if (a.length !== b.length) return false;
+  let r = 0;
+  for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return r === 0;
+}
+
+// Stripe-Signature: t=<unix>,v1=<hex hmac_sha256(secret, `${t}.${payload}`)> (igual à função kit)
+export async function verifyStripe(payload: string, header: string | null, secret: string, now = Date.now()) {
+  if (!header || !secret) return false;
+  const parts = header.split(",").map((p) => p.trim().split("="));
+  const t = parts.find(([k]) => k === "t")?.[1];
+  const sigs = parts.filter(([k]) => k === "v1").map(([, v]) => v);
+  if (!t || !sigs.length) return false;
+  if (Math.abs(now / 1000 - Number(t)) > TOLERANCE_S) return false;
+  const key = await crypto.subtle.importKey("raw", enc.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const mac = new Uint8Array(await crypto.subtle.sign("HMAC", key, enc.encode(`${t}.${payload}`)));
+  const hex = [...mac].map((b) => b.toString(16).padStart(2, "0")).join("");
+  return sigs.some((s) => timingSafeEqual(s, hex));
+}
+
 async function isFounder(filter: { device?: string; email?: string; transaction?: string }) {
-  let q = db.from("dreamelle_purchases").select("transaction,status,device").eq("status", "approved").eq("product_id", PRODUCT_ID).limit(1);
+  let q = db.from("dreamelle_purchases").select("transaction,status,device").eq("status", "approved").in("product_id", FOUNDER_PRODUCTS).limit(1);
   if (filter.device) q = q.eq("device", filter.device);
   if (filter.transaction) q = q.eq("transaction", filter.transaction);
   const { data } = await q;
@@ -66,6 +95,40 @@ Deno.serve(async (req) => {
     return json(req, { ok: true, status });
   }
 
+  if (path === "/stripe" && req.method === "POST") {
+    const payload = await req.text();
+    const ok = await verifyStripe(payload, req.headers.get("stripe-signature"), Deno.env.get("STRIPE_WEBHOOK_SECRET_DREAMELLE") || "");
+    if (!ok) return new Response("bad signature", { status: 400 });
+    const ev = JSON.parse(payload);
+    const o = ev.data?.object || {};
+    const now = new Date().toISOString();
+    if (ev.type === "checkout.session.completed" || ev.type === "checkout.session.async_payment_succeeded") {
+      if (!STRIPE_LINKS.has(String(o.payment_link || "")) && o.metadata?.oferta !== "dreamelle-founder") return json(req, { ok: true, ignored: "not dreamelle" });
+      if (o.payment_status !== "paid") return json(req, { ok: true, ignored: "not paid yet" });
+      const ref = String(o.client_reference_id || "");
+      const device = cleanDevice(ref.startsWith("dg") ? ref.slice(2) : "");
+      const row: Record<string, unknown> = {
+        transaction: String(o.id), email: (o.customer_details?.email || o.customer_email || "").toLowerCase() || null,
+        status: "approved", product_id: STRIPE_PRODUCT_ID,
+        price: o.amount_total != null ? o.amount_total / 100 : null, currency: o.currency ? String(o.currency).toUpperCase() : null,
+        raw: ev, updated_at: now,
+      };
+      if (device) row.device = device;
+      const { error } = await db.from("dreamelle_purchases").upsert(row, { onConflict: "transaction" });
+      if (error) return new Response("db error", { status: 500 }); // a Stripe tenta de novo
+      return json(req, { ok: true, status: "approved", device: !!device });
+    }
+    if (ev.type === "charge.refunded" || ev.type === "charge.dispute.created") {
+      const pi = o.payment_intent || o.charge?.payment_intent;
+      if (pi) {
+        await db.from("dreamelle_purchases").update({ status: "revoked", updated_at: now })
+          .eq("product_id", STRIPE_PRODUCT_ID).eq("raw->data->object->>payment_intent", String(pi));
+      }
+      return json(req, { ok: true, status: "revoked" });
+    }
+    return json(req, { ok: true, ignored: ev.type });
+  }
+
   if (path === "/unlock" && req.method === "GET") {
     const device = cleanDevice(url.searchParams.get("device"));
     if (!device) return json(req, { founder: false });
@@ -76,9 +139,11 @@ Deno.serve(async (req) => {
     let b: any = {};
     try { b = await req.json(); } catch { /* empty */ }
     const email = String(b.email || "").trim().toLowerCase();
-    const transaction = String(b.transaction || "").trim().toUpperCase();
+    const rawTx = String(b.transaction || "").trim();
+    // Hotmart: HP...; Stripe: id da sessão (cs_live_...), que volta no link de retorno do checkout
+    const transaction = /^cs_(live|test)_[A-Za-z0-9]{10,}$/.test(rawTx) ? rawTx : rawTx.toUpperCase();
     const device = cleanDevice(b.device);
-    if (!email || !/^HP\w{6,}$/.test(transaction)) return json(req, { founder: false, error: "missing" });
+    if (!email || !/^(HP\w{6,}|cs_(live|test)_[A-Za-z0-9]{10,})$/.test(transaction)) return json(req, { founder: false, error: "missing" });
     const hit = await isFounder({ email, transaction });
     if (hit && device) await db.from("dreamelle_purchases").update({ device, updated_at: new Date().toISOString() }).eq("transaction", transaction);
     return json(req, { founder: !!hit });

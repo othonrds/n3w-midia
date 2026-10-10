@@ -675,7 +675,11 @@ if(document.body) start(); else document.addEventListener('DOMContentLoaded',sta
 
 /* ===== Config ===== */
 const HOTMART_CHECKOUT_URL = 'https://pay.hotmart.com/O107945251X?sck=dreamelle_game';
-const VERSION = '0.5.0';
+const STRIPE_CHECKOUT_URL = 'https://buy.stripe.com/aFa9AUdqwdV3bvIdfw3cc01';
+// A/B de checkout Hotmart x Stripe: DESLIGADO até o ok do gestor de tráfego + Othon. Com false, todos vão para a Hotmart;
+// ?x_chk=stripe força o braço Stripe (QA / compra-teste).
+const CHK_AB_ON = false;
+const VERSION = '0.5.1';
 const SAVE_KEY = 'dreamelle_save_v2';
 const ENERGY_COST = 2;
 
@@ -708,6 +712,9 @@ const EXP = (function(){
   Object.keys(EXPS).forEach(k=>{ const arms=EXPS[k], f=q.get('x_'+k);
     out[k] = (f&&arms.includes(f)) ? f : (arms.includes(saved[k]) ? saved[k] : arms[h(DEV_ID+':'+k)%arms.length]); });
   try{ localStorage.setItem('dreamelle_exp',JSON.stringify(out)); }catch(e){}
+  { const f=q.get('x_chk'), arms=['hotmart','stripe'];
+    out.chk = arms.includes(f) ? f : (!CHK_AB_ON ? 'hotmart' : (arms.includes(saved.chk) ? saved.chk : arms[h(DEV_ID+':chk')%2]));
+    if(CHK_AB_ON||f){ try{ localStorage.setItem('dreamelle_exp',JSON.stringify(out)); }catch(e){} } }
   return out; })();
 const SRC = (function(){ let f=null; try{ f=JSON.parse(localStorage.getItem('dreamelle_src')||'null'); }catch(e){}
   if(f) return f; const q=new URLSearchParams(location.search), o={};
@@ -1318,11 +1325,17 @@ if(STANDALONE) track('pwa_open',{});
 /* ===== Founder's Pass (automatic delivery) ===== */
 const FP_API='https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/dreamelle';
 const DEVICE=(function(){ let d=store.get('dreamelle_device'); if(!d||!/^[a-z0-9]{8,40}$/.test(d)){ d=(Math.random().toString(36).slice(2,10)+Date.now().toString(36)).replace(/[^a-z0-9]/g,''); store.set('dreamelle_device',d); } return d; })();
-function checkoutUrl(){ const u=HOTMART_CHECKOUT_URL.split('?')[0]; return u+'?sck=dg'+DEVICE+'&src=dreamelle_game'; }
+function checkoutUrl(){
+  if(EXP.chk==='stripe') return STRIPE_CHECKOUT_URL+'?client_reference_id=dg'+DEVICE;
+  const u=HOTMART_CHECKOUT_URL.split('?')[0]; return u+'?sck=dg'+DEVICE+'&src=dreamelle_game'; }
+// Volta do Stripe: /?src=paid&pay=stripe&session_id=cs_...  -> Purchase com eventID = session_id (dedup com a CAPI)
+const STRIPE_SID=(function(){ try{ const q=new URLSearchParams(location.search), sid=q.get('session_id')||'';
+  if(q.get('pay')==='stripe' && /^cs_(live|test)_[A-Za-z0-9]{10,}$/.test(sid)){ store.set('dreamelle_stripe_sid',sid); return sid; }
+  return store.get('dreamelle_stripe_sid')||''; }catch(e){ return ''; } })();
 let fpPoll=null;
 function becomeFounder(src){
   if(S.founder) return; S.founder=true; save();
-  track('founder_unlocked',{src}); try{ window.fbq&&fbq('track','Purchase',{value:4.99,currency:'USD',content_name:'founders_pass'}); }catch(e){}
+  track('founder_unlocked',{src,pay:STRIPE_SID?'stripe':'hotmart'}); try{ window.fbq&&fbq('track','Purchase',{value:4.99,currency:'USD',content_name:'founders_pass'},STRIPE_SID?{eventID:STRIPE_SID}:undefined); }catch(e){}
   if(fpPoll){ clearInterval(fpPoll); fpPoll=null; }
   closeOverlay(); sfx('win'); confetti(); toast('Founder’s Pass active! Welcome, Founder 💖'); setTimeout(showFounder,600);
 }
@@ -1406,7 +1419,7 @@ const A = {
   enddayok(){ const first=!S.day1Done; S.day1Done=true; S.day=2; save(); if(first) track('day1_done',{level:S.level}); closeOverlay(); if(EXP.pw_moment==='cliff' && !S.founder) showCliff(); else showPaywall('end'); },
   cliffgo(){ sfx('tap'); closeOverlay(); showPaywall('cliff'); },
   paywall(){ showPaywall(S.day1Done?(EXP.pw_moment==='cliff'?'cliff':'end'):'home'); },
-  checkout(){ track('checkout_click',{price:4.99,currency:'USD',product:'founders_pass',moment:pwCtx});
+  checkout(){ track('checkout_click',{price:4.99,currency:'USD',product:'founders_pass',moment:pwCtx,chk:EXP.chk});
     if(HOTMART_CHECKOUT_URL.indexOf('PLACEHOLDER')>-1){ track('waitlist_click',{price:4.99}); toast('The Founder\'s Pass opens in a few days. Thanks for your interest — keep playing!'); return; }
     store.set('dreamelle_checkout_opened','1'); startFounderPoll();
     try{ const w=window.open(checkoutUrl(),'_blank','noopener'); if(!w) location.href=checkoutUrl(); }catch(e){ location.href=checkoutUrl(); }
@@ -1447,6 +1460,8 @@ load(); applySettings();
 try{ setTimeout(()=>Doll.preload([Doll.ART.scenes.C01_quarto,Doll.ART.scenes.C02_mapa,Doll.ART.scenes.C03_escritorio,Doll.ART.scenes.C04_casa].concat(Doll.ART.busts, Object.values(Doll.ART.poses[+(S.av.look||0)]))),400); }catch(e){}
 if(S.created && S.career) careerSel=S.career;
 setTimeout(()=>checkFounder('boot'),1200);
+// Voltou do Stripe e o webhook ainda não chegou: confere de 3 em 3 s por 1 min, depois o poll normal
+if(STRIPE_SID && /[?&]pay=stripe/.test(location.search) && !S.founder){ let k=0; const t=setInterval(()=>{ if(++k>20||S.founder){ clearInterval(t); if(!S.founder) startFounderPoll(); return; } checkFounder('stripe_return'); },3000); }
 track('session_start',{returning:!!S.created,day1Done:!!S.day1Done,standalone:STANDALONE});
 if(conceptId){ track('concept_view',{concept:conceptId}); go('concept'); } else go('splash');
 if('serviceWorker' in navigator && location.protocol==='https:'){ window.addEventListener('load',()=>{ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }); }
