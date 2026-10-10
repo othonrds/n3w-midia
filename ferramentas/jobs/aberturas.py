@@ -15,7 +15,7 @@ W,H=720,1280; FPS=30; DUR=2.0; CUT=0.9
 Y=(245,184,46); WH=(255,255,255)
 def halves(src):
     im=Image.open(src).convert('RGB')  # 1080x1920, selfie em cima, ensaio embaixo
-    top=im.crop((0,60,1080,890)); bot=im.crop((0,1060,1080,1890))
+    top=im.crop((0,110,1080,890)); bot=im.crop((0,1060,1080,1800))
     return top,bot
 def cover(im,z):
     w,h=im.size; s=max(W/w,H/h)*z; im2=im.resize((int(w*s)+1,int(h*s)+1),Image.LANCZOS)
