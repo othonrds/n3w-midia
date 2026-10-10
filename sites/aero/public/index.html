@@ -15,6 +15,7 @@
  if(v!=='A'&&v!=='B'){v=Math.random()<.5?'A':'B'}}
  try{localStorage.setItem('aero_lp',v)}catch(e){}
  window.AERO_LP=v;document.documentElement.className+=' lp'+v;})();
+(function(){var p,m=location.search.match(/[?&]preco=(37|67)/);if(m){p=m[1]}else{try{p=localStorage.getItem('aero_preco')}catch(e){}if(p!=='37'&&p!=='67'){p=Math.random()<.5?'37':'67'}}try{localStorage.setItem('aero_preco',p)}catch(e){}window.AERO_P=p;})();
 window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
@@ -407,11 +408,12 @@ footer .wrap{display:grid;gap:8px}
 
 <script>
 // Links de checkout (Payt) — preenchidos após o cadastro dos produtos
-var CHECKOUT_KIT = "https://payt.site/mNCDMaK";
+var CHECKOUT_KIT = (window.AERO_P==='37') ? "https://payt.site/wGCBDQW" : "https://payt.site/mNCDMaK"; // teste de preço 09/10: R$37 (RV7QXJ) × R$67 (RV7BWO)
+if(window.AERO_P==='37'){var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),n;while(n=w.nextNode()){if(n.nodeValue.indexOf('R$ 67')>=0)n.nodeValue=n.nodeValue.split('R$ 67').join('R$ 37')}}
 var CHECKOUT_PLANO = "https://payt.site/wGCBDlp";
 // repassa as UTMs do anúncio e marca a versão da página (utm_term=lp-a / lp-b) para ler na Payt
-function q(){var p=new URLSearchParams(location.search);p.delete('lp');p.set('utm_term','lp-'+(window.AERO_LP||'A').toLowerCase());return '?'+p.toString()}
-function tr(n,d){try{window.hj&&hj('event',n);}catch(e){}try{d=d||{};d.lp=window.AERO_LP;window.va('event',{name:n,data:d})}catch(e){}}
+function q(){var p=new URLSearchParams(location.search);p.delete('lp');p.set('utm_term','lp-'+(window.AERO_LP||'A').toLowerCase()+'-p'+(window.AERO_P||'67'));return '?'+p.toString()}
+function tr(n,d){try{window.hj&&hj('event',n);}catch(e){}try{d=d||{};d.lp=window.AERO_LP+'-p'+window.AERO_P;window.va('event',{name:n,data:d})}catch(e){}}
 tr('lp_view');
 // 09/10: todos os botões "Quero o kit" vão DIRETO ao checkout (antes desciam até #oferta e exigiam um 2º toque)
 var KITS=document.querySelectorAll('#cta-kit, a.cta[href="#oferta"]');
