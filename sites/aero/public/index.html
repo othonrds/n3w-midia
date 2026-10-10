@@ -396,7 +396,7 @@ tr('lp_view');
 // 09/10: todos os botões "Quero o kit" vão DIRETO ao checkout (antes desciam até #oferta e exigiam um 2º toque)
 var KITS=document.querySelectorAll('#cta-kit, a.cta[href="#oferta"]');
 if(CHECKOUT_KIT){KITS.forEach(function(a){a.href=CHECKOUT_KIT+q()})}
-function ic(){try{if(window.fbq)fbq('track','InitiateCheckout')}catch(e){}tr('checkout_click',{produto:this.id==='cta-plano'?'plano289':'kit67',pos:this.closest('.sticky')?'sticky':(this.id||'hero')})}
+function ic(){try{if(window.fbq)fbq('track','InitiateCheckout')}catch(e){}tr('checkout_click',{produto:(this.id==='cta-plano'?'plano289':'kit67')+'-'+(this.closest('.sticky')?'sticky':(this.id||'botao'))})}
 KITS.forEach(function(a){a.addEventListener('click',ic)});
 document.getElementById('cta-plano').addEventListener('click',ic);
 if(CHECKOUT_PLANO){document.getElementById('cta-plano').href=CHECKOUT_PLANO+q()}
