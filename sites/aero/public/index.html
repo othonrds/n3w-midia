@@ -15,6 +15,7 @@
  if(v!=='A'&&v!=='B'){v=Math.random()<.5?'A':'B'}}
  try{localStorage.setItem('aero_lp',v)}catch(e){}
  window.AERO_LP=v;document.documentElement.className+=' lp'+v;})();
+(function(){var p,m=location.search.match(/[?&]preco=(37|67)/);if(m){p=m[1]}else{try{p=localStorage.getItem('aero_preco')}catch(e){}if(p!=='37'&&p!=='67'){p=Math.random()<.5?'37':'67'}}try{localStorage.setItem('aero_preco',p)}catch(e){}window.AERO_P=p;})();
 window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
@@ -143,6 +144,9 @@ footer .wrap{display:grid;gap:8px}
 /* A/B: blocos só da versão B */
 .vB{display:none}
 .lpB .vB{display:block}
+.lpB .vA{display:none}
+.quick{background:#fff;color:#14213a;border-radius:16px;padding:22px;margin:0 auto;max-width:560px;border-top:5px solid var(--amber)}
+.quick h3{font-size:24px;margin-bottom:6px}.quick ul{margin:12px 0 4px 18px}.quick li{margin:4px 0}.quick .pr{font-size:15px;color:#5b6880;margin-top:8px}
 .mentor-photo{border-radius:14px;margin-bottom:18px;box-shadow:0 16px 36px rgba(11,29,54,.25);aspect-ratio:4/3;object-fit:cover;object-position:60% 30%;width:100%}
 .film{background:var(--navy);color:#fff;padding:56px 0}
 .film h2{color:#fff;margin-bottom:8px}
@@ -191,6 +195,23 @@ footer .wrap{display:grid;gap:8px}
  <div class="num"><b>1.500 h</b><span>para a licença de Piloto de Linha Aérea, aos 21 anos</span></div>
 </div></div>
 
+<section class="vB" style="padding:28px 0 8px">
+ <div class="wrap">
+  <div class="quick">
+   <h3>Kit Plano de Voo · R$ 67</h3>
+   <p>O mapa completo da carreira, para decidir antes de gastar com escola ou cursinho.</p>
+   <ul>
+    <li>Guia de 30 páginas com 52 fontes oficiais</li>
+    <li>Planilha: em quantos meses você chega ao Piloto Comercial</li>
+    <li>Rotas militar e policial: idades, vagas e provas</li>
+    <li>Checklist de escola e plano de 90 dias</li>
+   </ul>
+   <p class="pr">Menos do que uma única hora de voo de instrução. Acesso imediato, 7 dias de garantia.</p>
+   <a class="btn cta" href="#oferta" style="width:100%;text-align:center;margin-top:14px">Quero o meu kit <small>R$ 67</small></a>
+  </div>
+ </div>
+</section>
+
 <section class="film vB">
  <div class="wrap">
   <div class="eyebrow">Do sonho ao cockpit</div>
@@ -200,7 +221,7 @@ footer .wrap{display:grid;gap:8px}
  </div>
 </section>
 
-<section>
+<section class="vA">
  <div class="wrap">
   <div class="eyebrow" style="color:var(--amber-d)">O problema</div>
   <h2>Todo mundo que sonha em voar trava nas mesmas perguntas</h2>
@@ -213,7 +234,7 @@ footer .wrap{display:grid;gap:8px}
  </div>
 </section>
 
-<section class="alt">
+<section class="alt vA">
  <div class="wrap">
   <div class="eyebrow" style="color:var(--amber-d)">Para quem é</div>
   <h2>Um mapa para cada ponto da jornada</h2>
@@ -247,7 +268,7 @@ footer .wrap{display:grid;gap:8px}
  </div>
 </section>
 
-<section class="pais">
+<section class="pais vA">
  <div class="wrap">
   <div class="eyebrow">Para pais</div>
   <h2>Seu filho sonha com a aviação?</h2>
@@ -275,7 +296,7 @@ footer .wrap{display:grid;gap:8px}
  </div>
 </section>
 
-<section>
+<section class="vA">
  <div class="wrap">
   <div class="eyebrow" style="color:var(--amber-d)">Seu mentor</div>
   <h2>Quem já esteve no cockpit</h2>
@@ -387,15 +408,19 @@ footer .wrap{display:grid;gap:8px}
 
 <script>
 // Links de checkout (Payt) — preenchidos após o cadastro dos produtos
-var CHECKOUT_KIT = "https://payt.site/mNCDMaK";
+var CHECKOUT_KIT = (window.AERO_P==='37') ? "https://payt.site/wGCBDQW" : "https://payt.site/mNCDMaK"; // teste de preço 09/10: R$37 (RV7QXJ) × R$67 (RV7BWO)
+if(window.AERO_P==='37'){var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),n;while(n=w.nextNode()){if(n.nodeValue.indexOf('R$ 67')>=0)n.nodeValue=n.nodeValue.split('R$ 67').join('R$ 37')}}
 var CHECKOUT_PLANO = "https://payt.site/wGCBDlp";
 // repassa as UTMs do anúncio e marca a versão da página (utm_term=lp-a / lp-b) para ler na Payt
-function q(){var p=new URLSearchParams(location.search);p.delete('lp');p.set('utm_term','lp-'+(window.AERO_LP||'A').toLowerCase());return '?'+p.toString()}
-function tr(n,d){try{window.hj&&hj('event',n);}catch(e){}try{d=d||{};d.lp=window.AERO_LP;window.va('event',{name:n,data:d})}catch(e){}}
+function q(){var p=new URLSearchParams(location.search);p.delete('lp');p.set('utm_term','lp-'+(window.AERO_LP||'A').toLowerCase()+'-p'+(window.AERO_P||'67'));return '?'+p.toString()}
+function tr(n,d){try{window.hj&&hj('event',n);}catch(e){}try{d=d||{};d.lp=window.AERO_LP+'-p'+window.AERO_P;window.va('event',{name:n,data:d})}catch(e){}}
 tr('lp_view');
-if(CHECKOUT_KIT){document.querySelectorAll('#cta-kit').forEach(function(a){a.href=CHECKOUT_KIT+q()})}
-function ic(){try{if(window.fbq)fbq('track','InitiateCheckout')}catch(e){}tr('checkout_click',{produto:this.id==='cta-plano'?'plano289':'kit67'})}
-document.querySelectorAll('#cta-kit,#cta-plano').forEach(function(a){a.addEventListener('click',ic)});
+// 09/10: todos os botões "Quero o kit" vão DIRETO ao checkout (antes desciam até #oferta e exigiam um 2º toque)
+var KITS=document.querySelectorAll('#cta-kit, a.cta[href="#oferta"]');
+if(CHECKOUT_KIT){KITS.forEach(function(a){a.href=CHECKOUT_KIT+q()})}
+function ic(){try{if(window.fbq)fbq('track','InitiateCheckout')}catch(e){}tr('checkout_click',{produto:(this.id==='cta-plano'?'plano289':'kit67')+'-'+(this.closest('.sticky')?'sticky':(this.id||'botao'))})}
+KITS.forEach(function(a){a.addEventListener('click',ic)});
+document.getElementById('cta-plano').addEventListener('click',ic);
 if(CHECKOUT_PLANO){document.getElementById('cta-plano').href=CHECKOUT_PLANO+q()}
 document.querySelectorAll('.yt').forEach(function(b){b.addEventListener('click',function(){var id=b.getAttribute('data-id');b.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';tr('video_play',{id:id})},{once:true})});
 document.querySelectorAll('a[href="#oferta"]').forEach(function(a){a.addEventListener('click',function(){tr('cta_oferta')})});
