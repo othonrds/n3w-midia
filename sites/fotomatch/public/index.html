@@ -19,7 +19,7 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
 </header>
 
 <main id="app">
-  <!-- 0 · Abertura -->
+  <!-- 0 · Abertura (v2 padrão Roast: antes P&B 3,1 → depois 8,9 + checklist; fotos v2 entram em img/v2/ quando o motor for liberado) -->
   <section class="tela ativa" data-tela="inicio">
     <p class="kicker">Fotos de perfil para apps de namoro</p>
     <h1>Descubra em 2 minutos por que suas fotos não dão match.</h1>
@@ -30,26 +30,32 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
     </ul>
     <div class="exemplo" id="exemplo">
       <div class="par on" data-i="0">
-        <figure class="ph"><img src="img/r1-base.jpg" alt="Selfie comum de um homem fictício" loading="eager" width="640" height="960"><figcaption>selfie comum</figcaption></figure>
+        <figure class="ph antes"><span class="nt ruim">3,1</span><img src="img/r1-base.jpg" alt="Selfie comum de um homem fictício" loading="eager" width="640" height="960"><figcaption>antes · selfie comum</figcaption></figure>
         <div class="seta">→</div>
-        <figure class="ph ph2"><img src="img/r1-jantar.jpg" alt="O mesmo rosto fictício em foto de jantar à noite" loading="eager" width="640" height="960"><figcaption>mesma cara, jantar à noite</figcaption></figure>
+        <figure class="ph ph2 depois"><span class="nt boa">8,9</span><img src="img/r1-jantar.jpg" alt="O mesmo rosto fictício em foto de jantar à noite" loading="eager" width="640" height="960"><figcaption>mesma cara, jantar à noite</figcaption></figure>
       </div>
       <div class="par" data-i="1">
-        <figure class="ph"><img src="img/r2-base.jpg" alt="Selfie comum de um homem fictício" loading="lazy" width="640" height="960"><figcaption>selfie comum</figcaption></figure>
+        <figure class="ph antes"><span class="nt ruim">3,1</span><img src="img/r2-base.jpg" alt="Selfie comum de um homem fictício" loading="lazy" width="640" height="960"><figcaption>antes · selfie comum</figcaption></figure>
         <div class="seta">→</div>
-        <figure class="ph ph2"><img src="img/r2-terno.jpg" alt="O mesmo rosto fictício em foto de terno na rua" loading="lazy" width="640" height="960"><figcaption>mesma cara, terno na rua</figcaption></figure>
+        <figure class="ph ph2 depois"><span class="nt boa">8,9</span><img src="img/r2-terno.jpg" alt="O mesmo rosto fictício em foto de terno na rua" loading="lazy" width="640" height="960"><figcaption>mesma cara, terno na rua</figcaption></figure>
       </div>
       <div class="par" data-i="2">
-        <figure class="ph"><img src="img/r3-base.jpg" alt="Selfie comum de um homem fictício" loading="lazy" width="640" height="960"><figcaption>selfie comum</figcaption></figure>
+        <figure class="ph antes"><span class="nt ruim">3,1</span><img src="img/r3-base.jpg" alt="Selfie comum de um homem fictício" loading="lazy" width="640" height="960"><figcaption>antes · selfie comum</figcaption></figure>
         <div class="seta">→</div>
-        <figure class="ph ph2"><img src="img/r3-praia.jpg" alt="O mesmo rosto fictício em foto de pôr do sol na praia" loading="lazy" width="640" height="960"><figcaption>mesma cara, pôr do sol na praia</figcaption></figure>
+        <figure class="ph ph2 depois"><span class="nt boa">8,9</span><img src="img/r3-praia.jpg" alt="O mesmo rosto fictício em foto de pôr do sol na praia" loading="lazy" width="640" height="960"><figcaption>mesma cara, pôr do sol na praia</figcaption></figure>
       </div>
     </div>
     <div class="pontos" id="pontos"><button aria-label="Exemplo 1" class="on"></button><button aria-label="Exemplo 2"></button><button aria-label="Exemplo 3"></button></div>
+    <div class="checklist">
+      <div class="col ruim"><p class="tt">Antes</p><ul><li>Foto de baixa qualidade</li><li>Pose sem graça</li><li>Luz ruim</li><li>Primeira impressão fraca</li></ul></div>
+      <div class="col boa"><p class="tt">Depois</p><ul><li>Foto de qualidade</li><li>Pose confiante</li><li>Luz forte</li><li>Primeira impressão marcante</li></ul></div>
+    </div>
+    <button class="btn" data-ir="idade">Quero minha nota grátis</button>
   </section>
 
   <!-- 1 · Idade -->
   <section class="tela" data-tela="idade" data-passo="1">
+    <div class="faixa" aria-hidden="true"><img src="img/r1-jantar.jpg" alt="" loading="lazy"><img src="img/r2-terno.jpg" alt="" loading="lazy"><img src="img/r3-praia.jpg" alt="" loading="lazy"></div>
     <h2>Qual a sua idade?</h2>
     <div class="opcoes" data-campo="idade">
       <button data-v="18-24">18 a 24</button><button data-v="25-34">25 a 34</button><button data-v="35-44">35 a 44</button>

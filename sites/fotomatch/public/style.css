@@ -80,3 +80,17 @@ footer{max-width:520px;margin:0 auto;padding:20px 16px 40px;color:var(--muted);f
 .previaCarregando{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;text-align:center;color:var(--muted);font-size:14px}
 .previaCarregando[hidden],.previa[hidden],.previaFoto img[hidden]{display:none!important}
 .previaFoto img[hidden] ~ .marca{display:none}
+
+/* v2 padrão Roast */
+.exemplo .antes img{filter:grayscale(1) contrast(1.05)}
+.nt{position:absolute;top:8px;left:8px;z-index:2;font:800 17px/1 var(--display);color:#fff;border-radius:10px;padding:6px 9px;box-shadow:0 2px 8px #0006}
+.nt.ruim{background:var(--bad)}.nt.boa{background:var(--ok)}
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 6px}
+.checklist .col{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
+.checklist .tt{margin:0 0 6px;font:700 14px var(--display);text-transform:uppercase;letter-spacing:.06em}
+.checklist .ruim .tt{color:var(--bad)}.checklist .boa .tt{color:var(--ok)}
+.checklist ul{list-style:none;padding:0;margin:0;display:grid;gap:6px;font-size:13.5px}
+.checklist .ruim li::before{content:"✗ ";color:var(--bad);font-weight:800}
+.checklist .boa li::before{content:"✓ ";color:var(--ok);font-weight:800}
+.faixa{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0 4px}
+.faixa img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:10px}
