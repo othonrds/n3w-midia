@@ -28,10 +28,25 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
     <ul class="confianca">
       <li>Grátis, sem cartão</li><li>Resultado em cerca de 1 minuto</li><li>Fotos privadas, apagadas em até 30 dias</li>
     </ul>
-    <div class="exemplo">
-      <div class="ph"><span>selfie comum</span></div><div class="seta">→</div><div class="ph ph2"><span>mesma cara, foto certa</span></div>
+    <div class="exemplo" id="exemplo">
+      <div class="par on" data-i="0">
+        <figure class="ph"><img src="img/r1-base.jpg" alt="Selfie comum de um homem fictício" loading="eager" width="640" height="960"><figcaption>selfie comum</figcaption></figure>
+        <div class="seta">→</div>
+        <figure class="ph ph2"><img src="img/r1-jantar.jpg" alt="O mesmo rosto fictício em foto de jantar à noite" loading="eager" width="640" height="960"><figcaption>mesma cara, jantar à noite</figcaption></figure>
+      </div>
+      <div class="par" data-i="1">
+        <figure class="ph"><img src="img/r2-base.jpg" alt="Selfie comum de um homem fictício" loading="lazy" width="640" height="960"><figcaption>selfie comum</figcaption></figure>
+        <div class="seta">→</div>
+        <figure class="ph ph2"><img src="img/r2-terno.jpg" alt="O mesmo rosto fictício em foto de terno na rua" loading="lazy" width="640" height="960"><figcaption>mesma cara, terno na rua</figcaption></figure>
+      </div>
+      <div class="par" data-i="2">
+        <figure class="ph"><img src="img/r3-base.jpg" alt="Selfie comum de um homem fictício" loading="lazy" width="640" height="960"><figcaption>selfie comum</figcaption></figure>
+        <div class="seta">→</div>
+        <figure class="ph ph2"><img src="img/r3-praia.jpg" alt="O mesmo rosto fictício em foto de pôr do sol na praia" loading="lazy" width="640" height="960"><figcaption>mesma cara, pôr do sol na praia</figcaption></figure>
+      </div>
     </div>
-    <p class="legenda">Exemplos ilustrativos com pessoas fictícias geradas por IA (em produção).</p>
+    <div class="pontos" id="pontos"><button aria-label="Exemplo 1" class="on"></button><button aria-label="Exemplo 2"></button><button aria-label="Exemplo 3"></button></div>
+    <p class="legenda">Exemplos ilustrativos com pessoas fictícias geradas por IA.</p>
   </section>
 
   <!-- 1 · Idade -->
@@ -115,12 +130,17 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
     <div class="nota"><span id="notaGeral">–</span><small>/10</small></div>
     <p class="sub" id="resFrase"></p>
     <div class="fotosNota" id="fotosNota"></div>
+    <div class="previa" id="previa" hidden>
+      <p class="kicker">Sua prévia</p>
+      <figure class="previaFoto" id="previaFoto"><div class="previaCarregando" id="previaCarregando"><div class="anel"></div><span>Sua prévia está sendo gerada…</span></div><img id="previaImg" alt="Prévia de uma foto sua gerada com IA" hidden><span class="marca">FotoMatch · prévia</span></figure>
+      <p class="mini" id="previaTxt">Uma foto sua, com luz e cenário certos. Leva cerca de 1 minuto.</p>
+    </div>
     <h3>Os 3 erros que mais pesam</h3>
     <ol class="erros" id="errosLista"></ol>
     <div class="oferta">
       <p class="kicker">Com fotos certas</p>
-      <h2>Mande 5 selfies. Receba 15 fotos de perfil com o <u>seu</u> rosto.</h2>
-      <p class="sub">Luz, cenário, roupa e enquadramento certos. É você, mais bem fotografado. Pronto em até 2 horas.</p>
+      <h2>Com as fotos que você já mandou, receba 15 fotos de perfil com o <u>seu</u> rosto.</h2>
+      <p class="sub">Luz, cenário, roupa e enquadramento certos. É você, mais bem fotografado. Pronto em até 30 minutos.</p>
       <p class="preco"><s>R$ 97</s> <b>R$ 29,90</b> <span>pagamento único no PIX · sem mensalidade</span></p>
       <a class="btn" id="ctaCheckout" href="#" aria-disabled="true">Quero minhas 15 fotos · R$ 29,90</a>
       <p class="mini" id="ctaNota">Checkout em montagem (rascunho).</p>

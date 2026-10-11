@@ -125,6 +125,42 @@ $("#enviar").addEventListener("click", async () => {
   ir("pendente");
 });
 
+/* ---------- exemplos do topo (carrossel) ---------- */
+(() => {
+  const pares = $$("#exemplo .par"), pts = $$("#pontos button"); if (pares.length < 2) return;
+  let i = 0, timer;
+  const mostra = (n) => { i = n % pares.length; pares.forEach((p, k) => p.classList.toggle("on", k === i)); pts.forEach((b, k) => b.classList.toggle("on", k === i)); };
+  const roda = () => { clearInterval(timer); timer = setInterval(() => mostra(i + 1), 3500); };
+  pts.forEach((b, k) => b.addEventListener("click", () => { mostra(k); roda(); }));
+  roda();
+})();
+
+/* ---------- prévia com marca d'água ---------- */
+// Pede 1 foto gerada do próprio cliente à match-nota (ação "previa"). Se o servidor ainda não gera
+// (motor travado/sem verba), avisa que a prévia chega no contato deixado — a página não quebra.
+const PREVIA_EXEMPLO = "img/r1-jantar.jpg";
+function previaPronta(url) {
+  const img = $("#previaImg");
+  img.onload = () => { $("#previaCarregando").hidden = true; img.hidden = false; };
+  img.src = url;
+  $("#previaTxt").textContent = "Uma foto sua, com luz e cenário certos. As 15 do pacote saem sem marca d'água.";
+}
+function previaDepois() {
+  const viaWhats = $("#whats").value.replace(/\D/g, "").length >= 10;
+  $("#previaCarregando").innerHTML = "<span>Sua prévia está sendo gerada e chega no seu " + (viaWhats ? "WhatsApp" : "e-mail") + " em até 30 minutos.</span>";
+}
+async function pedePrevia(exemplo) {
+  $("#previa").hidden = false;
+  if (exemplo) { setTimeout(() => previaPronta(PREVIA_EXEMPLO), 1200); return; }
+  const fim = Date.now() + 3 * 60 * 1000;
+  let r = await api("previa", { ...estado.lead });
+  while (!r.url && (r.status === 202 || r.pendente) && Date.now() < fim) {
+    await new Promise((ok) => setTimeout(ok, 6000));
+    r = await api("previa", { ...estado.lead, consulta: true });
+  }
+  if (r.url) previaPronta(r.url); else previaDepois();
+}
+
 /* ---------- resultado ---------- */
 function mostraResultado(nota, exemplo) {
   $("#resKicker").textContent = exemplo ? "Exemplo de resultado (demonstração)" : "Sua nota";
@@ -144,6 +180,7 @@ function mostraResultado(nota, exemplo) {
   nota.erros.forEach((e) => { const li = document.createElement("li"); li.textContent = e; $("#errosLista").appendChild(li); });
   if (CHECKOUT_URL) { const a = $("#ctaCheckout"); a.href = CHECKOUT_URL; a.removeAttribute("aria-disabled"); $("#ctaNota").textContent = ""; }
   ir("resultado");
+  pedePrevia(exemplo).catch(previaDepois);
 }
 $("#ctaCheckout").addEventListener("click", (e) => {
   if (!CHECKOUT_URL) { e.preventDefault(); return; }

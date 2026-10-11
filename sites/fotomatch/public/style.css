@@ -28,7 +28,11 @@ h3{font:700 18px/1.25 var(--display);margin:26px 0 6px}
 .btn:focus-visible,.opcoes button:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
 .confianca{list-style:none;padding:0;margin:12px 0;display:grid;gap:6px;font-size:14px;color:var(--muted)}
 .confianca li::before{content:"✓ ";color:var(--ok);font-weight:700}
-.exemplo{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin:22px 0 6px}
+.exemplo{margin:22px 0 6px}
+.exemplo .par{display:none;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}.exemplo .par.on{display:grid}
+.exemplo .ph{position:relative;margin:0;overflow:hidden}.exemplo .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.exemplo figcaption{position:absolute;left:6px;bottom:6px;right:6px;background:#000b;color:#fff;border-radius:8px;padding:3px 7px;font-size:11.5px;text-align:center}
+.pontos{display:flex;justify-content:center;gap:8px;margin:6px 0}.pontos button{width:8px;height:8px;border-radius:50%;border:0;padding:0;background:var(--line);cursor:pointer}.pontos button.on{background:var(--accent)}
 .ph{aspect-ratio:4/5;border-radius:14px;background:repeating-linear-gradient(135deg,var(--surface) 0 10px,var(--surface2) 10px 20px);
   display:flex;align-items:flex-end;padding:8px;font-size:12px;color:var(--muted);border:1px solid var(--line)}
 .ph2{background:linear-gradient(160deg,#4a2a22,#1e1a17);color:var(--ink)}
@@ -68,3 +72,10 @@ input:focus{outline:none;border-color:var(--accent)}
 .preco s{color:var(--muted)}.preco b{font:800 30px var(--display);color:var(--ink)}.preco span{font-size:13px;color:var(--muted);width:100%}
 footer{max-width:520px;margin:0 auto;padding:20px 16px 40px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.previa{margin:18px 0}
+.previaFoto{position:relative;margin:8px auto 0;max-width:320px;aspect-ratio:2/3;border-radius:16px;overflow:hidden;background:var(--surface)}
+.previaFoto img{width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.previaFoto .marca{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transform:rotate(-24deg);font-weight:800;font-size:26px;color:#fff8;text-shadow:0 1px 3px #0008;pointer-events:none;letter-spacing:.5px}
+.previaCarregando{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;text-align:center;color:var(--muted);font-size:14px}
+.previaCarregando[hidden],.previa[hidden],.previaFoto img[hidden]{display:none!important}
