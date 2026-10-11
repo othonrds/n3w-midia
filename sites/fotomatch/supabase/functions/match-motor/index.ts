@@ -78,6 +78,17 @@ const seedream5Pro: Adaptador = {
 };
 const ADAPTADORES = [gptImage, nanoBananaPro, seedream5Pro];
 
+/* ---------- Regra de PRODUÇÃO (pacote pago, decidido em 11/10/2026) ---------- */
+// O A/B acima ("plano", candidatas 1–4 por cena) é só para escolher o motor. No pacote pago do cliente:
+//   1 candidata por foto (15 fotos = 15 gerações) → juiz (qaRosto + qaJuiz) → refaz SÓ as reprovadas, 1 por vez.
+//   Custo-alvo ~R$ 9–11 por pacote (geração + refações + juiz). Implementar o loop quando o card for aprovado.
+export const PRODUCAO = {
+  fotos_por_pacote: 15,
+  candidatas_por_foto: 1,
+  refacao: "só as reprovadas pelo juiz (qaRosto + qaJuiz), uma candidata nova por reprovada",
+  custo_brl_por_pacote: [9, 11] as [number, number],
+};
+
 /* ---------- QA de rosto e de qualidade ---------- */
 // 1) Similaridade de rosto por embedding (ArcFace/InsightFace): não roda em Deno puro; previsto serviço externo
 //    (ex.: container com InsightFace) chamado aqui com corte mínimo configurável (MATCH_QA_CORTE, ex.: 0.45 cos).
@@ -119,7 +130,7 @@ Deno.serve(async (req) => {
   const t = await trava();
   switch (b.acao) {
     case "saude":
-      return out(200, { trava: t, adaptadores: ADAPTADORES.map((a) => ({ id: a.id, nome: a.nome, via: a.via, chave: a.pronto() ? "presente" : "pendente" })) });
+      return out(200, { trava: t, producao: PRODUCAO, adaptadores: ADAPTADORES.map((a) => ({ id: a.id, nome: a.nome, via: a.via, chave: a.pronto() ? "presente" : "pendente" })) });
     case "cenas":
       return out(200, { cenas: Object.entries(CENAS).map(([id, c]) => ({ id, nome: c.nome, prompt: promptDaCena(id) })) });
     case "plano":
