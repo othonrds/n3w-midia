@@ -704,7 +704,7 @@ if(document.body) start(); else document.addEventListener('DOMContentLoaded',sta
 /* ===== Config ===== */
 const HOTMART_CHECKOUT_URL = 'https://pay.hotmart.com/O107945251X?sck=dreamelle_game'; // kept for restore of old buyers
 const STRIPE_CHECKOUT_URL = 'https://buy.stripe.com/5kQ7sMeuA9EN7fs1wO3cc05'; // v0.7: US$ 1, approved by Othon 11/10
-const VERSION = '0.8.0';
+const VERSION = '0.8.1';
 const SAVE_KEY = 'dreamelle_save_v2';
 const ENERGY_COST = 2;
 
@@ -1421,8 +1421,8 @@ const A = {
   'back-onb'(){ onbIdx=ONB.length-1; go('onb'); },
   av(el){ sfx('tap'); const k=el.dataset.k, v=el.dataset.v; S.av[k]= (k==='skin'||k==='hair'||k==='look')?+v:v; go('char'); },
   charok(){ const n=(S.name||'').trim();
-    if(!n){ nameErr=true; sfx('bad'); go('char'); const i=$('#nm'); if(i) i.focus(); return; }
-    nameErr=false; S.name=n; S.created=true; save();
+    const nm = n || ['Ella','Mia','Luna','Ava','Zoe','Lily'][Math.floor(Math.random()*6)]; if(!n) track('name_default',{}); // v0.8.1: name optional (typing on mobile was a drop-off)
+    nameErr=false; S.name=nm; S.created=true; save();
     track('character_created',{skin:S.av.skin,hair:S.av.hair,style:S.av.style,outfit:S.av.outfit}); sfx('ok'); go('career'); },
   'back-char'(){ go('char'); },
   career(el){ const c=CAREERS.find(x=>x.id===el.dataset.id);
