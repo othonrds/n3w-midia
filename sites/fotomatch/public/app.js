@@ -53,15 +53,9 @@ $("#seguraOk").addEventListener("click", async () => {
 });
 
 function montaReforco() {
-  // Sem números inventados: o reforço usa a resposta do próprio lead. (Owner: trocar por número real quando tivermos dados.)
-  const s = estado.respostas.segura || [];
-  if (s.includes("fotos")) {
-    $("#reforcoNum").textContent = "1ª foto";
-    $("#reforcoTit").textContent = "Você marcou “fotos”. É o que todo mundo vê antes de decidir.";
-  } else {
-    $("#reforcoNum").textContent = "Antes do papo";
-    $("#reforcoTit").textContent = "Antes de qualquer conversa, quem decide é a foto.";
-  }
+  // Sem número nem estatística: frase fixa aprovada. (Owner: só usar número quando tivermos dados próprios.)
+  $("#reforcoNum").textContent = "Antes do papo";
+  $("#reforcoTit").textContent = "A primeira foto decide se ela para no seu perfil.";
 }
 
 /* ---------- fotos ---------- */
@@ -125,6 +119,8 @@ $("#enviar").addEventListener("click", async () => {
   $("#statusAnalise").textContent = "Avaliando luz, ângulo, expressão e cenário";
   const n = await api("nota", { ...estado.lead, paths });
   if (n.nota) return mostraResultado(n.nota, false);
+  const viaWhats = $("#whats").value.replace(/\D/g, "").length >= 10;
+  $("#pendenteTxt").textContent = viaWhats ? "Sua nota chega em até 10 min no seu WhatsApp." : "Sua nota chega em até 10 min no seu e-mail.";
   $("#pendenteCod").textContent = n.codigo ? "código: " + n.codigo : (n.erro || "");
   ir("pendente");
 });
