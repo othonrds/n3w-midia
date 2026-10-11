@@ -126,6 +126,9 @@ body.v2 .so-v1,body:not(.v2) .so-v2{display:none!important}
 .pubbar span{display:grid;font-size:14px;line-height:1.25}.pubbar small{color:var(--muted)}
 .pubbar .btn{width:auto;flex:none;padding-left:18px;padding-right:18px}
 body.combarra{padding-bottom:84px}
+.pubbox{display:grid;gap:3px;border:1px solid var(--accent);background:var(--accent-soft);border-radius:8px;padding:10px 12px;font-size:13px}
+.pubbox b{font-size:15px;color:var(--accent)}
+.pubbox span{color:var(--muted)}
 /* modal */
 .modal{position:fixed;inset:0;background:rgba(5,12,10,.55);display:grid;place-items:center;padding:12px;z-index:50}
 .modal[hidden]{display:none}
@@ -215,8 +218,9 @@ footer.app a{color:inherit}
         <h2>Sua página está pronta</h2>
         <p class="sub">Role a prévia e veja como ela fica. Os textos foram escritos para a sua área de atuação.</p>
         <div class="check"><b>Checagem Provimento 205/2021 (OAB)</b><span>Nome e nº da OAB visíveis</span><span>Sem promessa de resultado</span><span>Sem divulgação de honorários</span><span>Tom informativo, sem captação ostensiva</span></div>
-        <button class="btn" id="goCustom" type="button">Personalizar com minha foto e marca</button>
-        <button class="btn ghost" id="goPub2" type="button">Publicar como está</button>
+        <div class="pubbox"><b id="pubPreco">Publicar: 3 páginas por R$ 39,90</b><span>Pix, sem mensalidade. A página vai ao ar em segundos e você edita quando quiser.</span></div>
+        <button class="btn" id="goPub2" type="button">Publicar minha página agora</button>
+        <button class="btn ghost" id="goCustom" type="button">Antes, colocar minha foto e marca</button>
         <button class="btn ghost" id="backForm" type="button">Mudar meus dados</button>
       </div>
 

@@ -121,6 +121,7 @@ $("#goCustom").onclick = () => setStep(3);
 $("#backForm").onclick = () => setStep(1);
 $("#back").onclick = () => setStep(2);
 $("#goPub2").onclick = () => abrirCheckout();
+if (V2) $("#pubPreco").textContent = "Publicar: a partir de R$ 97 (3 páginas por R$ 199)";
 $("#pubBarBtn").onclick = () => abrirCheckout();
 $("#pubBarPreco").textContent = V2 ? "a partir de " + brl(PACOTES[0].preco).replace(",00", "") : "3 páginas por " + brl(PRECO);
 $("#goPub").onclick = () => PAINEL ? salvarPainel() : abrirCheckout();
