@@ -2,6 +2,7 @@
 // ?demo=1 mostra um resultado de EXEMPLO sem chamar a IA (para revisão do Othon na prévia).
 const FN = "https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/match-nota";
 const CHECKOUT_URL = ""; // Checkout Expert: colar aqui o link do checkout PIX (Cakto/Payt) quando existir.
+const PRECO = 29.90; // BRL. Oferta "15 fotos com o seu rosto" (mesmo valor do botão e do Purchase em obrigado.html).
 const DEMO = new URLSearchParams(location.search).has("demo");
 const MIN = 3, MAX = 6;
 
@@ -148,7 +149,12 @@ function mostraResultado(nota, exemplo) {
   if (CHECKOUT_URL) { const a = $("#ctaCheckout"); a.href = CHECKOUT_URL; a.removeAttribute("aria-disabled"); $("#ctaNota").textContent = ""; }
   ir("resultado");
 }
-$("#ctaCheckout").addEventListener("click", (e) => { if (!CHECKOUT_URL) e.preventDefault(); });
+$("#ctaCheckout").addEventListener("click", (e) => {
+  if (!CHECKOUT_URL) { e.preventDefault(); return; }
+  // Pixel N3w FotoMatch: InitiateCheckout ao abrir o checkout; guarda o preço para o Purchase da obrigado.html.
+  try { localStorage.setItem("fm_preco", String(PRECO)); } catch { /* sem storage */ }
+  try { if (window.fbq) fbq("track", "InitiateCheckout", { content_name: "fotomatch_15_fotos", currency: "BRL", value: PRECO }); } catch { /* */ }
+});
 
 const EXEMPLO = {
   nota_geral: 5.4,
