@@ -1,0 +1,31 @@
+name: importar-midia
+on:
+  workflow_dispatch:
+    inputs:
+      pasta:
+        description: pasta destino no repo
+        required: true
+      urls:
+        description: "linhas 'nome|url' separadas por espaço"
+        required: true
+permissions:
+  contents: write
+jobs:
+  importar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: baixar
+        run: |
+          mkdir -p "${{ inputs.pasta }}"
+          for par in ${{ inputs.urls }}; do
+            nome="${par%%|*}"; url="${par#*|}"
+            curl -fsSL "$url" -o "${{ inputs.pasta }}/$nome"
+            ls -la "${{ inputs.pasta }}/$nome"
+          done
+      - name: commit
+        run: |
+          git config user.name "n3w-bot"; git config user.email "n3w-bot@users.noreply.github.com"
+          git add "${{ inputs.pasta }}"
+          git commit -m "importar-midia: ${{ inputs.pasta }}" || echo "nada novo"
+          git push
