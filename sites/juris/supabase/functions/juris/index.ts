@@ -3,7 +3,8 @@
 // Webhook do Mercado Pago (pedido pago): POST em .../functions/v1/juris?fonte=mp (tópico "Order").
 // Segredos: SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY (automáticos) e MP_ACCESS_TOKEN (Edge Functions → Secrets).
 // Sem MP_ACCESS_TOKEN a função roda em MODO TESTE: gera um Pix de mentira e aceita "simular pagamento".
-// Meta Conversions API (Purchase do lado do servidor, mesmo event_id do pixel = ref do pedido):
+// Meta Conversions API (eventos do lado do servidor, com o mesmo event_id do pixel para a Meta deduplicar):
+//   Lead (rascunho novo, "lead-<id da página>"), InitiateCheckout (Pix gerado, "ic-<ref>") e Purchase (Pix pago, "<ref>").
 //   JURIS_CAPI_TOKEN (token do pixel 982748768192003; se faltar, tenta META_CAPI_TOKEN), opcional META_TEST_EVENT_CODE.
 //   Sem token, nada é enviado e o resto funciona igual.
 
@@ -147,6 +148,36 @@ function normFone(w: unknown) {
 const limpaFbp = (s: unknown) => typeof s === "string" && s.length <= 200 && /^fb\.\d\.\d{10,13}\.[\w.-]+$/.test(s) ? s : null;
 const limpaFbc = (s: unknown) => typeof s === "string" && s.length <= 500 && /^fb\.\d\.\d{10,13}\.[\w.-]+$/.test(s) ? s : null;
 
+function userData(x: { email?: unknown; whats?: unknown; fbp?: unknown; fbc?: unknown; ip?: unknown; ua?: unknown }) {
+  return (async () => {
+    const u: Record<string, unknown> = {};
+    const em = normEmail(x.email); if (em) u.em = [await sha256(em)];
+    const ph = normFone(x.whats); if (ph) u.ph = [await sha256(ph)];
+    if (x.fbp) u.fbp = x.fbp; if (x.fbc) u.fbc = x.fbc;
+    if (x.ip) u.client_ip_address = x.ip; if (x.ua) u.client_user_agent = x.ua;
+    return u;
+  })();
+}
+// Envio simples (Lead e InitiateCheckout): uma tentativa, sem marcar no banco; a deduplicação fica com a Meta (event_id).
+async function capiEvento(nome: string, eventId: string, user_data: Record<string, unknown>, custom_data: Record<string, unknown>, teste: boolean) {
+  if (!CAPI_TOKEN) { console.log("capi: sem token,", nome, "não enviado", eventId); return; }
+  if (teste && !CAPI_TESTE) return;
+  const corpo: Record<string, unknown> = { data: [{ event_name: nome, event_time: Math.floor(Date.now() / 1000), event_id: eventId, action_source: "website", event_source_url: SITE + "/", user_data, custom_data }] };
+  if (CAPI_TESTE) corpo.test_event_code = CAPI_TESTE;
+  const r = await fetch(`${GRAPH}/${PIXEL}/events?access_token=${encodeURIComponent(CAPI_TOKEN)}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
+  const resp = await r.text();
+  if (!r.ok) console.error("capi falhou", nome, eventId, r.status, resp.slice(0, 300)); else console.log("capi ok", nome, eventId);
+}
+const ipDe = (req: Request) => (req.headers.get("cf-connecting-ip") || (req.headers.get("x-forwarded-for") || "").split(",")[0]).trim().slice(0, 64) || null;
+const uaDe = (req: Request) => (req.headers.get("user-agent") || "").slice(0, 500) || null;
+// fbc montado a partir do fbclid guardado na UTM (quando o cookie _fbc não veio).
+function fbcDoClique(utm: any, criadoEm?: string) {
+  const fbclid = typeof utm?.fbclid === "string" && /^[\w-]{1,400}$/.test(utm.fbclid) ? utm.fbclid : null;
+  if (!fbclid) return null;
+  const ms = criadoEm ? new Date(criadoEm).getTime() : Date.now();
+  return `fb.1.${Number.isFinite(ms) ? ms : Date.now()}.${fbclid}`;
+}
+
 // Idempotente: marca capi_sent_at antes de enviar (só quem conseguiu a marca envia). Se a Meta recusar, desmarca para tentar de novo.
 async function enviaCapi(ref: string) {
   if (!CAPI_TOKEN) { console.log("capi: sem token, Purchase não enviado", ref); return; }
@@ -156,13 +187,7 @@ async function enviaCapi(ref: string) {
   const marca = await db(`juris_pedidos?ref=eq.${pd.ref}&capi_sent_at=is.null`, { method: "PATCH", body: { capi_sent_at: new Date().toISOString() } });
   if (!marca.ok || !marca.data?.length) return; // outra chamada já enviou (ou a coluna ainda não existe: migration pendente)
   try {
-    const user_data: Record<string, unknown> = {};
-    const em = normEmail(pd.email); if (em) user_data.em = [await sha256(em)];
-    const ph = normFone(pd.whats); if (ph) user_data.ph = [await sha256(ph)];
-    if (pd.fbp) user_data.fbp = pd.fbp;
-    if (pd.fbc) user_data.fbc = pd.fbc;
-    if (pd.client_ip) user_data.client_ip_address = pd.client_ip;
-    if (pd.client_ua) user_data.client_user_agent = pd.client_ua;
+    const user_data = await userData({ email: pd.email, whats: pd.whats, fbp: pd.fbp, fbc: pd.fbc, ip: pd.client_ip, ua: pd.client_ua });
     const pagoMs = pd.pago_em ? new Date(pd.pago_em).getTime() : Date.now();
     const evento = {
       event_name: "Purchase",
@@ -215,10 +240,17 @@ async function acao(b: any, req: Request) {
         const r = await db(`juris_paginas?id=eq.${b.id}&token=eq.${b.token}&status=eq.rascunho`, { method: "PATCH", body: { dados, atualizado_em: new Date().toISOString() } });
         if (r.ok && r.data?.length) return out(200, { id: b.id, token: b.token, slug: slugBase(dados.nome), teste: TESTE });
       }
-      const utm = b.utm && typeof b.utm === "object" ? Object.fromEntries(Object.entries(b.utm).slice(0, 10).map(([k, v]) => [txt(k, 30), txt(v, 200)])) : null;
+      let utm: Record<string, unknown> | null = b.utm && typeof b.utm === "object" ? Object.fromEntries(Object.entries(b.utm).slice(0, 10).map(([k, v]) => [txt(k, 30), txt(v, 200)])) : null;
+      // Cookies do pixel guardados junto da UTM (sem migration): o pedido usa se o navegador não mandar de novo.
+      const fbp = limpaFbp(b.fbp), fbc = limpaFbc(b.fbc);
+      if (fbp || fbc) utm = { ...(utm || {}), ...(fbp ? { fbp } : {}), ...(fbc ? { fbc } : {}) };
       const token = rnd(16);
       const r = await db("juris_paginas", { method: "POST", body: { token, dados, utm } });
       if (!r.ok) return out(500, { erro: "Não foi possível salvar agora." });
+      // Lead pelo servidor (o pixel no navegador do Instagram costuma ser bloqueado). event_id igual ao do app.js.
+      emSegundoPlano((async () => capiEvento("Lead", "lead-" + r.data[0].id,
+        await userData({ whats: dados.zap, fbp, fbc: fbc || fbcDoClique(utm), ip: ipDe(req), ua: uaDe(req) }),
+        { content_name: dados.area }, TESTE))());
       return out(200, { id: r.data[0].id, token, slug: slugBase(dados.nome), teste: TESTE });
     }
     case "midia": {
@@ -264,19 +296,21 @@ async function acao(b: any, req: Request) {
         orderId = r.body.id; qr = pm.qr_code; qr64 = pm.qr_code_base64;
       }
       // Dados para a Conversions API (Purchase no servidor): cookies do pixel, IP e navegador de quem gerou o Pix.
-      const fbclid = typeof pag.utm?.fbclid === "string" && /^[\w-]{1,400}$/.test(pag.utm.fbclid) ? pag.utm.fbclid : null;
-      const cliqueMs = pag.criado_em ? new Date(pag.criado_em).getTime() : Date.now();
       const rastreio = {
-        fbp: limpaFbp(b.fbp),
-        fbc: limpaFbc(b.fbc) || (fbclid ? `fb.1.${Number.isFinite(cliqueMs) ? cliqueMs : Date.now()}.${fbclid}` : null),
-        client_ip: (req.headers.get("cf-connecting-ip") || (req.headers.get("x-forwarded-for") || "").split(",")[0]).trim().slice(0, 64) || null,
-        client_ua: (req.headers.get("user-agent") || "").slice(0, 500) || null,
+        fbp: limpaFbp(b.fbp) || limpaFbp(pag.utm?.fbp),
+        fbc: limpaFbc(b.fbc) || limpaFbc(pag.utm?.fbc) || fbcDoClique(pag.utm, pag.criado_em),
+        client_ip: ipDe(req),
+        client_ua: uaDe(req),
       };
       const linha = { ref, mp_order_id: orderId, valor, bump_fotos: bump, email, nome, whats, token, creditos, teste: TESTE, utm: { ...(pag.utm || {}), pacote: pac ? b.pacote : "teste-3x3990" } };
       let ins = await db("juris_pedidos", { method: "POST", prefer: "return=minimal", body: { ...linha, ...rastreio } });
       if (!ins.ok && ins.status === 400) ins = await db("juris_pedidos", { method: "POST", prefer: "return=minimal", body: linha }); // migration 002 ainda não aplicada
       if (!ins.ok) return out(500, { erro: "Falha ao registrar o pedido" });
       await db(`juris_paginas?id=eq.${pag.id}`, { method: "PATCH", prefer: "return=minimal", body: { pedido_ref: ref } });
+      // InitiateCheckout pelo servidor no momento em que o Pix é gerado (mesmo event_id "ic-<ref>" do app.js).
+      emSegundoPlano((async () => capiEvento("InitiateCheckout", "ic-" + ref,
+        await userData({ email, whats, fbp: rastreio.fbp, fbc: rastreio.fbc, ip: rastreio.client_ip, ua: rastreio.client_ua }),
+        { value: valor, currency: "BRL", num_items: creditos, order_id: ref }, TESTE))());
       return out(200, { ref, id: orderId, valor, creditos, qr, qr64, teste: TESTE });
     }
     case "status": {
@@ -321,7 +355,8 @@ Deno.serve(async (req) => {
   const url = new URL(req.url);
   let b: any = null; try { b = await req.json(); } catch { b = null; }
   // Webhook do Mercado Pago: ?fonte=mp na URL cadastrada no painel do MP (ou corpo de notificação sem "acao").
-  if (url.searchParams.get("fonte") === "mp" || (b && !b.acao && (b.type || b.topic) && b.data)) {
+  // startsWith: a URL ficou cadastrada com um caractere a mais ("?fonte=mp`", visto nos logs de 09–10/10).
+  if ((url.searchParams.get("fonte") || "").startsWith("mp") || (b && !b.acao && (b.type || b.topic) && b.data)) {
     try { return await webhookMP(b || {}, url); } catch (e) { console.error("webhook mp", e); return out(500, { erro: "falha no webhook" }); }
   }
   if (!b) return out(400, { erro: "JSON inválido" });
