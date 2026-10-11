@@ -183,6 +183,15 @@ Deno.serve(async (req) => {
       EdgeRuntime.waitUntil(rodar(job));
       return J({ ok: true, job: job.id });
     }
+    case 'links': {
+      // links assinados (1 h) das fotos prontas de um lote — custo zero, não depende da trava de verba
+      const ids: string[] = (Array.isArray(b.ids) ? b.ids : []).map(String).slice(0, 30);
+      const rows = (await rest('match_motor_jobs?lote=eq.' + encodeURIComponent(lote) + '&status=eq.done&select=id,path')).data || [];
+      const sel = rows.filter((x: any) => !ids.length || ids.includes(x.id));
+      const out: Record<string, string | null> = {};
+      for (const x of sel) out[x.id] = await assinar(x.path, 3600);
+      return J({ lote, links: out });
+    }
     case 'resumo': {
       const rows = (await rest('match_motor_jobs?lote=eq.' + encodeURIComponent(lote) + '&select=etapa,status,custo,ms,fidelidade')).data || [];
       const done = rows.filter((x: any) => x.status === 'done');
@@ -193,5 +202,5 @@ Deno.serve(async (req) => {
         fidelidade_media: cenas.filter((x: any) => x.fidelidade != null).length ? +(soma(cenas, 'fidelidade') / cenas.filter((x: any) => x.fidelidade != null).length).toFixed(2) : null });
     }
   }
-  return J({ erro: 'ação desconhecida (saude | cenas | plano | enfileirar | processar | resumo)' }, 400);
+  return J({ erro: 'ação desconhecida (saude | cenas | plano | enfileirar | processar | links | resumo)' }, 400);
 });
