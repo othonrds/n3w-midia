@@ -6,7 +6,7 @@ on:
         description: pasta destino no repo
         required: true
       urls:
-        description: "linhas 'nome|url' separadas por espaço"
+        description: "pares nome=url separadas por espaço"
         required: true
 permissions:
   contents: write
@@ -16,12 +16,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: baixar
+        env:
+          PASTA: ${{ inputs.pasta }}
+          URLS: ${{ inputs.urls }}
         run: |
-          mkdir -p "${{ inputs.pasta }}"
-          for par in ${{ inputs.urls }}; do
-            nome="${par%%|*}"; url="${par#*|}"
-            curl -fsSL "$url" -o "${{ inputs.pasta }}/$nome"
-            ls -la "${{ inputs.pasta }}/$nome"
+          mkdir -p "$PASTA"
+          for par in $URLS; do
+            nome="${par%%=*}"; url="${par#*=}"
+            curl -fsSL "$url" -o "$PASTA/$nome"
+            ls -la "$PASTA/$nome"
           done
       - name: commit
         run: |
