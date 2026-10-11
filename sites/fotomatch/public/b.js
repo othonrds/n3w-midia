@@ -130,7 +130,7 @@ function mostraOferta() {
   if (ls.length) $("#ofertaLooks").textContent = `Nos estilos ${ls.join(", ").replace(/, ([^,]*)$/, " e $1")}, com luz, roupa e cenário certos. É você, mais bem fotografado.`;
   if (CHECKOUT_URL) {
     ["#ctaCheckout", "#ctaCheckout2"].forEach((s) => { const a = $(s); a.href = linkCheckout(); a.removeAttribute("aria-disabled"); });
-    $("#ctaNota").textContent = "Pagamento seguro pela Payt · PIX na hora.";
+    $("#ctaNota").textContent = "Pagamento seguro pela Payt · R$ 27,90 no PIX, na hora.";
   }
   ir("oferta");
 }

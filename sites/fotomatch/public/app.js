@@ -188,7 +188,7 @@ function mostraResultado(nota, exemplo) {
   });
   $("#errosLista").innerHTML = "";
   nota.erros.forEach((e) => { const li = document.createElement("li"); li.textContent = e; $("#errosLista").appendChild(li); });
-  if (CHECKOUT_URL) { const a = $("#ctaCheckout"); a.href = linkCheckout(); a.removeAttribute("aria-disabled"); $("#ctaNota").textContent = "Pagamento seguro pela Payt · PIX na hora."; }
+  if (CHECKOUT_URL) { const a = $("#ctaCheckout"); a.href = linkCheckout(); a.removeAttribute("aria-disabled"); $("#ctaNota").textContent = "Pagamento seguro pela Payt · R$ 27,90 no PIX, na hora."; }
   ir("resultado");
   pedePrevia(exemplo).catch(previaDepois);
 }
