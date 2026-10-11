@@ -14,8 +14,10 @@ const q = new URLSearchParams(location.search);
 const brl = n => "R$ " + Number(n).toFixed(2).replace(".", ",");
 const ls = { get(k){ try { return JSON.parse(localStorage.getItem(k) || "null"); } catch { return null; } }, set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }, del(k){ try { localStorage.removeItem(k); } catch {} } };
 const ev = (...a) => { try { window.ev && window.ev(...a); } catch {} };
-// Cookies do pixel (_fbp/_fbc): vão no pedido para o servidor mandar o Purchase pela Conversions API.
+// Cookies do pixel (_fbp/_fbc, gravados por px.js mesmo se o pixel for bloqueado): vão no rascunho e no pedido
+// para o servidor mandar Lead, InitiateCheckout e Purchase pela Conversions API com o mesmo eventID do navegador.
 const cookie = n => { try { const m = document.cookie.match(new RegExp("(?:^|; )" + n + "=([^;]*)")); return m ? decodeURIComponent(m[1]) : null; } catch { return null; } };
+const fbIds = () => (window.fbIds ? window.fbIds() : { fbp: cookie("_fbp"), fbc: cookie("_fbc") });
 
 $("#lpcss").textContent = CSS;
 $("#tpls").innerHTML = TPLS.map(t => `<button type="button" data-t="${t[0]}" class="${t[0] === "classico" ? "on" : ""}">${t[3] !== "base" ? `<i>${t[3] === "viral" ? "Viral" : "Top"}</i>` : ""}${t[1]}<small>${t[2]}</small></button>`).join("");
@@ -80,6 +82,8 @@ function setStep(n) {
   st.step = n; if (n < 4) st.view = n;
   $$("#steps li").forEach(li => { const s = +li.dataset.s; li.className = s === n ? "on" : s < n ? "done" : ""; });
   $("#formGen").hidden = st.view !== 1; $("#ready").hidden = st.view !== 2; $("#custom").hidden = st.view !== 3;
+  // Barra fixa "Publicar": a prévia tem ~3.700px no celular e, rolando até o fim, não havia botão para publicar.
+  if (!PAINEL) { $("#pubBar").hidden = !(n === 2 || n === 3); document.body.classList.toggle("combarra", n === 2 || n === 3); }
   render();
 }
 
@@ -92,7 +96,7 @@ function agendaSalvar() {
 }
 async function salvaRascunho() {
   clearTimeout(tSave);
-  const j = await api({ acao: "rascunho", id: st.id, token: st.token, dados: dados(), utm: window.utm ? window.utm() : null });
+  const j = await api({ acao: "rascunho", id: st.id, token: st.token, dados: dados(), utm: window.utm ? window.utm() : null, ...fbIds() });
   st.id = j.id; st.token = j.token; st.teste = !!j.teste;
   ls.set("jp_rasc", { id: st.id, token: st.token, dados: dados() });
   $("#saved").textContent = "Rascunho salvo ✓";
@@ -106,14 +110,19 @@ $("#formGen").addEventListener("submit", async e => {
   if (v("#fNome").length < 3) { err.textContent = "Digite seu nome profissional."; $("#fNome").focus(); return; }
   if (v("#fZap").replace(/\D/g, "").length < 10) { err.textContent = "Digite o WhatsApp com DDD: ele vira o botão de contato da página."; $("#fZap").focus(); return; }
   const b = $("#btnGerar"); b.disabled = true; b.textContent = "Gerando…";
-  try { await salvaRascunho(); ev("Lead", { content_name: v("#fArea") }); setStep(2); if (innerWidth < 900) $("#ready").scrollIntoView({ behavior: "smooth", block: "start" }); }
+  try { await salvaRascunho(); if (!ls.get("jp_lead_" + st.id)) { ev("Lead", { content_name: v("#fArea") }, "lead-" + st.id); ls.set("jp_lead_" + st.id, 1); } setStep(2); if (innerWidth < 900) $("#ready").scrollIntoView({ behavior: "smooth", block: "start" }); }
   catch (x) { err.textContent = x.message; }
   finally { b.disabled = false; b.textContent = "Gerar minha página"; }
 });
+// ViewContent: a pessoa começou a preencher o gerador (separa "só abriu a página" de "tentou gerar").
+let vcFeito = false;
+$("#formGen").addEventListener("focusin", () => { if (vcFeito || PAINEL) return; vcFeito = true; ev("ViewContent", { content_name: "gerador", content_category: v("#fArea") }); });
 $("#goCustom").onclick = () => setStep(3);
 $("#backForm").onclick = () => setStep(1);
 $("#back").onclick = () => setStep(2);
 $("#goPub2").onclick = () => abrirCheckout();
+$("#pubBarBtn").onclick = () => abrirCheckout();
+$("#pubBarPreco").textContent = V2 ? "a partir de " + brl(PACOTES[0].preco).replace(",00", "") : "3 páginas por " + brl(PRECO);
 $("#goPub").onclick = () => PAINEL ? salvarPainel() : abrirCheckout();
 
 ["#fNome","#fGen","#fArea","#fTese","#fCidade","#fUf","#fOab","#fAnos","#fZap","#fAtend","#tH1","#tSub","#tBio","#tEnd","#tEmail","#tInsta"].forEach(i => $(i).addEventListener("input", () => { render(); agendaSalvar(); }));
@@ -170,7 +179,7 @@ function abrirCheckout() {
   const nome = v("#fNome") || "Seu Nome", slug = slugDe(nome) || "seu-nome";
   if (!st.pacote) st.pacote = "p3";
   const pac = () => V2 ? PACOTES.find(p => p.id === st.pacote) : { pg: 3, preco: PRECO };
-  setStep(4); ev("InitiateCheckout", { value: pac().preco, currency: "BRL" });
+  setStep(4); ev("AbriuCheckout", { value: pac().preco, currency: "BRL" }); // InitiateCheckout sai quando o Pix é gerado (abaixo)
   const oferta = V2 ? `<div class="pacs" id="pacs">${PACOTES.map(p => `<label class="pac${p.top ? " top" : ""}"><input type="radio" name="pac" value="${p.id}"${p.id === st.pacote ? " checked" : ""}>
       <span class="pn">${p.top ? "<i>Mais escolhido</i>" : ""}<b>${p.n}</b><span>${p.itens.join(" · ")}</span></span><span class="pp">${brl(p.preco)}</span></label>`).join("")}</div>
     <p class="note">Pagamento único no Pix. Todos incluem: sem marca d'água, botão direto para o seu WhatsApp, painel para editar quando quiser e endereço <b>jurispaginas.com/${esc(slug)}</b>.</p>`
@@ -197,9 +206,9 @@ function abrirCheckout() {
     const b = $("#pagar"); b.disabled = true; b.textContent = "Gerando Pix…";
     try {
       await salvaRascunho();
-      const j = await api({ acao: "pedido", id: st.id, token: st.token, email, whats, nome: v("#fNome"), fbp: cookie("_fbp"), fbc: cookie("_fbc"), ...(V2 ? { pacote: st.pacote } : {}) });
+      const j = await api({ acao: "pedido", id: st.id, token: st.token, email, whats, nome: v("#fNome"), ...fbIds(), ...(V2 ? { pacote: st.pacote } : {}) });
       ls.set("jp_pedido", { ref: j.ref, id: j.id, valor: j.valor });
-      ev("AddPaymentInfo", { value: j.valor, currency: "BRL" });
+      ev("InitiateCheckout", { value: j.valor, currency: "BRL", num_items: j.creditos || 3 }, "ic-" + j.ref); // mesmo event_id do servidor (CAPI)
       telaPix(j);
     } catch (x) { err.textContent = x.message; b.disabled = false; tot(); }
   };

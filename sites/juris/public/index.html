@@ -120,6 +120,12 @@ body.v2 .so-v1,body:not(.v2) .so-v2{display:none!important}
 .pac .pn b{display:block;font-size:15px}.pac .pn span{font-size:12px;color:var(--muted)}
 .pac .pn i{font:600 10px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-style:normal;display:block;margin-bottom:3px}
 .pac .pp{font:700 20px/1 var(--display);white-space:nowrap}
+/* barra fixa de publicar (etapas 2 e 3) */
+.pubbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -6px 20px rgba(0,0,0,.08)}
+.pubbar[hidden]{display:none}
+.pubbar span{display:grid;font-size:14px;line-height:1.25}.pubbar small{color:var(--muted)}
+.pubbar .btn{width:auto;flex:none;padding-left:18px;padding-right:18px}
+body.combarra{padding-bottom:84px}
 /* modal */
 .modal{position:fixed;inset:0;background:rgba(5,12,10,.55);display:grid;place-items:center;padding:12px;z-index:50}
 .modal[hidden]{display:none}
@@ -322,9 +328,10 @@ footer.app a{color:inherit}
       <a class="btn" href="#formGen">Gerar a minha grátis</a>
     </section>
   </div>
-  <footer class="app"><span>Juris Páginas · N3w Digital</span><a href="termos.html">Termos de uso</a><a href="privacidade.html">Privacidade</a></footer>
+  <footer class="app"><span>Juris Páginas · N3W DIGITAL LTDA · Florianópolis – SC</span><a href="termos.html">Termos de uso</a><a href="privacidade.html">Privacidade</a></footer>
 </div>
 
+<div class="pubbar" id="pubBar" hidden><span><b>Gostou?</b> <small id="pubBarPreco"></small></span><button class="btn" type="button" id="pubBarBtn">Publicar minha página</button></div>
 <div class="modal" id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 
 <script type="module" src="app.js"></script>

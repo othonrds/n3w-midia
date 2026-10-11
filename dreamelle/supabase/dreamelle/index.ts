@@ -10,7 +10,11 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 const PRODUCT_ID = "8686995";
 const STRIPE_PRODUCT_ID = "stripe:dreamelle-founder"; // product_id gravado nas compras Stripe
 const FOUNDER_PRODUCTS = [PRODUCT_ID, STRIPE_PRODUCT_ID];
-const STRIPE_LINKS = new Set(["plink_1UOu0PLF1DEi8ag88g0JPvK5"]); // Payment Link do Founder's Pass (US$ 4,99)
+const STRIPE_LINKS = new Set([
+  "plink_1UPHPuLF1DEi8ag8lZ69QRek", // Founder's Pass US$ 1 (jogo v0.7, aprovado 11/10)
+  "plink_1UOu0PLF1DEi8ag88g0JPvK5", // Founder's Pass US$ 4,99 (link antigo, mantido p/ compras feitas)
+]);
+const STRIPE_OFERTAS = new Set(["dreamelle-founder", "dreamelle-founder-1usd"]);
 const TOLERANCE_S = 300;
 const enc = new TextEncoder();
 const OK_EVENTS = new Set(["PURCHASE_APPROVED", "PURCHASE_COMPLETE"]);
@@ -103,7 +107,7 @@ Deno.serve(async (req) => {
     const o = ev.data?.object || {};
     const now = new Date().toISOString();
     if (ev.type === "checkout.session.completed" || ev.type === "checkout.session.async_payment_succeeded") {
-      if (!STRIPE_LINKS.has(String(o.payment_link || "")) && o.metadata?.oferta !== "dreamelle-founder") return json(req, { ok: true, ignored: "not dreamelle" });
+      if (!STRIPE_LINKS.has(String(o.payment_link || "")) && !STRIPE_OFERTAS.has(String(o.metadata?.oferta || ""))) return json(req, { ok: true, ignored: "not dreamelle" });
       if (o.payment_status !== "paid") return json(req, { ok: true, ignored: "not paid yet" });
       const ref = String(o.client_reference_id || "");
       const device = cleanDevice(ref.startsWith("dg") ? ref.slice(2) : "");

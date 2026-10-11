@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>You're in — The AI Photo &amp; Video Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600&display=swap">
+<style>
+:root{--bg:#FBF8F3;--card:#FFFFFF;--ink:#1C1A17;--muted:#6B655C;--line:#E7E0D4;--accent:#D2553A;--soft:#F8E4DD}
+@media (prefers-color-scheme:dark){:root{--bg:#15130F;--card:#1D1A16;--ink:#EEE8DE;--muted:#A69E91;--line:#2F2A23;--accent:#F07A5E;--soft:#3A221B}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Inter",system-ui,-apple-system,sans-serif;min-height:100vh;display:grid;place-items:center;padding:24px 16px}
+.box{max-width:560px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:36px 26px}
+.kicker{color:var(--accent);font-weight:600;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+h1{font:600 34px/1.15 "Fraunces",Georgia,serif;margin:8px 0 10px}
+p{color:var(--muted);margin:0 0 12px}
+.btns{display:grid;gap:10px;margin:22px 0}
+.btn{display:block;text-align:center;text-decoration:none;font-weight:600;border-radius:10px;padding:15px 16px;font-size:17px}
+.primary{background:var(--accent);color:#fff}
+.secondary{border:1px solid var(--line);color:var(--ink)}
+ol{padding-left:20px;margin:0 0 18px}li{margin:4px 0}
+.note{background:var(--soft);border-radius:10px;padding:12px 14px;font-size:15px;color:var(--ink);margin:16px 0}
+.small{font-size:14px}
+footer{border-top:1px solid var(--line);margin-top:22px;padding-top:14px;font-size:14px;color:var(--muted)}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="kicker">Payment confirmed</div>
+  <h1>You're in. Your playbook is ready.</h1>
+  <p>Open it right now in your browser or download the PDF. We also emailed you this link, so you can come back any time.</p>
+
+  <div class="btns">
+    <a class="btn primary" href="/b/9945d0f63751/">Open the playbook online</a>
+    <a class="btn secondary" href="/b/9945d0f63751/playbook.pdf" download>Download the PDF</a>
+  </div>
+
+  <ol>
+    <li>Read <b>Start here</b> and Chapters 1–2 (about an hour).</li>
+    <li>Jump to the chapter for what you want to make.</li>
+    <li>Do the 15-minute "Try it now" at the end of each chapter.</li>
+  </ol>
+
+  <div class="note"><b>Added the Viral Prompt Vault?</b> Its link is in your delivery email, right below the playbook link.</div>
+
+  <p class="small">Your card statement will show <b>N3W DIGITAL</b> — that's us. The receipt from Stripe is in your inbox too.</p>
+
+  <footer>
+    Lost your link or need help? Email <a id="sup" href="mailto:SUPPORT_EMAIL">SUPPORT_EMAIL</a> from the address you used at checkout and we'll resend it.<br>
+    7-day money-back guarantee: same email, no questions asked.
+  </footer>
+</div>
+<script>
+/* Purchase tracking: event_id = Stripe session_id (CAPI dedup is handled by the webhook). Pixel ID is set when the Checkout Expert defines it. */
+(function(){
+  try{
+    var sid=new URLSearchParams(location.search).get('session_id');
+    if(sid && window.fbq){ fbq('track','Purchase',{currency:'USD'},{eventID:sid}); }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

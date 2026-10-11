@@ -172,6 +172,9 @@ footer .wrap{display:grid;gap:8px}
 }
 @media (max-width:560px){.cards{grid-template-columns:1fr}.age{grid-template-columns:110px 1fr}.price b{font-size:60px}}
 </style>
+<!-- Meta Pixel N3w Aero (1463357788987501) -->
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','1463357788987501');fbq('track','PageView');fbq('track','ViewContent',{content_name:'kit_plano_de_voo',currency:'BRL',value:Number(window.AERO_P||67)});</script>
 </head>
 <body>
 
@@ -418,7 +421,7 @@ tr('lp_view');
 // 09/10: todos os botões "Quero o kit" vão DIRETO ao checkout (antes desciam até #oferta e exigiam um 2º toque)
 var KITS=document.querySelectorAll('#cta-kit, a.cta[href="#oferta"]');
 if(CHECKOUT_KIT){KITS.forEach(function(a){a.href=CHECKOUT_KIT+q()})}
-function ic(){try{if(window.fbq)fbq('track','InitiateCheckout')}catch(e){}tr('checkout_click',{produto:(this.id==='cta-plano'?'plano289':'kit67')+'-'+(this.closest('.sticky')?'sticky':(this.id||'botao'))})}
+function ic(){try{if(window.fbq){var pl=this.id==='cta-plano';fbq('track','InitiateCheckout',{content_name:pl?'plano_de_voo_289':'kit_plano_de_voo',currency:'BRL',value:pl?289:Number(window.AERO_P||67)})}}catch(e){}tr('checkout_click',{produto:(this.id==='cta-plano'?'plano289':'kit67')+'-'+(this.closest('.sticky')?'sticky':(this.id||'botao'))})}
 KITS.forEach(function(a){a.addEventListener('click',ic)});
 document.getElementById('cta-plano').addEventListener('click',ic);
 if(CHECKOUT_PLANO){document.getElementById('cta-plano').href=CHECKOUT_PLANO+q()}
