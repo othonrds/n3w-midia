@@ -79,3 +79,4 @@ footer{max-width:520px;margin:0 auto;padding:20px 16px 40px;color:var(--muted);f
 .previaFoto .marca{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transform:rotate(-24deg);font-weight:800;font-size:26px;color:#fff8;text-shadow:0 1px 3px #0008;pointer-events:none;letter-spacing:.5px}
 .previaCarregando{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;text-align:center;color:var(--muted);font-size:14px}
 .previaCarregando[hidden],.previa[hidden],.previaFoto img[hidden]{display:none!important}
+.previaFoto img[hidden] ~ .marca{display:none}
