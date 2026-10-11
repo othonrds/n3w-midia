@@ -1,0 +1,71 @@
+# Merge automático (regra do Othon, 11/10/2026)
+# Um PR com a etiqueta "pode-publicar" entra no main sozinho quando:
+#   1. nenhuma prévia da Vercel está rodando, e
+#   2. nenhuma prévia falhou que já não falhasse no main (ex.: kit-foco-br, quebrado desde antes).
+# PR sem a etiqueta continua esperando o Othon. Para desligar: apague este arquivo ou tire a etiqueta.
+name: Merge automático
+
+on:
+  pull_request:
+    types: [labeled, synchronize, reopened]
+  status: {}
+  check_suite:
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  statuses: read
+  checks: read
+
+concurrency:
+  group: auto-merge
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const ETIQUETA = 'pode-publicar';
+
+            // Estado de cada verificação de um commit: { nome: 'success' | 'failure' | 'pending' }
+            async function estados(ref) {
+              const out = {};
+              const st = await github.rest.repos.getCombinedStatusForRef({ owner, repo, ref, per_page: 100 });
+              for (const s of st.data.statuses) out[s.context] = s.state === 'error' ? 'failure' : s.state;
+              const cr = await github.rest.checks.listForRef({ owner, repo, ref, per_page: 100 });
+              for (const c of cr.data.check_runs) {
+                if (c.name === 'merge') continue; // este próprio job
+                out[c.name] = c.status !== 'completed' ? 'pending'
+                  : ['success', 'neutral', 'skipped'].includes(c.conclusion) ? 'success' : 'failure';
+              }
+              return out;
+            }
+
+            const prs = (await github.paginate(github.rest.pulls.list, { owner, repo, state: 'open', base: 'main', per_page: 100 }))
+              .filter(p => p.labels.some(l => l.name === ETIQUETA) && !p.draft);
+            if (!prs.length) { core.info('Nenhum PR com a etiqueta ' + ETIQUETA); return; }
+
+            const doMain = await estados('main');
+            for (const pr of prs) {
+              const agora = await estados(pr.head.sha);
+              const pendentes = Object.entries(agora).filter(([, v]) => v === 'pending').map(([k]) => k);
+              const novasFalhas = Object.entries(agora).filter(([k, v]) => v === 'failure' && doMain[k] !== 'failure').map(([k]) => k);
+              if (pendentes.length) { core.info(`#${pr.number}: esperando ${pendentes.join(', ')}`); continue; }
+              if (novasFalhas.length) {
+                core.warning(`#${pr.number}: falhou em ${novasFalhas.join(', ')}; fica para o Othon`);
+                await github.rest.issues.removeLabel({ owner, repo, issue_number: pr.number, name: ETIQUETA }).catch(() => {});
+                await github.rest.issues.createComment({ owner, repo, issue_number: pr.number,
+                  body: `Merge automático cancelado: a prévia falhou em **${novasFalhas.join(', ')}** (no main está ok). Fica para revisão do Othon.` });
+                continue;
+              }
+              const full = await github.rest.pulls.get({ owner, repo, pull_number: pr.number });
+              if (full.data.mergeable === false) { core.warning(`#${pr.number}: conflito com o main`); continue; }
+              await github.rest.pulls.merge({ owner, repo, pull_number: pr.number, merge_method: 'merge' });
+              core.info(`#${pr.number} publicado`);
+            }
