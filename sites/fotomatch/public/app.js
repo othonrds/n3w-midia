@@ -1,7 +1,7 @@
 // FotoMatch · LP-quiz (rascunho). Fala só com a Edge Function match-nota (verify_jwt=false; autorização por token do lead).
 // ?demo=1 mostra um resultado de EXEMPLO sem chamar a IA (para revisão do Othon na prévia).
 const FN = "https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/match-nota";
-const CHECKOUT_URL = ""; // Checkout Expert: colar aqui o link do checkout PIX (Cakto/Payt) quando existir.
+const CHECKOUT_URL = "https://checkout.payt.com.br/1c8f9b1e8a2f69d9ae85268e8854d13b"; // Payt (aprovado pelo Othon 11/10). Leva src=<id do lead> + UTMs; a Payt devolve para /obrigado.html (Purchase).
 const PRECO = 29.90; // BRL. Oferta "15 fotos com o seu rosto" (mesmo valor do botão e do Purchase em obrigado.html).
 const DEMO = new URLSearchParams(location.search).has("demo");
 const MIN = 3, MAX = 6;
@@ -178,12 +178,22 @@ function mostraResultado(nota, exemplo) {
   });
   $("#errosLista").innerHTML = "";
   nota.erros.forEach((e) => { const li = document.createElement("li"); li.textContent = e; $("#errosLista").appendChild(li); });
-  if (CHECKOUT_URL) { const a = $("#ctaCheckout"); a.href = CHECKOUT_URL; a.removeAttribute("aria-disabled"); $("#ctaNota").textContent = ""; }
+  if (CHECKOUT_URL) { const a = $("#ctaCheckout"); a.href = linkCheckout(); a.removeAttribute("aria-disabled"); $("#ctaNota").textContent = ""; }
   ir("resultado");
   pedePrevia(exemplo).catch(previaDepois);
 }
+// Link da Payt com o id do lead (src) e as UTMs do anúncio, para casar a venda com o lead e a campanha.
+function linkCheckout() {
+  try {
+    const u = new URL(CHECKOUT_URL);
+    if (estado.lead && estado.lead.id) u.searchParams.set("src", String(estado.lead.id));
+    Object.entries(utm).forEach(([k, v]) => k !== "fbclid" && u.searchParams.set(k, v));
+    return u.toString();
+  } catch { return CHECKOUT_URL; }
+}
 $("#ctaCheckout").addEventListener("click", (e) => {
   if (!CHECKOUT_URL) { e.preventDefault(); return; }
+  e.currentTarget.href = linkCheckout(); // garante o id do lead mesmo se ele chegou depois da nota
   // Pixel N3w FotoMatch: InitiateCheckout ao abrir o checkout; guarda o preço para o Purchase da obrigado.html.
   try { localStorage.setItem("fm_preco", String(PRECO)); } catch { /* sem storage */ }
   try { if (window.fbq) fbq("track", "InitiateCheckout", { content_name: "fotomatch_15_fotos", currency: "BRL", value: PRECO }); } catch { /* */ }
