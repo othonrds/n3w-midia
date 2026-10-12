@@ -13,7 +13,7 @@
 // Tudo nasce PAUSADO. Ativar ou aumentar orçamento exige o campo `autorizacao_humana`
 // com a frase de autorização do Othon, que fica registrada no log da resposta.
 
-const SERVER_INFO = { name: "n3w-meta", version: "0.3.0" };
+const SERVER_INFO = { name: "n3w-meta", version: "0.3.1" };
 const PROTOCOL_VERSIONS = ["2025-06-18", "2025-03-26", "2024-11-05"];
 
 // ---------------------------------------------------------------- Graph API
@@ -363,11 +363,12 @@ const TOOLS = [
   },
   {
     name: "criar_semelhante",
-    description: "Cria público semelhante (lookalike) a partir de um público de origem. Faixa em % (ex.: 1 a 3).",
-    inputSchema: S({ conta: CONTA, origem_id: str("público de origem"), nome: str("nome"), pais: str("padrão BR"), de_pct: num("início, ex.: 0"), ate_pct: num("fim, ex.: 3") }, ["origem_id", "nome"]),
+    description: "Cria público semelhante (lookalike) a partir de um público de origem. Faixa em % (ex.: 1 a 3). Desde 01/09/2026 a Meta cria o semelhante SEM país: o local de entrega vem do conjunto (paises em criar_conjunto).",
+    inputSchema: S({ conta: CONTA, origem_id: str("público de origem"), nome: str("nome"), pais: str("IGNORADO pela Meta desde 01/09/2026 — defina o país no conjunto"), de_pct: num("início, ex.: 0"), ate_pct: num("fim, ex.: 3") }, ["origem_id", "nome"]),
     run: async (env, a) => graph(env, "POST", `${act(env, a.conta)}/customaudiences`, {
       name: a.nome, subtype: "LOOKALIKE", origin_audience_id: a.origem_id,
-      lookalike_spec: { type: "similarity", country: a.pais || "BR", starting_ratio: (a.de_pct || 0) / 100, ratio: (a.ate_pct || 1) / 100 },
+      // country/location_spec foram descontinuados (changelog Marketing API v26.0, todas as versões a partir de 01/09/2026): a Meta ignora e devolve aviso.
+      lookalike_spec: { type: "similarity", starting_ratio: (a.de_pct || 0) / 100, ratio: (a.ate_pct || 1) / 100 },
     }),
   },
   {

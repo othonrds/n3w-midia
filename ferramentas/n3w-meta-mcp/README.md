@@ -17,6 +17,7 @@ Edição: `pausar`, `ativar`*, `alterar_orcamento`*, `renomear`, `trocar_criativ
 - Versão da Graph API fixada em **uma linha** (`GRAPH_VERSION` no wrangler.toml / variável do Worker). Hoje: v26.0 (lançada 29/07/2026).
 - Repetição automática com espera crescente nos erros de limite da Meta (códigos 4, 17, 32, 613, 80000–80014) e em falhas temporárias de leitura. Escrita só repete em erro de limite (evita criar duplicado).
 - Erros voltam traduzidos com `code`, `subcode` e `fbtrace_id` para diagnóstico.
+- 12/10/2026 (v0.3.1): `criar_semelhante` não envia mais `country` no `lookalike_spec` (descontinuado pela Meta em todas as versões desde 01/09/2026; o país passa a vir do conjunto).
 - Manutenção: tarefa agendada semanal confere o changelog da Meta e avisa no painel antes de qualquer versão expirar.
 
 ## Instalação (uma vez)
