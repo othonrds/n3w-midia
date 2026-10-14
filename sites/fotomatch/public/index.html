@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>FotoMatch · Nota grátis das suas fotos de perfil</title>
+<meta name="description" content="Descubra em 2 minutos por que suas fotos não dão match. Mande de 3 a 6 fotos e receba uma nota grátis, foto a foto, com os 3 erros que mais pesam.">
+<meta name="robots" content="noindex,nofollow"><!-- RASCUNHO: tirar quando o Othon aprovar a publicação -->
+<meta name="theme-color" content="#14110F">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<!-- Meta Pixel N3w FotoMatch (39072077939073915) -->
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent',{content_name:'fotomatch_15_fotos',currency:'BRL',value:29.90});</script>
+</head>
+<body>
+<header class="top">
+  <span class="logo">Foto<b>Match</b></span>
+  <span class="selo">Feito com IA</span>
+</header>
+
+<main id="app">
+  <!-- 0 · Abertura (v2 padrão Roast: antes P&B 3,1 → depois 8,9 + checklist; fotos v2 entram em img/v2/ quando o motor for liberado) -->
+  <section class="tela ativa" data-tela="inicio">
+    <p class="kicker">Fotos de perfil para apps de namoro</p>
+    <h1>Descubra em 2 minutos por que suas fotos não dão match.</h1>
+    <p class="sub">O papo nem chega a ser lido. Quem decide é a foto. Mande de 3 a 6 fotos e receba uma <b>nota grátis</b>, foto a foto, com os 3 erros que mais pesam.</p>
+    <button class="btn" data-ir="idade">Quero minha nota grátis</button>
+    <ul class="confianca">
+      <li>Grátis, sem cartão</li><li>Resultado em cerca de 1 minuto</li><li>Fotos privadas, apagadas em até 30 dias</li>
+    </ul>
+    <div class="exemplo" id="exemplo">
+      <div class="par on" data-i="0">
+        <figure class="ph antes"><span class="nt ruim">3,1</span><img src="img/r1-base.jpg" alt="Selfie comum de um homem fictício" loading="eager" width="640" height="960"><figcaption>antes · selfie comum</figcaption></figure>
+        <div class="seta">→</div>
+        <figure class="ph ph2 depois"><span class="nt boa">8,9</span><img src="img/r1-jantar.jpg" alt="O mesmo rosto fictício em foto de jantar à noite" loading="eager" width="640" height="960"><figcaption>mesma cara, jantar à noite</figcaption></figure>
+      </div>
+      <div class="par" data-i="1">
+        <figure class="ph antes"><span class="nt ruim">3,1</span><img src="img/r2-base.jpg" alt="Selfie comum de um homem fictício" loading="lazy" width="640" height="960"><figcaption>antes · selfie comum</figcaption></figure>
+        <div class="seta">→</div>
+        <figure class="ph ph2 depois"><span class="nt boa">8,9</span><img src="img/r2-terno.jpg" alt="O mesmo rosto fictício em foto de terno na rua" loading="lazy" width="640" height="960"><figcaption>mesma cara, terno na rua</figcaption></figure>
+      </div>
+      <div class="par" data-i="2">
+        <figure class="ph antes"><span class="nt ruim">3,1</span><img src="img/r3-base.jpg" alt="Selfie comum de um homem fictício" loading="lazy" width="640" height="960"><figcaption>antes · selfie comum</figcaption></figure>
+        <div class="seta">→</div>
+        <figure class="ph ph2 depois"><span class="nt boa">8,9</span><img src="img/r3-praia.jpg" alt="O mesmo rosto fictício em foto de pôr do sol na praia" loading="lazy" width="640" height="960"><figcaption>mesma cara, pôr do sol na praia</figcaption></figure>
+      </div>
+    </div>
+    <div class="pontos" id="pontos"><button aria-label="Exemplo 1" class="on"></button><button aria-label="Exemplo 2"></button><button aria-label="Exemplo 3"></button></div>
+    <div class="checklist">
+      <div class="col ruim"><p class="tt">Antes</p><ul><li>Foto de baixa qualidade</li><li>Pose sem graça</li><li>Luz ruim</li><li>Primeira impressão fraca</li></ul></div>
+      <div class="col boa"><p class="tt">Depois</p><ul><li>Foto de qualidade</li><li>Pose confiante</li><li>Luz forte</li><li>Primeira impressão marcante</li></ul></div>
+    </div>
+    <button class="btn" data-ir="idade">Quero minha nota grátis</button>
+  </section>
+
+  <!-- 1 · Idade -->
+  <section class="tela" data-tela="idade" data-passo="1">
+    <div class="faixa" aria-hidden="true"><img src="img/r1-jantar.jpg" alt="" loading="lazy"><img src="img/r2-terno.jpg" alt="" loading="lazy"><img src="img/r3-praia.jpg" alt="" loading="lazy"></div>
+    <h2>Qual a sua idade?</h2>
+    <div class="opcoes" data-campo="idade">
+      <button data-v="18-24">18 a 24</button><button data-v="25-34">25 a 34</button><button data-v="35-44">35 a 44</button>
+      <button data-v="45-54">45 a 54</button><button data-v="55+">55 ou mais</button>
+    </div>
+  </section>
+
+  <!-- 2 · Onde trava -->
+  <section class="tela" data-tela="trava" data-passo="2">
+    <h2>Onde você mais trava?</h2>
+    <div class="opcoes" data-campo="trava">
+      <button data-v="poucos_matches">Quase não tenho match</button>
+      <button data-v="match_nao_e_meu_tipo">Tenho match, mas não é quem eu queria</button>
+      <button data-v="match_nao_vira_encontro">Tenho match, mas não vira encontro</button>
+      <button data-v="quero_mais_animacao">Quero uma vida amorosa mais animada</button>
+    </div>
+  </section>
+
+  <!-- 3 · Objetivo -->
+  <section class="tela" data-tela="objetivo" data-passo="3">
+    <h2>O que você procura agora?</h2>
+    <div class="opcoes" data-campo="objetivo">
+      <button data-v="serio">Algo sério</button><button data-v="conhecer_gente">Conhecer gente nova</button>
+      <button data-v="aberto">Estou aberto ao que vier</button><button data-v="ainda_nao_sei">Ainda não sei</button>
+    </div>
+  </section>
+
+  <!-- 4 · O que mais segura (múltipla) -->
+  <section class="tela" data-tela="segura" data-passo="4">
+    <h2>O que mais te segura hoje?</h2>
+    <p class="dica">Pode marcar mais de um.</p>
+    <div class="opcoes multi" data-campo="segura">
+      <button data-v="fotos">Minhas fotos</button><button data-v="conversa">Puxar conversa</button>
+      <button data-v="estilo">Estilo e roupa</button><button data-v="tempo">Falta de tempo</button><button data-v="algoritmo">O algoritmo do app</button>
+    </div>
+    <button class="btn" id="seguraOk" disabled>Continuar</button>
+  </section>
+
+  <!-- 5 · Reforço -->
+  <section class="tela" data-tela="reforco" data-passo="5">
+    <div class="reforco">
+      <p class="grande" id="reforcoNum">Antes do papo</p>
+      <h2 id="reforcoTit">A primeira foto decide se ela para no seu perfil.</h2>
+      <p class="sub" id="reforcoTxt">Luz, ângulo e cenário mudam a primeira impressão mais do que qualquer bio. A boa notícia: é o ponto mais fácil de corrigir.</p>
+    </div>
+    <button class="btn" data-ir="envio">Ver a nota das minhas fotos</button>
+  </section>
+
+  <!-- 6 · Contato + upload -->
+  <section class="tela" data-tela="envio" data-passo="6">
+    <h2>Para onde mandamos o seu resultado?</h2>
+    <form id="formContato" novalidate>
+      <label>WhatsApp com DDD<input id="whats" inputmode="tel" autocomplete="tel" placeholder="(11) 91234-5678"></label>
+      <label>ou e-mail<input id="email" type="email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></label>
+      <label class="check"><input type="checkbox" id="aceite"> <span>Aceito que minhas fotos sejam analisadas por IA só para gerar a minha nota, guardadas em ambiente privado e apagadas em até 30 dias. Li a <a href="privacidade.html" target="_blank">privacidade</a>.</span></label>
+    </form>
+    <h3>Agora, de 3 a 6 fotos suas</h3>
+    <p class="dica">As que você usa no app (ou usaria). Só você na foto, rosto visível. Nada de foto de outra pessoa.</p>
+    <div class="grade" id="grade"></div>
+    <label class="btn sec" id="addFoto">+ Adicionar fotos<input type="file" id="arquivos" accept="image/jpeg,image/png,image/webp" multiple hidden></label>
+    <p class="erro" id="erroEnvio" role="alert"></p>
+    <button class="btn" id="enviar" disabled>Ver minha nota grátis</button>
+    <p class="mini">Suas selfies são usadas só para gerar a sua nota (e, se você comprar, as suas fotos) e são apagadas em 30 dias. Nunca usamos suas fotos em anúncios sem sua autorização por escrito.</p>
+  </section>
+
+  <!-- Analisando -->
+  <section class="tela" data-tela="analisando">
+    <div class="carregando"><div class="anel"></div>
+      <h2>Analisando suas fotos…</h2>
+      <p class="sub" id="statusAnalise">Enviando com segurança</p>
+    </div>
+  </section>
+
+  <!-- Resultado -->
+  <section class="tela" data-tela="resultado">
+    <p class="kicker" id="resKicker">Sua nota</p>
+    <div class="nota"><span id="notaGeral">–</span><small>/10</small></div>
+    <p class="sub" id="resFrase"></p>
+    <div class="fotosNota" id="fotosNota"></div>
+    <div class="previa" id="previa" hidden>
+      <p class="kicker">Sua prévia</p>
+      <figure class="previaFoto" id="previaFoto"><div class="previaCarregando" id="previaCarregando"><div class="anel"></div><span>Sua prévia está sendo gerada…</span></div><img id="previaImg" alt="Prévia de uma foto sua gerada com IA" hidden><span class="marca">FotoMatch · prévia</span></figure>
+      <p class="mini" id="previaTxt">Uma foto sua, com luz e cenário certos. Leva cerca de 1 minuto.</p>
+    </div>
+    <h3>Os 3 erros que mais pesam</h3>
+    <ol class="erros" id="errosLista"></ol>
+    <div class="oferta">
+      <p class="kicker">Com fotos certas</p>
+      <h2>Com as fotos que você já mandou, receba 15 fotos de perfil com o <u>seu</u> rosto.</h2>
+      <p class="sub">Luz, cenário, roupa e enquadramento certos. É você, mais bem fotografado. Pronto em até 30 minutos.</p>
+      <p class="preco"><s>R$ 97</s> <b>R$ 29,90</b> <span>ou <b>R$ 27,90 no PIX</b> · pagamento único, sem mensalidade</span></p>
+      <a class="btn" id="ctaCheckout" href="#" aria-disabled="true">Quero minhas 15 fotos · R$ 29,90</a>
+      <p class="mini" id="ctaNota">Checkout em montagem (rascunho).</p>
+      <ul class="confianca"><li>Refazemos 3 fotos se você não gostar</li><li>Garantia de 7 dias</li></ul>
+      <p class="mini">As selfies são usadas só para gerar as suas fotos e apagadas em 30 dias. Nunca usamos suas fotos em anúncios sem sua autorização por escrito.</p>
+    </div>
+  </section>
+
+  <!-- Resultado pendente (sem chave/erro) -->
+  <section class="tela" data-tela="pendente">
+    <h2>Recebemos suas fotos!</h2>
+    <p class="sub" id="pendenteTxt">Sua nota chega em até 10 min no contato que você deixou.</p>
+    <p class="mini" id="pendenteCod"></p>
+  </section>
+</main>
+
+<div class="barra" id="barra" hidden><div id="barraFill"></div></div>
+
+<footer>
+  <p>FotoMatch é um serviço de fotos e edição com IA. Não somos um app de namoro e não temos ligação com nenhum app de namoro. Fotos geradas com IA a partir das selfies enviadas pelo próprio cliente. As imagens de exemplo desta página mostram pessoas fictícias geradas por IA.</p>
+  <p><a href="privacidade.html">Privacidade</a></p>
+</footer>
+<script src="app.js"></script>
+</body></html>
