@@ -180,7 +180,7 @@ function abrirCheckout() {
   const nome = v("#fNome") || "Seu Nome", slug = slugDe(nome) || "seu-nome";
   if (!st.pacote) st.pacote = "p3";
   const pac = () => V2 ? PACOTES.find(p => p.id === st.pacote) : { pg: 3, preco: PRECO };
-  setStep(4); ev("AbriuCheckout", { value: pac().preco, currency: "BRL" }); // InitiateCheckout sai quando o Pix é gerado (abaixo)
+  setStep(4); if (!ls.get("jp_ic_" + st.id)) { ev("InitiateCheckout", { value: pac().preco, currency: "BRL", content_name: "juris-checkout" }, "ico-" + st.id); ls.set("jp_ic_" + st.id, 1); } // padrão Meta ao abrir o checkout (14/10)
   const oferta = V2 ? `<div class="pacs" id="pacs">${PACOTES.map(p => `<label class="pac${p.top ? " top" : ""}"><input type="radio" name="pac" value="${p.id}"${p.id === st.pacote ? " checked" : ""}>
       <span class="pn">${p.top ? "<i>Mais escolhido</i>" : ""}<b>${p.n}</b><span>${p.itens.join(" · ")}</span></span><span class="pp">${brl(p.preco)}</span></label>`).join("")}</div>
     <p class="note">Pagamento único no Pix. Todos incluem: sem marca d'água, botão direto para o seu WhatsApp, painel para editar quando quiser e endereço <b>jurispaginas.com/${esc(slug)}</b>.</p>`
@@ -209,7 +209,7 @@ function abrirCheckout() {
       await salvaRascunho();
       const j = await api({ acao: "pedido", id: st.id, token: st.token, email, whats, nome: v("#fNome"), ...fbIds(), ...(V2 ? { pacote: st.pacote } : {}) });
       ls.set("jp_pedido", { ref: j.ref, id: j.id, valor: j.valor });
-      ev("InitiateCheckout", { value: j.valor, currency: "BRL", num_items: j.creditos || 3 }, "ic-" + j.ref); // mesmo event_id do servidor (CAPI)
+      ev("AddPaymentInfo", { value: j.valor, currency: "BRL", num_items: j.creditos || 3 }, "api-" + j.ref); // Pix gerado; mesmo event_id do servidor (CAPI)
       telaPix(j);
     } catch (x) { err.textContent = x.message; b.disabled = false; tot(); }
   };
