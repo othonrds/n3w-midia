@@ -4,7 +4,7 @@
 // Segredos: SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY (automáticos) e MP_ACCESS_TOKEN (Edge Functions → Secrets).
 // Sem MP_ACCESS_TOKEN a função roda em MODO TESTE: gera um Pix de mentira e aceita "simular pagamento".
 // Meta Conversions API (eventos do lado do servidor, com o mesmo event_id do pixel para a Meta deduplicar):
-//   Lead (rascunho novo, "lead-<id da página>"), InitiateCheckout (Pix gerado, "ic-<ref>") e Purchase (Pix pago, "<ref>").
+//   Lead (rascunho novo, "lead-<id da página>"), AddPaymentInfo (Pix gerado, "api-<ref>"; desde 14/10, antes InitiateCheckout) e Purchase (Pix pago, "<ref>").
 //   JURIS_CAPI_TOKEN (token do pixel 982748768192003; se faltar, tenta META_CAPI_TOKEN), opcional META_TEST_EVENT_CODE.
 //   Sem token, nada é enviado e o resto funciona igual.
 
@@ -307,8 +307,8 @@ async function acao(b: any, req: Request) {
       if (!ins.ok && ins.status === 400) ins = await db("juris_pedidos", { method: "POST", prefer: "return=minimal", body: linha }); // migration 002 ainda não aplicada
       if (!ins.ok) return out(500, { erro: "Falha ao registrar o pedido" });
       await db(`juris_paginas?id=eq.${pag.id}`, { method: "PATCH", prefer: "return=minimal", body: { pedido_ref: ref } });
-      // InitiateCheckout pelo servidor no momento em que o Pix é gerado (mesmo event_id "ic-<ref>" do app.js).
-      emSegundoPlano((async () => capiEvento("InitiateCheckout", "ic-" + ref,
+      // AddPaymentInfo pelo servidor no momento em que o Pix é gerado (mesmo event_id "api-<ref>" do app.js).
+      emSegundoPlano((async () => capiEvento("AddPaymentInfo", "api-" + ref,
         await userData({ email, whats, fbp: rastreio.fbp, fbc: rastreio.fbc, ip: rastreio.client_ip, ua: rastreio.client_ua }),
         { value: valor, currency: "BRL", num_items: creditos, order_id: ref }, TESTE))());
       return out(200, { ref, id: orderId, valor, creditos, qr, qr64, teste: TESTE });
