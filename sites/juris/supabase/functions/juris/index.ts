@@ -1,10 +1,11 @@
 // Juris Páginas — backend único (Supabase Edge Function "juris", verify_jwt=false).
-// Ações (POST JSON {acao,...}): saude, rascunho, midia, pedido, status, painel, salvar.
+// Ações (POST JSON {acao,...}): saude, rascunho, midia, fotos, pedido, status, painel, salvar.
+// Funil (14/10): página pronta pelo link do anúncio → selfie gera as fotos de autoridade (acao "fotos") → Pix único R$ 97 (+R$ 67 domínio próprio).
 // Webhook do Mercado Pago (pedido pago): POST em .../functions/v1/juris?fonte=mp (tópico "Order").
 // Segredos: SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY (automáticos) e MP_ACCESS_TOKEN (Edge Functions → Secrets).
 // Sem MP_ACCESS_TOKEN a função roda em MODO TESTE: gera um Pix de mentira e aceita "simular pagamento".
 // Meta Conversions API (eventos do lado do servidor, com o mesmo event_id do pixel para a Meta deduplicar):
-//   Lead (rascunho novo, "lead-<id da página>"), AddPaymentInfo (Pix gerado, "api-<ref>"; desde 14/10, antes InitiateCheckout) e Purchase (Pix pago, "<ref>").
+//   Lead (selfie enviada, acao "fotos", "lead-<id da página>"), AddPaymentInfo (Pix gerado, "api-<ref>"; desde 14/10, antes InitiateCheckout) e Purchase (Pix pago, "<ref>").
 //   JURIS_CAPI_TOKEN (token do pixel 982748768192003; se faltar, tenta META_CAPI_TOKEN), opcional META_TEST_EVENT_CODE.
 //   Sem token, nada é enviado e o resto funciona igual.
 
@@ -18,11 +19,11 @@ const CAPI_TESTE = Deno.env.get("META_TEST_EVENT_CODE") || "";
 const GRAPH = "https://graph.facebook.com/" + (Deno.env.get("META_GRAPH_VERSION") || "v21.0");
 const PRECO = 39.9, PRECO_FOTOS = 29.9, CREDITOS = 3;
 // Oferta v2 (pacotes). Preço e nº de páginas definidos aqui, nunca pelo navegador. Sem pacote = oferta de teste (3 por R$ 39,90).
+// Oferta única (14/10): R$ 97 = 1 página no ar por 1 ano em jurispaginas.com/<nome>, compra única. Bump: domínio próprio +R$ 67.
 const PACOTES: Record<string, { preco: number; paginas: number; nome: string }> = {
-  p1: { preco: 97, paginas: 1, nome: "Essencial (1 página)" },
-  p3: { preco: 199, paginas: 3, nome: "Profissional (3 páginas)" },
-  p10: { preco: 397, paginas: 10, nome: "Escritório (10 páginas + domínio próprio)" },
+  p1: { preco: 97, paginas: 1, nome: "Página no ar por 1 ano" },
 };
+const PRECO_DOMINIO = 67;
 const SITE = "https://jurispaginas.com";
 const RESERVADOS = new Set(["api","painel","p","termos","privacidade","index","www","admin","fotos","assets","lp","app","entrar","login","ajuda","blog","static","public","favicon","robots","sitemap"]);
 const AREAS = ["familia","trabalhista","previdenciario","criminal","consumidor","imobiliario","tributario","bancario","empresarial"];
@@ -74,11 +75,12 @@ function limpaDados(d: any) {
     cidade: txt(d.cidade, 60), uf: UFS.includes(d.uf) ? d.uf : "SP",
     oab: txt(d.oab, 20), anos: txt(d.anos, 3), zap: txt(d.zap, 20),
     atend: ["Presencial e online", "Somente online, todo o Brasil", "Somente presencial"].includes(d.atend) ? d.atend : "Presencial e online",
-    tpl: ["classico", "moderno", "minimal", "bio", "hub", "impacto", "editorial"].includes(d.tpl) ? d.tpl : "classico",
+    tpl: ["premium", "classico", "moderno", "minimal", "bio", "hub", "impacto", "editorial"].includes(d.tpl) ? d.tpl : "premium",
     p: hex(d.p, "#1B2A41"), a: hex(d.a, "#C9A227"),
     h1: txt(d.h1, 160), sub: longo(d.sub, 400), bio: longo(d.bio, 900),
     end: txt(d.end, 160), email: txt(d.email, 120), insta: txt(d.insta, 60), escritorio: txt(d.escritorio, 80),
     foto: nossaMidia(d.foto), logo: nossaMidia(d.logo),
+    fotos: Array.isArray(d.fotos) ? d.fotos.map(nossaMidia).filter(Boolean).slice(0, 4) : [],
   };
 }
 function slugBase(nome: string) {
@@ -227,6 +229,13 @@ async function webhookMP(b: any, url: URL) {
   return out(200, { ok: true, pago: true });
 }
 
+// TODO-Higgsfield: gerar 4 fotos de autoridade a partir da selfie (estúdio, escritório, retrato, meio corpo),
+// subir no bucket juris-midia e devolver as URLs. STUB: devolve a própria selfie 4 vezes; o modelo premium
+// aplica um recorte diferente em cada posição (hero, sobre, atendimento, chamada final). Não gasta créditos.
+async function gerarFotosAutoridade(selfie: string, _dados: unknown): Promise<string[]> {
+  return [selfie, selfie, selfie, selfie];
+}
+
 async function acao(b: any, req: Request) {
   switch (b.acao) {
     case "saude": { // diz se o Pix real está ligado, sem expor o token
@@ -247,10 +256,7 @@ async function acao(b: any, req: Request) {
       const token = rnd(16);
       const r = await db("juris_paginas", { method: "POST", body: { token, dados, utm } });
       if (!r.ok) return out(500, { erro: "Não foi possível salvar agora." });
-      // Lead pelo servidor (o pixel no navegador do Instagram costuma ser bloqueado). event_id igual ao do app.js.
-      emSegundoPlano((async () => capiEvento("Lead", "lead-" + r.data[0].id,
-        await userData({ whats: dados.zap, fbp, fbc: fbc || fbcDoClique(utm), ip: ipDe(req), ua: uaDe(req) }),
-        { content_name: dados.area }, TESTE))());
+      // Lead agora sai na acao "fotos" (selfie enviada), não na criação do rascunho.
       return out(200, { id: r.data[0].id, token, slug: slugBase(dados.nome), teste: TESTE });
     }
     case "midia": {
@@ -270,15 +276,26 @@ async function acao(b: any, req: Request) {
       if (!up.ok) { console.error("upload", up.status, (await up.text()).slice(0, 200)); return out(502, { erro: "Falha ao enviar a imagem" }); }
       return out(200, { url: `${SB}/storage/v1/object/public/juris-midia/${nome}` });
     }
+    case "fotos": { // etapa 2: selfie → fotos de autoridade (prévia com marca d'água no navegador)
+      const pag = (await db(`juris_paginas?id=eq.${b.id}&token=eq.${b.token}&select=*`)).data?.[0];
+      if (!pag) return out(403, { erro: "Sem permissão" });
+      const selfie = nossaMidia(b.selfie);
+      if (!selfie) return out(400, { erro: "Envie a selfie primeiro" });
+      const fotos = await gerarFotosAutoridade(selfie, pag.dados);
+      await db(`juris_paginas?id=eq.${pag.id}`, { method: "PATCH", prefer: "return=minimal", body: { dados: { ...pag.dados, foto: fotos[0], fotos }, atualizado_em: new Date().toISOString() } });
+      const fbp = limpaFbp(b.fbp) || limpaFbp(pag.utm?.fbp), fbc = limpaFbc(b.fbc) || limpaFbc(pag.utm?.fbc) || fbcDoClique(pag.utm, pag.criado_em);
+      emSegundoPlano((async () => capiEvento("Lead", "lead-" + pag.id, await userData({ fbp, fbc, ip: ipDe(req), ua: uaDe(req) }), { content_name: pag.dados?.area }, TESTE))());
+      return out(200, { fotos, stub: true });
+    }
     case "pedido": {
       const pag = (await db(`juris_paginas?id=eq.${b.id}&token=eq.${b.token}&select=*`)).data?.[0];
       if (!pag) return out(404, { erro: "Página não encontrada. Gere de novo." });
       const email = txt(b.email, 120).toLowerCase(), whats = txt(b.whats, 20).replace(/\D/g, ""), nome = txt(b.nome || pag.dados?.nome, 80);
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return out(400, { erro: "Confira o e-mail" });
       if (whats.length < 10) return out(400, { erro: "WhatsApp com DDD" });
-      const pac = PACOTES[b.pacote] || null;
-      const bump = false /* bump de fotos desligado em 08/10: produto de fotos parado */, valor = +((pac ? pac.preco : PRECO) + (bump ? PRECO_FOTOS : 0)).toFixed(2);
-      const creditos = pac ? pac.paginas : CREDITOS;
+      const pac = PACOTES.p1, dominio = !!b.dominio;
+      const bump = false /* bump de fotos desligado em 08/10: produto de fotos parado */, valor = +(pac.preco + (dominio ? PRECO_DOMINIO : 0)).toFixed(2);
+      const creditos = pac.paginas;
       const ref = "JP" + rnd(5).toUpperCase(), token = rnd(16);
       let orderId = "TESTE-" + ref, qr = "00020126580014BR.GOV.BCB.PIX0136modo-teste-jurispaginas-" + ref, qr64: string | null = null;
       if (!TESTE) {
@@ -286,7 +303,7 @@ async function acao(b: any, req: Request) {
           method: "POST", headers: { "X-Idempotency-Key": crypto.randomUUID() },
           body: JSON.stringify({
             type: "online", processing_mode: "automatic", external_reference: ref, total_amount: valor.toFixed(2),
-            description: pac ? "Juris Páginas: " + pac.nome : bump ? "Juris Páginas: 3 páginas + 3 fotos profissionais" : "Juris Páginas: 3 páginas",
+            description: "Juris Páginas: " + pac.nome + (dominio ? " + domínio próprio" : ""),
             payer: { email, first_name: nome.replace(/^(dr|dra)\.?\s+/i, "").split(" ")[0] },
             transactions: { payments: [{ amount: valor.toFixed(2), payment_method: { id: "pix", type: "bank_transfer" } }] },
           }),
@@ -302,7 +319,7 @@ async function acao(b: any, req: Request) {
         client_ip: ipDe(req),
         client_ua: uaDe(req),
       };
-      const linha = { ref, mp_order_id: orderId, valor, bump_fotos: bump, email, nome, whats, token, creditos, teste: TESTE, utm: { ...(pag.utm || {}), pacote: pac ? b.pacote : "teste-3x3990" } };
+      const linha = { ref, mp_order_id: orderId, valor, bump_fotos: bump, email, nome, whats, token, creditos, teste: TESTE, utm: { ...(pag.utm || {}), pacote: "p1", dominio } }; // TODO: coluna expira_em + aviso no WhatsApp ~30 dias antes de completar 1 ano
       let ins = await db("juris_pedidos", { method: "POST", prefer: "return=minimal", body: { ...linha, ...rastreio } });
       if (!ins.ok && ins.status === 400) ins = await db("juris_pedidos", { method: "POST", prefer: "return=minimal", body: linha }); // migration 002 ainda não aplicada
       if (!ins.ok) return out(500, { erro: "Falha ao registrar o pedido" });
@@ -321,7 +338,7 @@ async function acao(b: any, req: Request) {
       const primeira = pd.status === "pago" ? false : await confirma(pd);
       if (!pd.capi_sent_at) emSegundoPlano(enviaCapi(pd.ref)); // se o webhook ainda não enviou, envia daqui (sem atrasar a resposta)
       const pags = (await db(`juris_paginas?pedido_ref=eq.${pd.ref}&select=*&order=criado_em`)).data || [];
-      return out(200, { pago: true, primeira, valor: pd.valor, creditos: pd.creditos, ref: pd.ref, token: pd.token, paginas: pags.map(vistaPagina), fotos: fotosUrl(pd), painel: `${SITE}/painel.html?ref=${pd.ref}&t=${pd.token}` });
+      return out(200, { pago: true, primeira, valor: pd.valor, dominio: !!pd.utm?.dominio, validade: pd.pago_em ? new Date(new Date(pd.pago_em).getTime() + 365 * 864e5).toISOString().slice(0, 10) : null, creditos: pd.creditos, ref: pd.ref, token: pd.token, paginas: pags.map(vistaPagina), fotos: fotosUrl(pd), painel: `${SITE}/painel.html?ref=${pd.ref}&t=${pd.token}` });
     }
     case "painel": {
       const pd = await pedidoPorRef(b.ref);
