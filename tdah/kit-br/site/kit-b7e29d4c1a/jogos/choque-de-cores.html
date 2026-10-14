@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><meta name="robots" content="noindex">
+<title>Choque de Cores · Kit Foco</title><link rel="stylesheet" href="../jogo.css">
+<style>
+#word{font-size:56px;font-weight:900;text-align:center;margin:40px 0 30px;letter-spacing:.02em}
+#opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#opts button{border:0;border-radius:14px;padding:22px 8px;font:800 18px system-ui,sans-serif;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+#fb{text-align:center;height:24px;font-weight:700}
+</style></head>
+<body><div class="w">
+<div class="top"><a href="../index.html">‹ Kit</a><div class="hud"><span>⏱ <b id="t">45</b>s</span><span>★ <b id="s">0</b></span></div></div>
+<div id="intro" class="screen">
+  <h1>Choque de Cores</h1>
+  <div class="rules">Vai aparecer o nome de uma cor pintado com outra cor. Toque no botão da <b>cor da tinta</b>, não no que está escrito. Acerto +1, erro −1. 45 segundos.</div>
+  <p class="mute">Recorde: <b id="rec">–</b></p>
+  <button class="btn" id="go">Começar</button>
+</div>
+<div id="game" class="hidden"><div id="word"></div><div id="fb"></div><div id="opts"></div></div>
+<div id="end" class="screen hidden">
+  <h1>Fim!</h1><div class="big" id="final"></div><p class="mute" id="endmsg"></p>
+  <button class="btn" id="again">Jogar de novo</button><a class="btn sec" href="../index.html" style="text-decoration:none">Voltar ao kit</a>
+</div>
+</div>
+<script src="../jogo.js"></script>
+<script>
+var C=[{n:'VERMELHO',c:'#e74c3c'},{n:'AZUL',c:'#3498db'},{n:'VERDE',c:'#27ae60'},{n:'AMARELO',c:'#f1c40f'}];
+var ink,score,time,tick;
+KF.$('#rec').textContent=KF.best('stroop')??'–';
+C.forEach(function(x,i){var b=document.createElement('button');b.textContent=x.n;b.style.background=x.c;
+  b.onpointerdown=function(e){e.preventDefault();if(time<=0)return;if(i===ink){score++;KF.$('#fb').textContent='✓';KF.$('#fb').style.color='#7ef0c4';}else{score--;KF.vib(60);KF.$('#fb').textContent='✗';KF.$('#fb').style.color='#ff7b7b';}KF.$('#s').textContent=score;next();};
+  KF.$('#opts').appendChild(b);});
+function next(){var w=Math.floor(Math.random()*4);do{ink=Math.floor(Math.random()*4)}while(ink===w&&Math.random()<.8);
+  var el=KF.$('#word');el.textContent=C[w].n;el.style.color=C[ink].c;el.style.fontSize=C[w].n.length>6?'44px':'56px';}
+function start(){score=0;time=45;KF.$('#s').textContent=0;KF.$('#t').textContent=45;KF.$('#fb').textContent='';next();
+  KF.$('#intro').classList.add('hidden');KF.$('#end').classList.add('hidden');KF.$('#game').classList.remove('hidden');
+  tick=setInterval(function(){time--;KF.$('#t').textContent=time;if(time<=0)end();},1000);}
+function end(){clearInterval(tick);KF.$('#game').classList.add('hidden');KF.$('#end').classList.remove('hidden');KF.$('#final').textContent=score;
+  var nb=KF.best('stroop',score);KF.$('#endmsg').textContent=nb?'Novo recorde!':'Recorde: '+KF.best('stroop');KF.$('#rec').textContent=KF.best('stroop');}
+KF.$('#go').onclick=start;KF.$('#again').onclick=start;
+</script></body></html>

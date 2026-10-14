@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Sons de foco · Kit Foco</title><link rel="stylesheet" href="../jogo.css">
+<style>
+.snd{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 10px;color:var(--ink);font:inherit;cursor:pointer}
+.snd b{display:block;font-size:17px}.snd span{color:var(--mute);font-size:14px}
+.snd.on{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc) inset}
+#clock{font-size:64px;font-weight:900;text-align:center;font-variant-numeric:tabular-nums;margin:10px 0}
+input[type=range]{width:100%}
+</style></head>
+<body><div class="w">
+<div class="top"><a href="../index.html">‹ Kit</a><span class="mute">Sons de foco</span></div>
+<h1>Escolha um som</h1>
+<p class="mute">Use fone. Os sons são gerados no próprio navegador e tocam sem parar até você desligar.</p>
+<button class="snd" data-s="brown"><b>🌊 Ruído marrom</b><span>Grave e contínuo, lembra um rio distante</span></button>
+<button class="snd" data-s="pink"><b>🌬️ Ruído rosa</b><span>Mais suave, como vento constante</span></button>
+<button class="snd" data-s="rain"><b>🌧️ Chuva</b><span>Chuva leve com variação natural</span></button>
+<label class="mute">Volume<input type="range" id="vol" min="0" max="1" step="0.01" value="0.5"></label>
+
+<h1 style="margin-top:28px">Bloco de foco</h1>
+<div id="clock">25:00</div>
+<p class="center"><button class="btn" id="tgo">Iniciar 25 min</button> <button class="btn sec" id="tbrk">Pausa 5 min</button></p>
+<p class="note">Dica do caderno: antes de iniciar, escreva no planejador qual é a única tarefa deste bloco.</p>
+</div>
+<script src="../jogo.js"></script>
+<script>
+var ac,gain,src,cur=null,lfo;
+function buf(type){var len=ac.sampleRate*4,b=ac.createBuffer(2,len,ac.sampleRate);
+  for(var ch=0;ch<2;ch++){var d=b.getChannelData(ch),last=0,b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+    for(var i=0;i<len;i++){var w=Math.random()*2-1;
+      if(type==='brown'){last=(last+0.02*w)/1.02;d[i]=last*3.5;}
+      else{b0=.99886*b0+w*.0555179;b1=.99332*b1+w*.0750759;b2=.969*b2+w*.153852;b3=.8665*b3+w*.3104856;b4=.55*b4+w*.5329522;b5=-.7616*b5-w*.016898;
+        d[i]=(b0+b1+b2+b3+b4+b5+b6+w*.5362)*.11;b6=w*.115926;}}}
+  return b;}
+function play(s){if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();gain=ac.createGain();gain.connect(ac.destination);}
+  ac.resume();stop();if(cur===s){cur=null;mark();return;}cur=s;
+  src=ac.createBufferSource();src.buffer=buf(s==='brown'?'brown':'pink');src.loop=true;var out=src;
+  if(s==='rain'){var hp=ac.createBiquadFilter();hp.type='highpass';hp.frequency.value=900;var am=ac.createGain();am.gain.value=.8;
+    lfo=ac.createOscillator();lfo.frequency.value=.13;var lg=ac.createGain();lg.gain.value=.25;lfo.connect(lg);lg.connect(am.gain);lfo.start();
+    src.connect(hp);hp.connect(am);out=am;}
+  out.connect(gain);gain.gain.value=+KF.$('#vol').value;src.start();mark();}
+function stop(){try{src&&src.stop()}catch(e){}try{lfo&&lfo.stop()}catch(e){}src=null;lfo=null;}
+function mark(){document.querySelectorAll('.snd').forEach(function(b){b.classList.toggle('on',b.dataset.s===cur)})}
+document.querySelectorAll('.snd').forEach(function(b){b.onclick=function(){play(b.dataset.s)}});
+KF.$('#vol').oninput=function(){if(gain)gain.gain.value=+this.value};
+var end=0,tk;function run(min){end=Date.now()+min*60000;clearInterval(tk);tk=setInterval(upd,250);upd();}
+function upd(){var s=Math.max(0,Math.round((end-Date.now())/1000));KF.$('#clock').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+  if(s<=0){clearInterval(tk);KF.vib([200,100,200]);beep();}}
+function beep(){if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();var o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;g.gain.setValueAtTime(.3,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+1.2);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+1.2);}
+KF.$('#tgo').onclick=function(){run(25)};KF.$('#tbrk').onclick=function(){run(5)};
+</script></body></html>
