@@ -20,10 +20,17 @@ im.save(os.path.join(D, 'FOTOSADV_oferta-grade_H03_v2_pacote249.png'))
 im = o(H03); d = ImageDraw.Draw(im); d.rectangle((0, 50, W, 280), fill=BG)
 ctext(d, 62, 'R$ 5,93 por foto', f('Bold', 104), GOLD)
 ctext(d, 200, '15 fotos profissionais por R$ 89', f('Bold', 46), WHITE)
+# preço da página (Othon 16/10): entrada = 4 fotos R$ 49,90
+d.rectangle((0, 1160, W, 1228), fill=BG); ctext(d, 1168, 'ou 4 fotos por R$ 49,90', f('Medium', 40), WHITE)
 im.save(os.path.join(D, 'FOTOSADV_oferta-grade_H03_v3_593-por-foto.png'))
 
 # H01 v4/v5 — muda SÓ a pessoa da prova (antes/depois); título e barra de preço idênticos ao H01 v2
 for src, out in (('FOTOSADV_dor-selfie_H02_v1_r3.png', 'FOTOSADV_antes-depois_H01_v4_advogado2.png'),
                  ('FOTOSADV_dor-selfie_H02_v2_r3.png', 'FOTOSADV_antes-depois_H01_v5_advogada.png')):
-    im = o(H01); im.paste(o(src).crop((40, 285, 1040, 1080)), (40, 285)); im.save(os.path.join(D, out))
+    im = o(H01); im.paste(o(src).crop((40, 285, 1040, 1080)), (40, 285)); d = ImageDraw.Draw(im)
+    # preço da página (Othon 16/10): célula da esquerda vira 4 fotos R$ 49,90
+    d.rectangle((90, 1122, 528, 1250), fill=WHITE)
+    for y, t, fo, col in ((1128, '4 fotos', f('Regular', 32), (90, 96, 110)), (1172, 'R$ 49,90', f('Bold', 56), BG)):
+        d.text((300 - d.textlength(t, font=fo) / 2, y), t, font=fo, fill=col)
+    im.save(os.path.join(D, out))
 print('ok')
