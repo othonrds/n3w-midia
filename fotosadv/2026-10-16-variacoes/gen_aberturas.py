@@ -11,7 +11,7 @@ def sh(*a): subprocess.run(a, check=True)
 def frame(src, t):
     p = f'{T}/{os.path.basename(src)}_{t}.png'; sh('ffmpeg', '-v', 'error', '-y', '-ss', str(t), '-i', src, '-frames:v', '1', p)
     return Image.open(p).convert('RGB')
-V01 = os.path.join(I, 'V01.mp4'); V04 = os.path.join(I, 'V04.mp4')
+V01 = os.path.join(I, 'V01_fix.mp4'); V04 = os.path.join(I, 'V04_fix.mp4')  # F1: fontes sem o quadro quebrado
 SELFIE = frame(V01, 4.2).crop((165, 200, 555, 890))
 ENSAIO = frame(V01, 6.6).crop((190, 250, 530, 860))
 GRADE = frame(V01, 11.6).crop((28, 104, 692, 940))
