@@ -196,7 +196,7 @@ const TOOLS = [
   },
   {
     name: "criar_conjunto",
-    description: "Cria conjunto SEMPRE PAUSADO. Para Advantage+ com público sugerido: advantage_plus=true e publicos_sugeridos=[ids]. targeting_json permite passar o targeting completo da Meta.",
+    description: "Cria conjunto SEMPRE PAUSADO. Programação de horário (programacao) exige orçamento VITALÍCIO no conjunto (orcamento_total_reais + fim) e campanha SEM orçamento (não CBO). Para Advantage+ com público sugerido: advantage_plus=true e publicos_sugeridos=[ids]. targeting_json permite passar o targeting completo da Meta.",
     inputSchema: S({
       conta: CONTA, campanha_id: str("campanha"), nome: str("nome"),
       pixel_id: str("pixel para OFFSITE_CONVERSIONS"), evento: str("padrão PURCHASE"),
@@ -212,6 +212,7 @@ const TOOLS = [
       lance_reais: num("teto de lance (bid cap) ou custo-alvo (cost cap) em reais — obrigatório quando a campanha usa LOWEST_COST_WITH_BID_CAP ou COST_CAP"),
       roas_minimo: num("ROAS mínimo (ex.: 1.2) — obrigatório quando a campanha usa LOWEST_COST_WITH_MIN_ROAS"),
       programacao: { type: "array", items: { type: "object" }, description: "horários de veiculação no fuso da conta, ex.: [{\"de\":10,\"ate\":17},{\"de\":0,\"ate\":2}] (horas cheias; dias opcional 0=dom..6=sáb). Só com orçamento vitalício" },
+      estrategia_lance: str("estratégia de lance do conjunto quando ele tem orçamento próprio (padrão LOWEST_COST_WITHOUT_CAP; COST_CAP, LOWEST_COST_WITH_BID_CAP, LOWEST_COST_WITH_MIN_ROAS)"),
     }, ["campanha_id", "nome"]),
     run: async (env, a) => {
       const adv = a.advantage_plus !== false;
@@ -232,6 +233,11 @@ const TOOLS = [
         end_time: a.fim,
         bid_amount: a.lance_reais ? Math.round(a.lance_reais * 100) : undefined,
         bid_constraints: a.roas_minimo ? { roas_average_floor: Math.round(a.roas_minimo * 10000) } : undefined,
+        // Conjunto com orçamento próprio (diário ou vitalício) precisa declarar a estratégia de lance,
+        // senão a Meta devolve o erro 2490487 ("falta estratégia de lance"). Em campanha CBO o orçamento é da campanha e isto fica de fora.
+        bid_strategy: (a.orcamento_diario_reais || a.orcamento_total_reais)
+          ? (a.estrategia_lance || (a.roas_minimo ? "LOWEST_COST_WITH_MIN_ROAS" : a.lance_reais ? "LOWEST_COST_WITH_BID_CAP" : "LOWEST_COST_WITHOUT_CAP"))
+          : undefined,
         pacing_type: a.programacao && a.programacao.length ? ["day_parting"] : undefined,
         adset_schedule: programacaoMeta(a.programacao),
         targeting, start_time: a.inicio,
