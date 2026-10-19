@@ -63,3 +63,5 @@ Projetos: fotosadv, lawyer, tdah, aero, social-tomas, social-maggy.
 
 ## Deploy (08/10)
 Workers Builds ligado ao repositório com **Root directory = ferramentas/n3w-meta-mcp**. Todo push em main publica com o wrangler.toml desta pasta (variáveis + bucket MIDIA). Segredos (META_TOKEN, CONNECTOR_KEY) ficam só no Cloudflare. Nunca ligar o Worker com raiz `/`.
+
+- 19/10/2026: Workers Builds conectado (branch main, raiz ferramentas/n3w-meta-mcp). Todo push em main publica o conector.
