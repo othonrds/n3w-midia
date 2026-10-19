@@ -382,6 +382,51 @@ const TOOLS = [
     }),
   },
   {
+    name: "criar_regra",
+    description: "Cria uma REGRA AUTOMATIZADA da Meta (stop loss que roda dentro da Meta a cada 30 min). Nasce DESLIGADA (DISABLED); para nascer ligada, passe ligada=true com autorizacao_humana. Valores de dinheiro em REAIS (o conector converte para centavos). filtros: [{campo, operador, valor}] no formato da Meta (ex.: {campo:'spent', operador:'GREATER_THAN', valor:70} em reais; {campo:'offsite_conversion.fb_pixel_purchase', operador:'LESS_THAN', valor:1}; {campo:'campaign.name', operador:'CONTAIN', valor:'[TST]'}; {campo:'time_preset', operador:'EQUAL', valor:'TODAY'}). acao: PAUSE | UNPAUSE | CHANGE_BUDGET (com orcamento_reais = novo orçamento diário absoluto) | NOTIFICATION.",
+    inputSchema: S({
+      conta: CONTA, nome: str("nome da regra"),
+      nivel: { type: "string", enum: ["CAMPAIGN", "ADSET", "AD"], description: "padrão CAMPAIGN" },
+      filtros: { type: "array", items: { type: "object" }, description: "[{campo, operador, valor}]" },
+      acao: { type: "string", enum: ["PAUSE", "UNPAUSE", "CHANGE_BUDGET", "NOTIFICATION"] },
+      orcamento_reais: num("só para CHANGE_BUDGET: novo orçamento diário em reais"),
+      frequencia: { type: "string", enum: ["SEMI_HOURLY", "HOURLY", "DAILY"], description: "padrão SEMI_HOURLY" },
+      ligada: { type: "boolean", description: "padrão false (DISABLED)" },
+      autorizacao_humana: AUT,
+    }, ["nome", "filtros", "acao"]),
+    run: async (env, a) => {
+      if (a.ligada) exigeAutorizacao(a, "criar regra já ligada");
+      const DINHEIRO = new Set(["spent", "daily_budget", "lifetime_budget", "cost_per_purchase_fb", "cpa", "cpc", "cpm"]);
+      const filters = [{ field: "entity_type", value: a.nivel || "CAMPAIGN", operator: "EQUAL" }];
+      for (const f of a.filtros || []) {
+        const v = DINHEIRO.has(f.campo) && typeof f.valor === "number" ? Math.round(f.valor * 100) : f.valor;
+        filters.push({ field: f.campo, value: v, operator: f.operador });
+      }
+      if (!filters.some((f) => f.field === "time_preset")) filters.push({ field: "time_preset", value: "TODAY", operator: "EQUAL" });
+      const execution_spec = { execution_type: a.acao };
+      if (a.acao === "CHANGE_BUDGET") {
+        if (!a.orcamento_reais) throw new Error("CHANGE_BUDGET exige orcamento_reais");
+        execution_spec.execution_options = [{ field: "change_spec", operator: "EQUAL", value: { amount: Math.round(a.orcamento_reais * 100), unit: "ABSOLUTE", target_field: "daily_budget" } }];
+      }
+      return graph(env, "POST", `${act(env, a.conta)}/adrules_library`, {
+        name: a.nome,
+        evaluation_spec: { evaluation_type: "SCHEDULE", filters },
+        execution_spec,
+        schedule_spec: { schedule_type: a.frequencia || "SEMI_HOURLY" },
+        status: a.ligada ? "ENABLED" : "DISABLED",
+      });
+    },
+  },
+  {
+    name: "ligar_regra",
+    description: "Liga (ENABLED) ou desliga (DISABLED) uma regra automatizada. Ligar exige autorizacao_humana; desligar é livre.",
+    inputSchema: S({ id: str("id da regra"), ligada: { type: "boolean" }, autorizacao_humana: AUT }, ["id", "ligada"]),
+    run: async (env, a) => {
+      if (a.ligada) exigeAutorizacao(a, "ligar regra");
+      return graph(env, "POST", a.id, { status: a.ligada ? "ENABLED" : "DISABLED" });
+    },
+  },
+  {
     name: "consultar",
     description: "Leitura livre na Graph API (somente GET) para qualquer objeto/campo não coberto acima.",
     inputSchema: S({ caminho: str("ex.: 123456/insights ou act_X/adrules_library"), parametros: { type: "object" } }, ["caminho"]),
