@@ -4,7 +4,7 @@ set -u
 cd estudio; mkdir -p v f
 while read -r id url; do
   [ -z "$id" ] && continue
-  curl -fsSL "$url" -o /tmp/$id.mp4 || { echo "falhou $id"; continue; }
+  curl -fsSL --retry 4 --retry-delay 3 -A "Mozilla/5.0" "$url" -o /tmp/$id.mp4 || { echo "falhou $id"; echo $id >> falhas.txt; continue; }
   ffmpeg -loglevel error -y -i /tmp/$id.mp4 -t 60 -vf "scale=-2:360" -c:v libx264 -crf 30 -preset veryfast -c:a aac -b:a 64k -movflags +faststart v/$id.mp4
   dur=$(ffprobe -v error -show_entries format=duration -of csv=p=0 /tmp/$id.mp4)
   for k in 0 1 2 3 4 5; do
