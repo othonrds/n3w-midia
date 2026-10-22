@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><meta name="robots" content="noindex">
+<title>Caça-Números · Kit Foco</title><link rel="stylesheet" href="../jogo.css">
+<style>
+#grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;touch-action:manipulation}
+#grid button{aspect-ratio:1;border:1px solid var(--line);background:var(--card);color:var(--ink);font:800 22px system-ui,sans-serif;border-radius:10px}
+#grid button.ok{background:#1f3b34;color:#7ef0c4}
+#grid button.bad{background:#4a1f25}
+#next{text-align:center;font-weight:800;margin:6px 0 10px;font-size:18px}
+</style></head>
+<body><div class="w">
+<div class="top"><a href="../index.html">‹ Kit</a><div class="hud"><span>⏱ <b id="t">0,0</b>s</span></div></div>
+<div id="intro" class="screen">
+  <h1>Caça-Números</h1>
+  <div class="rules">Toque nos números em ordem, de <b>1 a 25</b>, o mais rápido possível. Toque errado soma 1 segundo.</div>
+  <p class="mute">Recorde: <b id="rec">–</b></p>
+  <button class="btn" id="go">Começar</button>
+</div>
+<div id="game" class="hidden"><div id="next">Procure: 1</div><div id="grid"></div></div>
+<div id="end" class="screen hidden">
+  <h1>Pronto!</h1><div class="big" id="final"></div><p class="mute" id="endmsg"></p>
+  <button class="btn" id="again">Jogar de novo</button><a class="btn sec" href="../index.html" style="text-decoration:none">Voltar ao kit</a>
+</div>
+</div>
+<script src="../jogo.js"></script>
+<script>
+var nxt,t0,pen,timer;
+function fmt(s){return s.toFixed(1).replace('.',',')}
+var r=KF.best('caca');KF.$('#rec').textContent=r?fmt(r)+'s':'–';
+function start(){nxt=1;pen=0;var g=KF.$('#grid');g.innerHTML='';
+  KF.shuffle(Array.from({length:25},function(_,i){return i+1})).forEach(function(n){
+    var b=document.createElement('button');b.textContent=n;
+    b.onpointerdown=function(e){e.preventDefault();if(n===nxt){b.classList.add('ok');nxt++;KF.$('#next').textContent='Procure: '+nxt;if(nxt>25)end();}
+      else if(n>nxt){pen+=1;KF.vib(60);b.classList.add('bad');setTimeout(function(){b.classList.remove('bad')},250);}};
+    g.appendChild(b);});
+  KF.$('#next').textContent='Procure: 1';
+  KF.$('#intro').classList.add('hidden');KF.$('#end').classList.add('hidden');KF.$('#game').classList.remove('hidden');
+  t0=performance.now();timer=setInterval(function(){KF.$('#t').textContent=fmt((performance.now()-t0)/1000+pen)},100);}
+function end(){clearInterval(timer);var s=Math.round(((performance.now()-t0)/1000+pen)*10)/10;
+  KF.$('#game').classList.add('hidden');KF.$('#end').classList.remove('hidden');KF.$('#final').textContent=fmt(s)+'s';
+  var nb=KF.best('caca',s,true);KF.$('#endmsg').textContent=nb?'Novo recorde!':'Recorde: '+fmt(KF.best('caca'))+'s';KF.$('#rec').textContent=fmt(KF.best('caca'))+'s';}
+KF.$('#go').onclick=start;KF.$('#again').onclick=start;
+</script></body></html>

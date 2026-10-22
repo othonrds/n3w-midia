@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><meta name="robots" content="noindex">
+<title>Reflexo · Kit Foco</title><link rel="stylesheet" href="../jogo.css">
+<style>
+#arena{position:relative;height:62vh;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;touch-action:manipulation}
+.ball{position:absolute;width:64px;height:64px;border-radius:50%;cursor:pointer}
+#rule{font-weight:800;text-align:center;margin:8px 0;font-size:18px}
+#flash{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;background:rgba(15,18,34,.85)}
+</style></head>
+<body><div class="w">
+<div class="top"><a href="../index.html">‹ Kit</a><div class="hud"><span>⏱ <b id="t">60</b>s</span><span>★ <b id="s">0</b></span></div></div>
+<div id="intro" class="screen">
+  <h1>Reflexo</h1>
+  <div class="rules">Toque nas bolas da <b>cor-alvo</b> e deixe as outras sumirem. A cada 20 segundos a cor-alvo muda. Acerto +1, toque errado −2. 60 segundos.</div>
+  <p class="mute">Recorde: <b id="rec">–</b></p>
+  <button class="btn" id="go">Começar</button>
+</div>
+<div id="game" class="hidden">
+  <div id="rule"></div>
+  <div id="arena"></div>
+</div>
+<div id="end" class="screen hidden">
+  <h1>Fim!</h1><div class="big" id="final">0</div><p class="mute" id="endmsg"></p>
+  <button class="btn" id="again">Jogar de novo</button><a class="btn sec" href="../index.html" style="text-decoration:none">Voltar ao kit</a>
+</div>
+</div>
+<script src="../jogo.js"></script>
+<script>
+var COLORS=[{n:'VERDE',c:'#2ecc71'},{n:'VERMELHA',c:'#e74c3c'},{n:'AZUL',c:'#3498db'}];
+var arena=KF.$('#arena'),score=0,time=60,target,spawnT,tickT,running=false;
+KF.$('#rec').textContent=KF.best('reflexo')??'–';
+function setTarget(i){target=i;KF.$('#rule').innerHTML='Toque só na bola <span style="color:'+COLORS[i].c+'">'+COLORS[i].n+'</span>';
+  var f=document.createElement('div');f.id='flash';f.innerHTML='Agora: <span style="color:'+COLORS[i].c+';margin-left:8px">'+COLORS[i].n+'</span>';arena.appendChild(f);setTimeout(function(){f.remove()},900);}
+function spawn(){if(!running)return;
+  var isT=Math.random()<.45,i=isT?target:[0,1,2].filter(function(x){return x!==target})[Math.random()<.5?0:1];
+  var b=document.createElement('div');b.className='ball';b.style.background=COLORS[i].c;
+  var W=arena.clientWidth-64,H=arena.clientHeight-64;b.style.left=Math.random()*W+'px';b.style.top=Math.random()*H+'px';
+  b.onpointerdown=function(e){e.preventDefault();if(!running)return;if(i===target){score++;}else{score-=2;KF.vib(80);}KF.$('#s').textContent=score;b.remove();};
+  arena.appendChild(b);var life=Math.max(650,1300-(60-time)*10);setTimeout(function(){b.remove()},life);
+  spawnT=setTimeout(spawn,Math.max(380,750-(60-time)*6));}
+function start(){score=0;time=60;running=true;arena.innerHTML='';KF.$('#s').textContent=0;KF.$('#t').textContent=60;
+  KF.$('#intro').classList.add('hidden');KF.$('#end').classList.add('hidden');KF.$('#game').classList.remove('hidden');
+  setTarget(0);spawn();
+  tickT=setInterval(function(){time--;KF.$('#t').textContent=time;
+    if(time===40||time===20){var n;do{n=Math.floor(Math.random()*3)}while(n===target);setTarget(n);}
+    if(time<=0)stop();},1000);}
+function stop(){running=false;clearInterval(tickT);clearTimeout(spawnT);
+  KF.$('#game').classList.add('hidden');KF.$('#end').classList.remove('hidden');KF.$('#final').textContent=score;
+  var nb=KF.best('reflexo',score);KF.$('#endmsg').textContent=nb?'Novo recorde!':'Recorde: '+KF.best('reflexo');KF.$('#rec').textContent=KF.best('reflexo');}
+KF.$('#go').onclick=start;KF.$('#again').onclick=start;
+</script></body></html>
