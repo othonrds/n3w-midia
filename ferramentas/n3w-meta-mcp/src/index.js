@@ -346,6 +346,41 @@ const TOOLS = [
     },
   },
   {
+    name: "alterar_lance",
+    description: "Altera o teto de lance (bid cap) ou custo-alvo (cost cap), em reais, de conjuntos. Passe conjunto_ids ou campanha_ids (aplica em todos os conjuntos das campanhas). Reduzir é livre; AUMENTAR exige autorizacao_humana. Usa a API em lote da Meta (50 por chamada), então serve para estruturas 1-100-1.",
+    inputSchema: S({
+      campanha_ids: { type: "array", items: { type: "string" }, description: "aplica em todos os conjuntos destas campanhas" },
+      conjunto_ids: { type: "array", items: { type: "string" } },
+      lance_reais: num("novo lance em reais"),
+      autorizacao_humana: AUT,
+    }, ["lance_reais"]),
+    run: async (env, a) => {
+      const novo = Math.round(a.lance_reais * 100);
+      let alvos = [];
+      for (const c of a.campanha_ids || []) alvos.push(...await graphAll(env, `${c}/adsets`, { fields: "id,bid_amount" }, 1000));
+      if ((a.conjunto_ids || []).length) {
+        for (let i = 0; i < a.conjunto_ids.length; i += 50) {
+          const r = await graph(env, "GET", "", { ids: a.conjunto_ids.slice(i, i + 50).join(","), fields: "id,bid_amount" }).catch(() => null);
+          if (r) alvos.push(...Object.values(r)); else alvos.push(...a.conjunto_ids.slice(i, i + 50).map((id) => ({ id, bid_amount: null })));
+        }
+      }
+      if (!alvos.length) throw new Error("Nenhum conjunto encontrado.");
+      let aut = null;
+      if (alvos.some((x) => !x.bid_amount || novo > Number(x.bid_amount))) aut = exigeAutorizacao(a, "aumentar lance");
+      const out = [];
+      for (let i = 0; i < alvos.length; i += 50) {
+        const lote = alvos.slice(i, i + 50);
+        const batch = lote.map((x) => ({ method: "POST", relative_url: x.id, body: `bid_amount=${novo}` }));
+        const r = await graph(env, "POST", "", { batch: JSON.stringify(batch) });
+        (Array.isArray(r) ? r : []).forEach((resp, j) => {
+          let body = {}; try { body = JSON.parse(resp && resp.body || "{}"); } catch {}
+          out.push({ id: lote[j].id, de_reais: lote[j].bid_amount ? Number(lote[j].bid_amount) / 100 : null, ok: resp && resp.code === 200, erro: body.error ? body.error.message : undefined });
+        });
+      }
+      return { para_reais: novo / 100, total: out.length, ok: out.filter((x) => x.ok).length, falhas: out.filter((x) => !x.ok), autorizacao_registrada: aut };
+    },
+  },
+  {
     name: "renomear",
     description: "Renomeia campanha, conjunto ou anúncio.",
     inputSchema: S({ id: str("id"), nome: str("novo nome") }, ["id", "nome"]),
