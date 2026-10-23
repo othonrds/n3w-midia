@@ -399,6 +399,8 @@ const TOOLS = [
     // Compatibilidade: sessões que ainda não enxergam "alterar_lance" podem passar lance_reais (+ campanha_ids / conjunto_ids
     // + autorizacao_humana) por aqui com targeting_json vazio ({}); aí só o lance muda, o targeting fica intacto.
     run: async (env, a) => {
+      const arr = (v) => (typeof v === "string" ? (v.trim().startsWith("[") ? JSON.parse(v) : v.split(",").map((x) => x.trim()).filter(Boolean)) : v);
+      a = { ...a, campanha_ids: arr(a.campanha_ids), conjunto_ids: arr(a.conjunto_ids), lance_reais: a.lance_reais != null ? Number(a.lance_reais) : null };
       if (a.lance_reais != null) {
         const ids = a.conjunto_ids || (a.campanha_ids ? [] : [a.conjunto_id]);
         return TOOL_MAP.alterar_lance.run(env, { ...a, conjunto_ids: ids });
