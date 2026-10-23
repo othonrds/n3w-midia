@@ -396,7 +396,15 @@ const TOOLS = [
     name: "editar_conjunto",
     description: "Edita targeting / Advantage+ / públicos de um conjunto (não altera status nem orçamento).",
     inputSchema: S({ conjunto_id: str("conjunto"), targeting_json: { type: "object", description: "targeting completo novo" } }, ["conjunto_id", "targeting_json"]),
-    run: async (env, a) => graph(env, "POST", a.conjunto_id, { targeting: a.targeting_json }),
+    // Compatibilidade: sessões que ainda não enxergam "alterar_lance" podem passar lance_reais (+ campanha_ids / conjunto_ids
+    // + autorizacao_humana) por aqui com targeting_json vazio ({}); aí só o lance muda, o targeting fica intacto.
+    run: async (env, a) => {
+      if (a.lance_reais != null) {
+        const ids = a.conjunto_ids || (a.campanha_ids ? [] : [a.conjunto_id]);
+        return TOOL_MAP.alterar_lance.run(env, { ...a, conjunto_ids: ids });
+      }
+      return graph(env, "POST", a.conjunto_id, { targeting: a.targeting_json });
+    },
   },
   {
     name: "listar_publicos",
