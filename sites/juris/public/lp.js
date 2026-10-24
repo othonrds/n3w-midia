@@ -30,7 +30,7 @@ export const TESES = {
 };
 export const UFS = "AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".split(" ");
 export const PALS = [["#1B2A41","#C9A227"],["#0F3D3E","#E0B04A"],["#3B1F2B","#D9A5A0"],["#1E3A8A","#F59E0B"],["#2E2E2E","#B48A5A"],["#14532D","#A3E635"]];
-export const FONTS = "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600;800&display=swap";
+export const FONTS = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Playfair+Display:wght@600;700&family=Manrope:wght@400;600;800&display=swap";
 
 // Modelos: [id, nome, descrição curta, tipo, paleta sugerida [principal, destaque]].
 export const TPLS = [
@@ -42,7 +42,7 @@ export const TPLS = [
  ["impacto","Impacto","Topo forte e botão flutuante","top",["#0B1B33","#C9A227"]],
  ["editorial","Editorial","Revista, premium","top",["#1F1A17","#9C7A4B"]],
 ];
-const TPL_IDS = TPLS.map(t => t[0]);
+const TPL_IDS = TPLS.map(t => t[0]).concat("premium");
 export const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 export const slugDe = s => String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/^(dr|dra)\.?\s+/,"").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,50);
 const iniciais = n => String(n).replace(/^(Dr|Dra)\.?\s+/i,"").split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join("").toUpperCase();
@@ -63,6 +63,93 @@ export function textos(d) {
   };
 }
 
+// Modelo único "premium" (14/10): o único oferecido ao cliente. Usa até 4 fotos (dados.fotos[]), caindo para dados.foto.
+const CSS_PREMIUM = `
+.lp.t-premium{--ink:#0F141B;--paper:#FBF8F3;--sand:#F1EBE1;--line:rgba(15,20,27,.12);background:var(--paper);color:#2A2F36;font:16px/1.65 "Manrope",system-ui,sans-serif}
+.lp.t-premium .pm-serif,.lp.t-premium h1,.lp.t-premium h2,.lp.t-premium h3{font-family:"Cormorant Garamond","Playfair Display",Georgia,serif;font-weight:500;color:var(--ink);letter-spacing:-.005em}
+.lp.t-premium h1{font-size:clamp(40px,11cqi,76px);line-height:1;margin:14px 0 18px;color:#fff;outline:none}
+.lp.t-premium h1[contenteditable]{border-bottom:1px dashed rgba(255,255,255,.55);cursor:text;padding-bottom:2px}
+.lp.t-premium h1[contenteditable]:focus{border-bottom-color:var(--a)}
+.lp.t-premium h2{font-size:clamp(32px,7.5cqi,52px);line-height:1.05;margin:0 0 22px}
+.lp.t-premium h2 em,.lp.t-premium h1 em{font-style:italic;color:var(--a)}
+.lp.t-premium section{padding:72px 7%}
+.lp.t-premium .pm-k{font:600 11px/1.4 "Manrope",sans-serif;letter-spacing:.26em;text-transform:uppercase;color:var(--a);display:flex;align-items:center;gap:12px}
+.lp.t-premium .pm-k:before{content:"";width:28px;height:1px;background:currentColor;flex:none}
+.lp.t-premium .pm-nav{position:absolute;top:0;left:0;right:0;z-index:4;display:flex;justify-content:space-between;align-items:center;padding:20px 7%;color:#fff}
+.lp.t-premium .pm-mono{width:40px;height:40px;border:1px solid rgba(255,255,255,.55);border-radius:50%;display:grid;place-items:center;font:500 17px "Cormorant Garamond",serif;letter-spacing:.04em}
+.lp.t-premium .pm-mono img{width:100%;height:100%;object-fit:contain;border-radius:50%}
+.lp.t-premium .pm-navzap{color:#fff;text-decoration:none;font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;border-bottom:1px solid var(--a);padding-bottom:3px}
+.lp.t-premium .pm-hero{position:relative;min-height:min(92vh,860px);display:flex;align-items:flex-end;background:var(--ink);overflow:hidden}
+.lp.t-premium .pm-hero .pm-ph{position:absolute;inset:0;border-radius:0}
+.lp.t-premium .pm-hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,13,18,.55) 0%,rgba(10,13,18,0) 26%,rgba(10,13,18,.15) 48%,rgba(10,13,18,.92) 84%);pointer-events:none;z-index:1}
+.lp.t-premium .pm-hc{position:relative;z-index:2;padding:0 7% 48px;max-width:760px;color:rgba(255,255,255,.86)}
+.lp.t-premium .pm-hc .pm-k{color:#E9D8B4}
+.lp.t-premium .pm-hc p{margin:0 0 26px;font-size:17px;max-width:46ch}
+.lp.t-premium .pm-oab{display:block;margin-top:22px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.lp.t-premium .pm-cta{display:inline-flex;align-items:center;gap:10px;background:var(--a);color:#14110B;text-decoration:none;font-weight:700;font-size:15px;padding:17px 26px;border-radius:2px;letter-spacing:.01em}
+.lp.t-premium .pm-cta svg{width:18px;height:18px;fill:currentColor}
+.lp.t-premium .pm-cta.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.lp.t-premium .pm-ph{position:relative;overflow:hidden;background:#1B222C}
+.lp.t-premium .pm-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.lp.t-premium .pm-ph .pm-sil{position:absolute;inset:0;width:100%;height:100%}
+.lp.t-premium .pm-wm{position:absolute;inset:0;z-index:3;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='190'%3E%3Ctext x='8' y='100' transform='rotate(-24 150 95)' font-family='Helvetica,Arial,sans-serif' font-size='15' letter-spacing='1' fill='rgba(255,255,255,0.26)'%3Epr%C3%A9via %C2%B7 jurispaginas.com%3C/text%3E%3C/svg%3E")}
+.lp.t-premium .pm-facts{display:grid;grid-template-columns:repeat(3,1fr);background:var(--ink);color:rgba(255,255,255,.8);border-top:1px solid rgba(255,255,255,.08)}
+.lp.t-premium .pm-facts div{padding:22px 7%;font-size:12px;letter-spacing:.12em;text-transform:uppercase;border-right:1px solid rgba(255,255,255,.08)}
+.lp.t-premium .pm-facts b{display:block;font:500 22px/1.2 "Cormorant Garamond",serif;letter-spacing:0;text-transform:none;color:#fff;margin-bottom:4px}
+.lp.t-premium .pm-sv{counter-reset:s;border-top:1px solid var(--line);margin-top:30px}
+.lp.t-premium .pm-sv a{display:grid;grid-template-columns:56px 1fr 20px;gap:12px;align-items:start;padding:24px 0;border-bottom:1px solid var(--line);text-decoration:none;color:inherit}
+.lp.t-premium .pm-sv a:before{counter-increment:s;content:counter(s,decimal-leading-zero);font:italic 500 26px/1 "Cormorant Garamond",serif;color:var(--a)}
+.lp.t-premium .pm-sv h3{font-size:25px;line-height:1.15;margin:0 0 6px}
+.lp.t-premium .pm-sv p{margin:0;font-size:15px;color:#5A6068}
+.lp.t-premium .pm-sv i{font-style:normal;color:var(--a);font-size:20px;line-height:1.3}
+.lp.t-premium .pm-about{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:center;background:var(--sand)}
+.lp.t-premium .pm-frame{position:relative;margin:0 18px 18px 0}
+.lp.t-premium .pm-frame:before{content:"";position:absolute;inset:18px -18px -18px 18px;border:1px solid var(--a);z-index:0}
+.lp.t-premium .pm-frame .pm-ph{aspect-ratio:4/5;z-index:1}
+.lp.t-premium .pm-about blockquote{margin:0 0 22px;font:italic 500 clamp(24px,5cqi,32px)/1.25 "Cormorant Garamond",serif;color:var(--ink)}
+.lp.t-premium .pm-about p{margin:0 0 16px;color:#4B515A}
+.lp.t-premium .pm-sign{font:italic 500 28px/1 "Cormorant Garamond",serif;color:var(--ink);margin-top:22px}
+.lp.t-premium .pm-sign small{display:block;font:600 11px/1.6 "Manrope",sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#7A7F86;margin-top:8px;font-style:normal}
+.lp.t-premium .pm-atd{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.lp.t-premium .pm-atd .pm-ph{aspect-ratio:5/6}
+.lp.t-premium .pm-steps{list-style:none;margin:26px 0 0;padding:0}
+.lp.t-premium .pm-steps li{position:relative;padding:0 0 26px 36px;border-left:1px solid var(--line);margin-left:6px}
+.lp.t-premium .pm-steps li:last-child{border-left-color:transparent;padding-bottom:0}
+.lp.t-premium .pm-steps li:before{content:"";position:absolute;left:-6px;top:4px;width:11px;height:11px;border-radius:50%;background:var(--paper);border:1px solid var(--a)}
+.lp.t-premium .pm-steps b{display:block;font:500 23px/1.2 "Cormorant Garamond",serif;color:var(--ink);margin-bottom:4px}
+.lp.t-premium .pm-steps span{font-size:15px;color:#5A6068}
+.lp.t-premium .pm-faq{background:#fff}
+.lp.t-premium details{border:0;border-bottom:1px solid var(--line);padding:20px 0}
+.lp.t-premium summary{list-style:none;display:flex;justify-content:space-between;gap:16px;font:500 22px/1.25 "Cormorant Garamond",serif;color:var(--ink);cursor:pointer}
+.lp.t-premium summary::-webkit-details-marker{display:none}
+.lp.t-premium summary:after{content:"+";color:var(--a);font:300 26px/1 "Manrope",sans-serif}
+.lp.t-premium details[open] summary:after{content:"–"}
+.lp.t-premium details p{margin:10px 0 0;color:#5A6068;font-size:15px}
+.lp.t-premium .pm-final{position:relative;min-height:560px;display:flex;align-items:flex-end;padding:0;background:var(--ink);overflow:hidden}
+.lp.t-premium .pm-final .pm-ph{position:absolute;inset:0}
+.lp.t-premium .pm-final:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,13,18,.2),rgba(10,13,18,.94) 72%);z-index:1;pointer-events:none}
+.lp.t-premium .pm-final>div{position:relative;z-index:2;padding:72px 7% 56px;color:rgba(255,255,255,.82);max-width:720px}
+.lp.t-premium .pm-final h2{color:#fff}
+.lp.t-premium .pm-ct{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:26px;font-size:14px}
+.lp.t-premium .pm-ct a,.lp.t-premium .pm-ct span{color:rgba(255,255,255,.75);text-decoration:none}
+.lp.t-premium footer.pm-ft{background:#0A0D12;color:rgba(255,255,255,.5);padding:28px 7% 36px;font-size:12px;line-height:1.7;display:block}
+.lp.t-premium footer.pm-ft b{color:rgba(255,255,255,.8);font-weight:600}
+.lp.t-premium .fab{position:fixed;right:16px;bottom:16px;z-index:20;width:56px;height:56px;border-radius:50%;background:#1F8F55;display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.lp.t-premium .fab svg{width:28px;height:28px;fill:#fff}
+.lp.t-premium.emb .fab{display:none}
+@container (max-width:720px){
+ .lp.t-premium section{padding:60px 24px}
+ .lp.t-premium .pm-nav{padding:18px 24px}
+ .lp.t-premium .pm-hc{padding:0 24px 40px}
+ .lp.t-premium .pm-hero{min-height:760px}
+ .lp.t-premium .pm-facts{grid-template-columns:1fr}
+ .lp.t-premium .pm-facts div{padding:16px 24px;border-right:0;border-bottom:1px solid rgba(255,255,255,.08)}
+ .lp.t-premium .pm-about,.lp.t-premium .pm-atd{grid-template-columns:1fr;gap:40px}
+ .lp.t-premium .pm-sv a{grid-template-columns:44px 1fr 16px}
+ .lp.t-premium .pm-final>div{padding:64px 24px 48px}
+ .lp.t-premium footer.pm-ft{padding:24px 24px 90px}
+}
+`;
 export const CSS = `
 .lp{--p:#1B2A41;--a:#C9A227;--t:#1F2328;--bgp:#FFFFFF;--soft:#F4F5F7;background:var(--bgp);color:var(--t);font:15px/1.6 "Manrope",system-ui,sans-serif;position:relative;overflow:hidden;container-type:inline-size}
 .lp *{box-sizing:border-box}
@@ -194,7 +281,7 @@ export const CSS = `
 .lp.t-editorial .final{background:var(--p)}.lp.t-editorial .final .cta{background:var(--a);color:#111}
 .lp.t-editorial.semfoto .eh{grid-template-columns:1fr}
 @container (max-width:620px){.lp.t-editorial .eh{grid-template-columns:1fr}.lp.t-editorial .eh .photo{max-width:240px}.lp.t-editorial .lista{grid-template-columns:1fr}}
-`;
+` + CSS_PREMIUM;
 
 
 const IC = {
@@ -210,6 +297,7 @@ const destaque = h => { const w = String(h).split(" "); if (w.length < 4) return
 // Devolve {cls, style, html}: o conteúdo de <div class="lp ...">.
 // app=true quando a página é mostrada dentro do gerador/painel (o botão flutuante fica preso à prévia).
 export function renderLP(d, { previa = false, fotoVazia = "Sua foto aqui", app = false } = {}) {
+  if (!d.tpl || d.tpl === "premium") return renderPremium(d, arguments[1] || {}); // modelo único desde 14/10; os 7 antigos seguem para páginas já publicadas
   const t = textos(d), a = t.a, nome = d.nome || "Seu Nome", tpl = TPL_IDS.includes(d.tpl) ? d.tpl : "classico";
   const zap = String(d.zap||"").replace(/\D/g,"");
   const waMsg = m => zap ? `https://wa.me/55${zap}?text=${encodeURIComponent(m)}` : "#";
@@ -306,4 +394,63 @@ export function renderLP(d, { previa = false, fotoVazia = "Sua foto aqui", app =
   ${final()}${rodape}`;
   }
   return { cls: "lp t-" + tpl + (semFoto ? " semfoto" : "") + (app ? " emb" : ""), style: `--p:${corOk(d.p,"#1B2A41")};--a:${corOk(d.a,"#C9A227")}`, html };
+}
+
+/* ---------- Modelo único "premium" ---------- */
+// Silhueta elegante para quando ainda não há foto (nunca "Sua foto aqui").
+const silhueta = (i) => `<svg class="pm-sil" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="pmg${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A3442"/><stop offset="1" stop-color="#121820"/></linearGradient><radialGradient id="pml${i}" cx=".7" cy=".2" r=".8"><stop offset="0" stop-color="var(--a)" stop-opacity=".28"/><stop offset="1" stop-color="var(--a)" stop-opacity="0"/></radialGradient></defs><rect width="400" height="500" fill="url(#pmg${i})"/><rect width="400" height="500" fill="url(#pml${i})"/><g fill="#fff" fill-opacity=".09"><ellipse cx="200" cy="205" rx="66" ry="80"/><path d="M60 500c8-110 70-168 140-168s132 58 140 168z"/></g><path d="M200 128c-40 0-66 30-66 77s26 81 66 81 66-34 66-81-26-77-66-77z" fill="none" stroke="var(--a)" stroke-opacity=".35"/></svg>`;
+// Recortes diferentes da mesma foto (quando só há 1): hero, sobre, atendimento, chamada final.
+const RECORTE = ["object-position:50% 22%", "object-position:50% 18%;transform:scale(1.28);transform-origin:50% 26%", "object-position:50% 40%;transform:scale(1.12);transform-origin:50% 45%", "object-position:50% 20%;transform:scale(1.5);transform-origin:50% 22%"];
+export function fotosDe(d) {
+  const l = Array.isArray(d.fotos) ? d.fotos.filter(u => typeof u === "string" && u).slice(0, 4) : [];
+  return l.length ? l : d.foto ? [d.foto] : [];
+}
+export function renderPremium(d, { previa = false, app = false, editavel = false, marca = false } = {}) {
+  const t = textos(d), a = t.a, nome = d.nome || "Seu Nome";
+  const zap = String(d.zap||"").replace(/\D/g,"");
+  const waMsg = m => zap ? `https://wa.me/55${zap}?text=${encodeURIComponent(m)}` : "#";
+  const wa = waMsg("Olá, vim pelo site e gostaria de agendar uma consulta.");
+  const ext = 'target="_blank" rel="noopener"';
+  const fotos = fotosDe(d), unica = fotos.length === 1;
+  const ph = (i, cls = "") => {
+    const u = fotos.length ? fotos[i % fotos.length] : null;
+    const img = u ? `<img src="${esc(u)}" alt="${esc(nome)}" loading="eager"${unica || fotos.length < 4 ? ` style="${RECORTE[i]}"` : ""}>` : silhueta(i);
+    return `<div class="pm-ph ${cls}">${img}${u && marca ? '<i class="pm-wm"></i>' : ""}</div>`;
+  };
+  const N = `<span data-nome>${esc(nome)}</span>`;
+  const local = t.online ? "Atendimento online" : [d.cidade, d.uf].filter(Boolean).map(esc).join("/");
+  const oab = `OAB/${esc(d.uf||"UF")}${d.oab ? " " + esc(d.oab) : ""}`;
+  const prof = d.genero === "o" ? "Advogado" : "Advogada";
+  const insta = d.insta ? String(d.insta).replace(/^@/,"") : "";
+  const escr = d.escritorio ? esc(d.escritorio) : "";
+  const logo = d.logo ? `<img src="${esc(d.logo)}" alt="">` : esc(iniciais(nome));
+  const h1 = editavel ? `<h1 contenteditable="plaintext-only" spellcheck="false" data-edit="nome" aria-label="Seu nome (toque para editar)">${esc(nome)}</h1>` : `<h1>${esc(nome)}</h1>`;
+  const atend = t.online ? "Online, todo o Brasil" : (d.atend === "Somente presencial" ? "Presencial" : "Presencial e online");
+  const contato = [d.end ? `<span>${esc(d.end)}</span>` : "", d.email ? `<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>` : "", insta ? `<a href="https://instagram.com/${esc(insta)}" ${ext}>@${esc(insta)}</a>` : "", zap ? `<a href="${wa}" ${ext}>WhatsApp ${esc(d.zap)}</a>` : ""].join("");
+  const html = `
+  <header class="pm-hero">${ph(0)}
+    <div class="pm-nav"><span class="pm-mono">${logo}</span><a class="pm-navzap" href="${wa}" ${ext}>Agendar consulta</a></div>
+    <div class="pm-hc"><div class="pm-k">${esc(prof)} · ${esc(areaCurta(a))}${local ? " · " + local : ""}</div>
+      ${h1}<p>${esc(t.h1)}</p>
+      <a class="pm-cta" href="${wa}" ${ext}>${IC.zap}Agendar uma consulta</a>
+      <span class="pm-oab">${oab}${escr ? " · " + escr : ""}</span></div>
+  </header>
+  <div class="pm-facts"><div><b>${oab}</b>Inscrição na Ordem</div><div><b>${atend}</b>Formato do atendimento</div><div><b>Sigilo</b>Profissional resguardado</div></div>
+  <section><div class="pm-k">Áreas de atuação</div><h2>Como posso <em>ajudar</em></h2><p style="max-width:54ch;color:#5A6068;margin:0">${esc(t.sub)}</p>
+    <div class="pm-sv">${a.sv.map(s=>`<a href="${waMsg(`Olá, gostaria de orientação sobre ${s[0].toLowerCase()}.`)}" ${ext}><div><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p></div><i>→</i></a>`).join("")}</div></section>
+  <section class="pm-about"><div class="pm-frame">${ph(1)}</div>
+    <div><div class="pm-k">Sobre</div><blockquote>Explicar cada etapa com clareza, para que você decida com segurança.</blockquote><p>${esc(t.bio)}</p>
+    <div class="pm-sign">${N}<small>${esc(prof)} · ${oab}</small></div></div></section>
+  <section class="pm-atd"><div><div class="pm-k">Atendimento</div><h2>Como funciona o <em>primeiro contato</em></h2>
+    <ol class="pm-steps"><li><b>Mensagem</b><span>Você conta brevemente a sua situação pelo WhatsApp e agenda um horário.</span></li>
+    <li><b>Consulta</b><span>Análise do caso e dos documentos, ${t.online ? "por videochamada" : "no escritório ou por vídeo"}.</span></li>
+    <li><b>Acompanhamento</b><span>Você recebe atualizações sobre cada etapa, em linguagem simples.</span></li></ol></div>
+    ${ph(2)}</section>
+  <section class="pm-faq"><div class="pm-k">Dúvidas frequentes</div><h2>Perguntas <em>comuns</em></h2>${a.f.map(q=>`<details><summary>${esc(q[0])}</summary><p>${esc(q[1])}</p></details>`).join("")}</section>
+  <section class="pm-final">${ph(3)}<div><div class="pm-k">Contato</div><h2>Converse sobre o seu caso com <em>${esc(primeiroNome(nome))}</em></h2>
+    <p>Atendimento ${t.online ? "online para todo o Brasil" : d.cidade ? "em " + esc(d.cidade) + " e online" : "presencial e online"}. Individual e sigiloso.</p>
+    <a class="pm-cta" href="${wa}" ${ext}>${IC.zap}Falar pelo WhatsApp</a>${contato ? `<div class="pm-ct">${contato}</div>` : ""}</div></section>
+  <footer class="pm-ft"><b>${N}</b>${escr ? " · " + escr : ""} · ${oab}<br>Conteúdo de caráter exclusivamente informativo, nos termos do Provimento 205/2021 do Conselho Federal da OAB. Sigilo profissional resguardado pelo Código de Ética e Disciplina da OAB.</footer>
+  ${previa ? "" : `<a class="fab" href="${wa}" ${ext} aria-label="Falar pelo WhatsApp">${IC.zap}</a>`}`;
+  return { cls: "lp t-premium" + (app ? " emb" : ""), style: `--p:${corOk(d.p,"#15202B")};--a:${corOk(d.a,"#C5A26B")}`, html };
 }
