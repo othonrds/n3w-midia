@@ -216,7 +216,11 @@ const TOOLS = [
     }, ["campanha_id", "nome"]),
     run: async (env, a) => {
       const adv = a.advantage_plus !== false;
-      const targeting = a.targeting_json || {
+      // v26+: targeting_automation.advantage_audience precisa ser explícito (erro ADS_TARGETING__REQUIRE_EXPLICIT_ADVANTAGE_AUDIENCE_FLAG).
+      const tj = a.targeting_json && (a.targeting_json.targeting_automation || {}).advantage_audience == null
+        ? { ...a.targeting_json, targeting_automation: { ...(a.targeting_json.targeting_automation || {}), advantage_audience: adv ? 1 : 0 } }
+        : a.targeting_json;
+      const targeting = tj || {
         geo_locations: { countries: a.paises || ["BR"] },
         age_min: a.idade_min || 18, age_max: a.idade_max || 65,
         custom_audiences: a.publicos_sugeridos && a.publicos_sugeridos.length ? a.publicos_sugeridos.map((id) => ({ id })) : undefined,
@@ -360,8 +364,13 @@ const TOOLS = [
       for (const c of a.campanha_ids || []) alvos.push(...await graphAll(env, `${c}/adsets`, { fields: "id,bid_amount" }, 1000));
       if ((a.conjunto_ids || []).length) {
         for (let i = 0; i < a.conjunto_ids.length; i += 50) {
-          const r = await graph(env, "GET", "", { ids: a.conjunto_ids.slice(i, i + 50).join(","), fields: "id,bid_amount" }).catch(() => null);
-          if (r) alvos.push(...Object.values(r)); else alvos.push(...a.conjunto_ids.slice(i, i + 50).map((id) => ({ id, bid_amount: null })));
+          // GET /?ids= (root request) dá erro na v26+ e em todas as versões desde 27/10/2026: leitura via batch API.
+          const lote = a.conjunto_ids.slice(i, i + 50);
+          const r = await graph(env, "POST", "", { batch: JSON.stringify(lote.map((id) => ({ method: "GET", relative_url: `${id}?fields=id,bid_amount` }))) }).catch(() => null);
+          lote.forEach((id, j) => {
+            let body = null; try { body = r && r[j] && r[j].code === 200 ? JSON.parse(r[j].body) : null; } catch {}
+            alvos.push(body && body.id ? body : { id, bid_amount: null });
+          });
         }
       }
       if (!alvos.length) throw new Error("Nenhum conjunto encontrado.");
