@@ -1,16 +1,6 @@
 total 6708
-drwxr-xr-x 2 runner runner    4096 Oct 27 21:35 .
-drwxr-xr-x 3 runner runner    4096 Oct 27 21:34 ..
--rw-r--r-- 1 runner runner 3596891 Oct 27 21:35 3_V01_selfie-vira-ensaio.mp4
--rw-r--r-- 1 runner runner 3257771 Oct 27 21:35 4_Gaby01_v1.mp4
+drwxr-xr-x 2 runner runner    4096 Oct 27 21:38 .
+drwxr-xr-x 3 runner runner    4096 Oct 27 21:38 ..
+-rw-r--r-- 1 runner runner 3596891 Oct 27 21:38 3_V01_selfie-vira-ensaio.mp4
+-rw-r--r-- 1 runner runner 3257771 Oct 27 21:38 4_Gaby01_v1.mp4
 Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-Traceback (most recent call last):
-  File "<stdin>", line 5, in <module>
-  File "/tmp/venv/lib/python3.12/site-packages/faster_whisper/transcribe.py", line 876, in transcribe
-    audio = decode_audio(audio, sampling_rate=sampling_rate)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/tmp/venv/lib/python3.12/site-packages/faster_whisper/audio.py", line 46, in decode_audio
-    with av.open(input_file, mode="r", metadata_errors="ignore") as container:
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "av/container/core.py", line 479, in av.container.core.open
-TypeError: open() got an unexpected keyword argument 'metadata_errors'

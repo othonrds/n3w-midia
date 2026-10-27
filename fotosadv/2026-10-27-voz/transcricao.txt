@@ -1,0 +1,30 @@
+== 3_V01_selfie-vira-ensaio
+  0.00-  1.94  Ensaio fotográfico para advogados com IA.
+   W: Ensaio@0.00 fotográfico@0.38 para@0.94 advogados@1.10 com@1.52 IA.@1.72
+  2.10-  3.28  Dá uma olhada nesses resultados.
+   W: Dá@2.10 uma@2.22 olhada@2.32 nesses@2.58 resultados.@2.90
+  3.68-  7.40  Esse advogado nos enviou uma foto simples e geramos essas imagens profissionais.
+   W: Esse@3.68 advogado@3.84 nos@4.30 enviou@4.48 uma@4.74 foto@4.90 simples@5.14 e@5.60 geramos@5.84 essas@6.10 imagens@6.40 profissionais.@6.78
+  7.56- 11.64  Outro advogado fez o mesmo e recebeu um ensaio completo com aparência de estúdio.
+   W: Outro@7.56 advogado@7.82 fez@8.26 o@8.46 mesmo@8.58 e@8.84 recebeu@9.08 um@9.46 ensaio@9.52 completo@9.88 com@10.32 aparência@10.58 de@11.06 estúdio.@11.24
+ 11.86- 16.10  E aqui estão diversos outros ensaios que já realizamos para profissionais da advocacia.
+   W: E@11.86 aqui@11.90 estão@12.08 diversos@12.32 outros@12.88 ensaios@13.12 que@13.72 já@13.90 realizamos@14.12 para@14.58 profissionais@14.82 da@15.46 advocacia.@15.64
+ 16.40- 20.78  Se você deseja transmitir mais credibilidade e autoridade na sua imagem profissional,
+   W: Se@16.40 você@16.52 deseja@16.74 transmitir@17.18 mais@17.76 credibilidade@17.98 e@18.72 autoridade@18.96 na@19.52 sua@19.70 imagem@19.90 profissional,@20.24
+ 20.98- 23.80  clique no botão abaixo e peça o seu ensaio de fotos pelo WhatsApp.
+   W: clique@20.98 no@21.14 botão@21.26 abaixo@21.48 e@21.90 peça@22.04 o@22.32 seu@22.44 ensaio@22.54 de@22.96 fotos@23.06 pelo@23.26 WhatsApp.@23.52
+== 4_Gaby01_v1
+  0.00-  2.30  Ensaio fotográfico para advogados com IA.
+   W: Ensaio@0.00 fotográfico@0.52 para@1.16 advogados@1.32 com@1.80 IA.@2.04
+  2.52-  3.80  Dá uma olhada nesses resultados.
+   W: Dá@2.52 uma@2.60 olhada@2.72 nesses@3.00 resultados.@3.36
+  4.26-  8.42  Esse advogado nos enviou uma foto simples e geramos essas imagens profissionais.
+   W: Esse@4.26 advogado@4.42 nos@4.90 enviou@5.12 uma@5.40 foto@5.62 simples@5.86 e@6.38 geramos@6.64 essas@6.96 imagens@7.28 profissionais.@7.76
+  8.64- 13.16  Outro advogado fez o mesmo e recebeu um ensaio completo com a aparência de estúdio.
+   W: Outro@8.64 advogado@8.84 fez@9.32 o@9.58 mesmo@9.72 e@10.02 recebeu@10.28 um@10.72 ensaio@10.80 completo@11.16 com@11.70 a@11.96 aparência@12.10 de@12.50 estúdio.@12.70
+ 13.40- 18.14  E aqui estão diversos outros ensaios que já realizamos para profissionais da advocacia.
+   W: E@13.40 aqui@13.46 estão@13.64 diversos@13.92 outros@14.54 ensaios@14.82 que@15.48 já@15.68 realizamos@15.92 para@16.44 profissionais@16.72 da@17.40 advocacia.@17.64
+ 18.44- 23.38  Se você deseja transmitir mais credibilidade e autoridade na sua imagem profissional,
+   W: Se@18.44 você@18.60 deseja@18.86 transmitir@19.34 mais@20.00 credibilidade@20.26 e@21.02 autoridade@21.34 na@21.96 sua@22.18 imagem@22.42 profissional,@22.78
+ 23.62- 26.74  clique no botão abaixo e peça o seu ensaio de fotos pelo WhatsApp.
+   W: clique@23.62 no@23.78 botão@23.94 abaixo@24.16 e@24.62 peça@24.82 o@25.10 seu@25.24 ensaio@25.36 de@25.80 fotos@25.94 pelo@26.20 WhatsApp.@26.46
