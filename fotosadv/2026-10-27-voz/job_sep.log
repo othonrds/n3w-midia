@@ -1,0 +1,14 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Selected model is a bag of 1 models. You will see that many progress bars per track.
+Separated tracks will be stored in /home/runner/work/n3w-midia/n3w-midia/fotosadv/2026-10-27-voz/sep/htdemucs
+Separating track fotosadv/2026-10-27-voz/src/v01.wav
+  0%|                                                                                  | 0.0/29.25 [00:00<?, ?seconds/s] 20%|██████████████▌                                                          | 5.85/29.25 [00:02<00:11,  2.04seconds/s] 40%|█████████████████████████████▏                                           | 11.7/29.25 [00:05<00:08,  2.13seconds/s] 60%|███████████████████████████████████▍                       | 17.549999999999997/29.25 [00:08<00:05,  2.14seconds/s] 80%|██████████████████████████████████████████████████████████▍              | 23.4/29.25 [00:10<00:02,  2.14seconds/s]100%|████████████████████████████████████████████████████████████████████████| 29.25/29.25 [00:13<00:00,  2.15seconds/s]100%|████████████████████████████████████████████████████████████████████████| 29.25/29.25 [00:13<00:00,  2.13seconds/s]
+fotosadv/2026-10-27-voz/sep:
+htdemucs
+
+fotosadv/2026-10-27-voz/sep/htdemucs:
+v01
+
+fotosadv/2026-10-27-voz/sep/htdemucs/v01:
+no_vocals.wav
+vocals.wav
