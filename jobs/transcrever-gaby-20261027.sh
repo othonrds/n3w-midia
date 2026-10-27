@@ -6,10 +6,14 @@ ls -la $O/src
 python3 -m venv /tmp/venv && /tmp/venv/bin/pip install -q faster-whisper
 /tmp/venv/bin/python - <<'PY'
 from faster_whisper import WhisperModel
+import subprocess, numpy as np
+def load(f):
+    raw=subprocess.run(["ffmpeg","-nostdin","-loglevel","error","-i",f,"-ac","1","-ar","16000","-f","s16le","-"],capture_output=True).stdout
+    return np.frombuffer(raw,np.int16).astype(np.float32)/32768
 m=WhisperModel("small", device="cpu", compute_type="int8")
 out=open("fotosadv/2026-10-27-voz/transcricao.txt","w")
 for f in ["3_V01_selfie-vira-ensaio","4_Gaby01_v1"]:
-    segs,_=m.transcribe(f"fotosadv/2026-10-27-voz/src/{f}.mp4", language="pt", word_timestamps=True)
+    segs,_=m.transcribe(load(f"fotosadv/2026-10-27-voz/src/{f}.mp4"), language="pt", word_timestamps=True)
     out.write(f"== {f}\n")
     for s in segs:
         out.write(f"{s.start:6.2f}-{s.end:6.2f} {s.text}\n")
