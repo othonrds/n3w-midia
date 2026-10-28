@@ -1,0 +1,22 @@
+== livia
+  0.00-  2.82  Ensai o fotográfico para advogados com o IA.
+   W: Ensai@0.00-0.48 o@0.48-0.54 fotográfico@0.54-1.36 para@1.36-1.54 advogados@1.54-2.24 com@2.24-2.46 o@2.46-2.58 IA.@2.58-2.82
+  3.28-  4.78  Dá uma olhada nesses resultados.
+   W: Dá@3.28-3.50 uma@3.50-3.62 olhada@3.62-4.04 nesses@4.04-4.32 resultados.@4.32-4.78
+  5.54- 10.94  Esse advogado nos enviou uma foto simples e geramos essas imagens profissionais.
+   W: Esse@5.54-5.76 advogado@5.76-6.44 nos@6.44-6.62 enviou@6.62-7.02 uma@7.02-7.18 foto@7.18-7.46 simples@7.46-8.12 e@8.12-8.58 geramos@8.58-8.98 essas@8.98-9.42 imagens@9.42-10.00 profissionais.@10.00-10.94
+ 11.48- 16.80  Se você deseja transmitir mais credibilidade e autoridade na sua imagem profissional,
+   W: Se@11.48-11.68 você@11.68-11.90 deseja@11.90-12.40 transmitir@12.40-13.06 mais@13.06-13.38 credibilidade@13.38-14.34 e@14.34-14.54 autoridade@14.54-15.36 na@15.36-15.58 sua@15.58-15.78 imagem@15.78-16.12 profissional,@16.12-16.80
+ 17.22- 20.66  clique no botão abaixo e peça o seu ensaio de fotos.
+   W: clique@17.22-17.50 no@17.50-17.70 botão@17.70-18.00 abaixo@18.00-18.56 e@18.56-18.86 peça@18.86-19.30 o@19.30-19.44 seu@19.44-19.68 ensaio@19.68-20.22 de@20.22-20.32 fotos.@20.32-20.66
+== andre
+  0.00-  2.68  Ensaio fotográfico para advogados com IA.
+   W: Ensaio@0.00-0.50 fotográfico@0.50-1.34 para@1.34-1.50 advogados@1.50-2.12 com@2.12-2.32 IA.@2.32-2.68
+  3.18-  4.56  Dá uma olhada nesses resultados.
+   W: Dá@3.18-3.42 uma@3.42-3.54 olhada@3.54-3.94 nesses@3.94-4.16 resultados.@4.16-4.56
+  5.30-  9.94  Esse advogado nos enviou uma foto simples e geramos essas imagens profissionais.
+   W: Esse@5.30-5.52 advogado@5.52-6.12 nos@6.12-6.24 enviou@6.24-6.64 uma@6.64-6.78 foto@6.78-7.02 simples@7.02-7.54 e@7.54-7.88 geramos@7.88-8.28 essas@8.28-8.56 imagens@8.56-9.10 profissionais.@9.10-9.94
+ 10.42- 15.26  Se você deseja transmitir mais credibilidade e autoridade na sua imagem profissional,
+   W: Se@10.42-10.60 você@10.60-10.80 deseja@10.80-11.24 transmitir@11.24-11.82 mais@11.82-12.10 credibilidade@12.10-12.96 e@12.96-13.22 autoridade@13.22-13.86 na@13.86-14.08 sua@14.08-14.26 imagem@14.26-14.64 profissional,@14.64-15.26
+ 15.62- 18.58  clique no botão abaixo e peço seu ensaio de fotos.
+   W: clique@15.62-15.86 no@15.86-16.04 botão@16.04-16.32 abaixo@16.32-16.80 e@16.80-17.06 peço@17.06-17.46 seu@17.46-17.70 ensaio@17.70-18.24 de@18.24-18.32 fotos.@18.32-18.58
