@@ -1,0 +1,37 @@
+ad_img1_hd.jpg 200 462135
+ad_img2_hd.jpg 200 526367
+ad_video_hd.mp4 200 3260876
+ct2_img1_mesa.png 200 2393488
+ct2_img2_lua.png 200 2394430
+ct2_img3_linho.png 200 2968959
+ct2_img4_copas.jpg 200 32788
+ct2_video.mp4 200 3824054
+ciclo_lua_oferta_v3.png 200 1307093
+1080,1924
+
+6.233481
+1080,1920
+
+13.000000
+total 18060
+drwxr-xr-x 2 runner runner    4096 Oct 29 22:05 .
+drwxr-xr-x 3 runner runner    4096 Oct 29 22:05 ..
+-rw-r--r-- 1 runner runner  462135 Oct 29 22:05 ad_img1_hd.jpg
+-rw-r--r-- 1 runner runner  526367 Oct 29 22:05 ad_img2_hd.jpg
+-rw-r--r-- 1 runner runner 3260876 Oct 29 22:05 ad_video_hd.mp4
+-rw-r--r-- 1 runner runner 1307093 Oct 29 22:05 ciclo_lua_oferta_v3.png
+-rw-r--r-- 1 runner runner 2393488 Oct 29 22:05 ct2_img1_mesa.png
+-rw-r--r-- 1 runner runner 2394430 Oct 29 22:05 ct2_img2_lua.png
+-rw-r--r-- 1 runner runner 2968959 Oct 29 22:05 ct2_img3_linho.png
+-rw-r--r-- 1 runner runner   32788 Oct 29 22:05 ct2_img4_copas.jpg
+-rw-r--r-- 1 runner runner 3824054 Oct 29 22:05 ct2_video.mp4
+-rw-r--r-- 1 runner runner     302 Oct 29 22:05 job.log
+-rw-r--r-- 1 runner runner   97048 Oct 29 22:05 th_ad_img1_hd.jpg
+-rw-r--r-- 1 runner runner  119621 Oct 29 22:05 th_ad_img2_hd.jpg
+-rw-r--r-- 1 runner runner   68728 Oct 29 22:05 th_ad_video_hd.jpg
+-rw-r--r-- 1 runner runner  101088 Oct 29 22:05 th_ciclo_lua_oferta_v3.jpg
+-rw-r--r-- 1 runner runner  242002 Oct 29 22:05 th_ct2_img1_mesa.jpg
+-rw-r--r-- 1 runner runner  229510 Oct 29 22:05 th_ct2_img2_lua.jpg
+-rw-r--r-- 1 runner runner  261437 Oct 29 22:05 th_ct2_img3_linho.jpg
+-rw-r--r-- 1 runner runner   74079 Oct 29 22:05 th_ct2_img4_copas.jpg
+-rw-r--r-- 1 runner runner   75082 Oct 29 22:05 th_ct2_video.jpg
