@@ -1,0 +1,126 @@
+<meta charset=utf-8>
+<style>
+@font-face{font-family:P;src:url(file:///usr/share/fonts/truetype/google-fonts/Poppins-Bold.ttf);font-weight:700}
+@font-face{font-family:P;src:url(file:///usr/share/fonts/truetype/google-fonts/Poppins-Medium.ttf);font-weight:500}
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;height:1350px;overflow:hidden;font-family:P;color:#fff;background:radial-gradient(900px 760px at 50% 42%,#1c2344,#090b16)}
+.gold{color:#f2c94c}
+.abs{position:absolute}
+.ph{position:absolute;border-radius:18px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.6);background:#222;will-change:transform,filter,opacity}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph .tag{position:absolute;left:10px;bottom:10px;background:#f2c94c;color:#1a1408;font-size:20px;font-weight:700;padding:4px 12px;border-radius:8px}
+#title{top:60px;left:40px;right:40px;text-align:center;font-size:62px;font-weight:700;line-height:1.08}
+#title div{position:absolute;left:0;right:0}
+#phone{left:330px;top:300px;width:420px;height:860px;background:#111;border-radius:60px;border:10px solid #2a2d3a;box-shadow:0 40px 90px rgba(0,0,0,.7);overflow:hidden;z-index:5}
+.scr{position:absolute;inset:0}
+#notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:120px;height:26px;background:#000;border-radius:14px;z-index:9}
+#cam img{width:100%;height:100%;object-fit:cover;object-position:50% 20%}
+.corner{position:absolute;width:46px;height:46px;border:5px solid rgba(255,255,255,.85)}
+#shutter{position:absolute;left:50%;bottom:40px;width:96px;height:96px;margin-left:-48px;border-radius:50%;border:7px solid #fff;background:rgba(255,255,255,.25)}
+#flash{position:absolute;inset:0;background:#fff;opacity:0}
+#prof{background:#0f1325;padding:80px 30px 0}
+#prof h3{font-size:30px;font-weight:700;margin-bottom:24px}
+.op{display:flex;align-items:center;gap:16px;font-size:28px;font-weight:500;padding:20px 22px;border-radius:16px;background:#1a2038;margin-bottom:14px;border:2px solid transparent}
+.op .ck{margin-left:auto;width:36px;height:36px;border-radius:50%;background:#f2c94c;color:#1a1408;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;opacity:0}
+#tap{position:absolute;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.35);border:4px solid rgba(255,255,255,.8);opacity:0}
+#gen{background:#0f1325}
+#gen img.s{position:absolute;left:0;top:0;width:400px;height:560px;object-fit:cover;object-position:50% 20%}
+#genbox{position:absolute;left:0;right:0;bottom:0;height:290px;background:#161a2c;padding:30px}
+#bar{margin-top:18px;height:24px;background:#2a2f45;border-radius:12px;overflow:hidden}
+#barf{height:100%;width:0;background:linear-gradient(90deg,#f2c94c,#ffe08a)}
+#pct{margin-top:14px;font-size:46px;font-weight:700;color:#f2c94c}
+#cnt{position:absolute;right:30px;bottom:44px;font-size:24px;color:#aab0c8;font-weight:500}
+#ok{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(15,19,37,.85);opacity:0;flex-direction:column;gap:12px}
+#ok .c{width:120px;height:120px;border-radius:50%;background:#2fbf71;display:flex;align-items:center;justify-content:center;font-size:70px;font-weight:700}
+#pill{left:0;right:0;bottom:70px;text-align:center;z-index:8}
+#pill .pl{display:inline-block;background:#fff;color:#0f1222;font-weight:700;border-radius:999px;padding:16px 40px;font-size:38px;box-shadow:0 12px 30px rgba(0,0,0,.4)}
+#end{inset:0;z-index:20;opacity:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,rgba(9,11,22,.55),rgba(9,11,22,.92) 40%,rgba(9,11,22,.92) 70%,rgba(9,11,22,.6))}
+#end .a{font-size:60px;font-weight:700;line-height:1.05}
+#end .b{font-size:120px;font-weight:700;line-height:1.05;color:#f2c94c;margin-top:6px}
+#end .c{font-size:36px;font-weight:500;color:#d7dbee;margin-top:18px}
+#end .d{margin-top:46px;background:#f2c94c;color:#1a1408;font-size:40px;font-weight:700;padding:22px 52px;border-radius:999px}
+</style>
+<div id="title" class="abs"><div id="t1">Mandou <span class=gold>1 selfie.</span></div><div id="t2">Escolheu a <span class=gold>profissão.</span></div><div id="t3">Em minutos,<br><span class=gold>o ensaio inteiro.</span></div><div id="t4">1 selfie. <span class=gold>Ensaio completo.</span></div></div>
+<div id="photos"></div>
+<div id="phone" class="abs">
+  <div id="notch"></div>
+  <div id="cam" class="scr"><img src="ref/selfie.png">
+    <div class="corner" style="left:40px;top:70px;border-right:0;border-bottom:0"></div><div class="corner" style="right:40px;top:70px;border-left:0;border-bottom:0"></div>
+    <div class="corner" style="left:40px;bottom:170px;border-right:0;border-top:0"></div><div class="corner" style="right:40px;bottom:170px;border-left:0;border-top:0"></div>
+    <div id="shutter"></div><div id="flash"></div></div>
+  <div id="prof" class="scr"><h3>Qual a sua profissão?</h3>
+    <div class="op">⚖️ Advogado<span class="ck" id="ck">✓</span></div><div class="op">🩺 Médico</div><div class="op">📐 Arquiteto</div><div class="op">💼 Empresário</div><div class="op">🏠 Corretor</div><div class="op">✨ Outra</div>
+    <div id="tap"></div></div>
+  <div id="gen" class="scr"><img class="s" src="ref/selfie.png">
+    <div id="genbox"><div style="font-size:28px;font-weight:500;color:#cfd3e6">Gerando seu ensaio profissional…</div><div id="bar"><div id="barf"></div></div><div id="pct">0%</div><div id="cnt">0 de 8 fotos</div></div>
+    <div id="ok"><div class="c">✓</div><div style="font-size:34px;font-weight:700">Ensaio pronto!</div></div></div>
+</div>
+<div id="pill" class="abs"><span class="pl">Ensaio completo por <b style="color:#b8860b">R$ 49</b></span></div>
+<div id="end" class="abs"><div class="a">Ensaio profissional completo</div><div class="b">por R$ 49,00</div><div class="c">Escolha sua profissão, envie uma selfie, e pronto!</div><div class="d">Toque em Saiba mais ↓</div></div>
+<script>
+const $=s=>document.querySelector(s);
+const cl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const r=(t,a,b)=>cl((t-a)/(b-a));
+const eo=x=>1-Math.pow(1-x,3), eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const back=x=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+window.DUR=15.5;
+// fotos ao redor do celular
+const POS=[[30,300,280,350,-8],[770,300,280,350,8],[60,650,270,338,-4],[750,650,270,338,5],[20,975,260,325,-10],[800,975,260,325,10],[180,200,220,275,-14],[680,200,220,275,14]];
+const T0=4.5, DT=0.6;
+// grade final 3x3 (selfie no centro)
+const GW=300,GH=375,GX=75,GY=200,GG=15;
+const CELL=[0,1,2,3,5,6,7,8];
+const ph=$('#photos');
+const P=[];
+for(let i=0;i<8;i++){const d=document.createElement('div');d.className='ph';d.innerHTML=`<img src="gerado/e${i+1}.jpg">`;ph.appendChild(d);P.push(d)}
+const S=document.createElement('div');S.className='ph';S.innerHTML='<img src="ref/selfie.png" style="object-position:50% 20%"><span class="tag">SELFIE</span>';S.style.zIndex=6;ph.appendChild(S);
+function title(t){
+  const W=[[0.15,1.9,'#t1'],[2.0,3.9,'#t2'],[4.0,9.4,'#t3'],[9.6,12.4,'#t4']];
+  for(const [a,b,id] of W){const e=$(id);const i=eo(r(t,a,a+.35)),o=r(t,b-.25,b);e.style.opacity=i*(1-o);e.style.transform=`translateY(${(1-i)*30}px) scale(${.92+.08*i})`}
+}
+function render(t){
+  title(t);
+  // celular: cenas
+  const cam=$('#cam'),prof=$('#prof'),gen=$('#gen');
+  cam.style.opacity=1-r(t,1.9,2.1); prof.style.opacity=r(t,1.9,2.1)*(1-r(t,3.9,4.1)); gen.style.opacity=r(t,3.9,4.1);
+  // entrada do celular
+  const pin=eo(r(t,0,.45));
+  let px=0,py=(1-pin)*80,ps=.9+.1*pin, po=1;
+  // saída do celular em 9.4-10
+  const pout=eio(r(t,9.4,10.0)); py+=pout*700; po=1-r(t,9.6,10);
+  $('#phone').style.transform=`translate(${px}px,${py}px) scale(${ps})`; $('#phone').style.opacity=po;
+  $('#shutter').style.transform=`scale(${1-.15*Math.sin(Math.PI*r(t,1.05,1.3))})`;
+  $('#flash').style.opacity=Math.sin(Math.PI*r(t,1.15,1.6))*.95;
+  // toque em Advogado
+  const tp=r(t,2.7,3.3); $('#tap').style.left='150px'; $('#tap').style.top='150px';
+  $('#tap').style.opacity=Math.sin(Math.PI*tp)*.9; $('#tap').style.transform=`scale(${.6+.6*tp})`;
+  const sel=r(t,2.95,3.1); const op=document.querySelector('.op'); op.style.borderColor=`rgba(242,201,76,${sel})`; op.style.background=sel>0?'#2a2a1e':'#1a2038'; $('#ck').style.opacity=sel; $('#ck').style.transform=`scale(${back(sel)})`;
+  // barra
+  const pr=eio(r(t,4.3,9.2)); $('#barf').style.width=(pr*100)+'%'; $('#pct').textContent=Math.round(pr*100)+'%';
+  const n=Math.max(0,Math.min(8,Math.floor((t-T0)/DT)+1)); $('#cnt').textContent=n+' de 8 fotos';
+  const ok=r(t,9.15,9.35); $('#ok').style.opacity=ok; $('#ok .c').style.transform=`scale(${back(ok)})`;
+  // fotos
+  const g=eio(r(t,9.7,10.5));
+  P.forEach((d,i)=>{
+    const [x,y,w,h,rot]=POS[i]; const a=T0+i*DT; const k=r(t,a,a+.45);
+    const c=CELL[i], gx=GX+(c%3)*(GW+GG), gy=GY+Math.floor(c/3)*(GH+GG);
+    const X=x+(gx-x)*g, Y=y+(gy-y)*g, Wd=w+(GW-w)*g, Hd=h+(GH-h)*g, R=rot*(1-g);
+    let sc=.6+.4*back(k); if(k<=0)sc=.6;
+    // pulso na grade
+    const pulse=t>10.6?1+.03*Math.sin((t-10.6)*5+i):1;
+    d.style.left=X+'px';d.style.top=Y+'px';d.style.width=Wd+'px';d.style.height=Hd+'px';
+    d.style.opacity=k; d.style.filter=`blur(${(1-k)*22}px)`; d.style.transform=`rotate(${R}deg) scale(${sc*pulse})`;
+    d.style.zIndex=g>0?10:(i>=6?4:3);
+  });
+  // selfie no centro da grade
+  const sIn=eo(r(t,10.2,10.7)); const sx=GX+(GW+GG), sy=GY+(GH+GG);
+  S.style.left=sx+'px';S.style.top=sy+'px';S.style.width=GW+'px';S.style.height=GH+'px';S.style.opacity=sIn;S.style.zIndex=12;
+  S.style.transform=`scale(${.7+.3*back(sIn)})`; S.style.boxShadow=`0 0 0 6px rgba(242,201,76,${sIn}),0 30px 60px rgba(0,0,0,.6)`;
+  // pílula
+  $('#pill').style.opacity=r(t,.3,.7)*(1-r(t,9.4,9.8));
+  // card final
+  const e=eo(r(t,12.4,13.0)); $('#end').style.opacity=e; $('#end').style.transform=`scale(${1.04-.04*e})`;
+  $('#end .d').style.transform=`scale(${1+.04*Math.sin(Math.max(0,t-13.2)*6)})`;
+}
+render(0);
+</script>
