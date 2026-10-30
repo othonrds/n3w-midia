@@ -1,0 +1,23 @@
+e1 200 8354860
+e2 200 7541610
+e3 200 5613046
+e4 200 5803525
+e5 200 6359213
+e6 200 6516536
+e7 200 8121455
+e8 200 5501350
+voz 200 150926
+9.404082
+total 5004
+drwxr-xr-x 2 runner runner   4096 Oct 30 02:17 .
+drwxr-xr-x 4 runner runner   4096 Oct 30 02:17 ..
+-rw-r--r-- 1 runner runner 603640 Oct 30 02:17 e1.jpg
+-rw-r--r-- 1 runner runner 926226 Oct 30 02:17 e2.jpg
+-rw-r--r-- 1 runner runner 465097 Oct 30 02:17 e3.jpg
+-rw-r--r-- 1 runner runner 568674 Oct 30 02:17 e4.jpg
+-rw-r--r-- 1 runner runner 665604 Oct 30 02:17 e5.jpg
+-rw-r--r-- 1 runner runner 783960 Oct 30 02:17 e6.jpg
+-rw-r--r-- 1 runner runner 485095 Oct 30 02:17 e7.jpg
+-rw-r--r-- 1 runner runner 444089 Oct 30 02:17 e8.jpg
+-rw-r--r-- 1 runner runner    144 Oct 30 02:17 job.log
+-rw-r--r-- 1 runner runner 150926 Oct 30 02:17 voz_andre.mp3
