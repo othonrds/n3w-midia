@@ -88,7 +88,7 @@ function render(t){
   cam.style.opacity=1-r(t,c1,c1+.2); prof.style.opacity=r(t,c1,c1+.2)*(1-r(t,c2,c2+.2)); gen.style.opacity=r(t,c2,c2+.2);
   let py=0,ps=1;
   const pout=eio(r(t,K.g1+0.05,K.g1+0.6)); py+=pout*700; const po=1-r(t,K.g1+0.25,K.g1+0.6);
-  ps=1-.25*(1-r(t,K.s0-0.3,K.s0+0.2))*0; $('#phone').style.transform=`translate(0px,${py}px) scale(${ps})`; $('#phone').style.opacity=po;
+  const pin=eo(r(t,K.s0-0.2,K.s0+0.3)); py+=(1-pin)*900; $('#phone').style.transform=`translate(0px,${py}px) scale(${ps})`; $('#phone').style.opacity=po*pin;
   const fl=(K.s0+K.s1)/2;
   $('#shutter').style.transform=`scale(${1-.15*Math.sin(Math.PI*r(t,fl-.12,fl+.12))})`;
   $('#flash').style.opacity=Math.sin(Math.PI*r(t,fl,fl+.45))*.95;
