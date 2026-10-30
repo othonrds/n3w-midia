@@ -1,0 +1,10 @@
+01_andre.mp3 | dur 11.7s | lang pt 1.00 | Você já tem suas fotos profissionais? Basta enviar uma selfie, escolher a sua profissão e em poucos minutos você recebe o seu ensaio completo. Tudo isso por 49 reais.
+02_leo.mp3 | dur 11.4s | lang pt 1.00 | Você já tem suas fotos profissionais? Basta enviar uma selfie, escolher a sua profissão e em poucos minutos você recebe o seu ensaio completo. Tudo isso por 49 reais.
+03_julian.mp3 | dur 11.3s | lang pt 1.00 | Você já tem suas fotos profissionais? Basta enviar uma selfie, escolher a sua profissão e em poucos minutos você recebe o seu ensaio completo. Tudo isso por 49 reais.
+04_marcus.mp3 | dur 12.0s | lang pt 1.00 | Você já tem suas fotos profissionais? Basta enviar uma selfie, escolher a sua profissão e em poucos minutos você recebe o seu ensaio completo. Tudo isso por 49 reais.
+05_mark.mp3 | dur 11.5s | lang pt 1.00 | Você já tem suas fotos profissionais? Basta enviar uma selfie, escolher a sua profissão e em poucos minutos você recebe o seu ensaio completo. Tudo isso por 49 reais.
+06_livia.mp3 | dur 12.2s | lang pt 1.00 | Você já tem suas fotos profissionais? Basta enviar uma selfie, escolher a sua profissão e em poucos minutos você recebe o seu ensaio completo. Tudo isso por 49 reais.
+07_isabella.mp3 | dur 11.7s | lang pt 1.00 | Você já tem suas fotos profissionais? Basta enviar uma selfie, escolher a sua profissão e em poucos minutos você recebe o seu ensaio completo. Tudo isso por 49 reais.
+08_amanda.mp3 | dur 12.0s | lang pt 1.00 | Você já tem suas fotos profissionais? Basta enviar uma selfie, escolher a sua profissão e em poucos minutos você recebe o seu ensaio completo. Tudo isso por 49 reais.
+09_helena.mp3 | dur 12.0s | lang pt 1.00 | Você já tem suas fotos profissionais? Basta enviar uma selfie, escolher a sua profissão e em poucos minutos você recebe o seu ensaio completo. Tudo isso por 49 reais.
+10_luna.mp3 | dur 11.7s | lang pt 1.00 | Você já tem suas fotos profissionais? Basta enviar uma selfie, escolher a sua profissão e em poucos minutos você recebe o seu ensaio completo. Tudo isso por R$ 49.
