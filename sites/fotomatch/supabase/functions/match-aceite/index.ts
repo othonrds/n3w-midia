@@ -14,9 +14,9 @@ Deno.serve(async (req) => {
   if (!UUID.test(String(b.id || "")) || !/^[0-9a-f]{32}$/.test(String(b.token || ""))) return out(403, { erro: "Sem permissão" });
   if (b.consentimento !== true) return out(400, { erro: "Precisamos do seu aceite para analisar as fotos." });
   const agora = new Date().toISOString();
-  const r = await fetch(`${SB}/rest/v1/match_leads?id=eq.${b.id}&token=eq.${b.token}&consentimento=is.not.true`, {
+  const r = await fetch(`${SB}/rest/v1/match_leads?id=eq.${b.id}&token=eq.${b.token}&consentimento=not.is.true`, {
     method: "PATCH", headers: { ...H, Prefer: "return=minimal" }, body: JSON.stringify({ consentimento: true, consentimento_em: agora, atualizado_em: agora }) });
-  if (!r.ok) return out(500, { erro: "Não foi possível salvar agora." });
+  if (!r.ok) { console.error("aceite", r.status, (await r.text()).slice(0, 300)); return out(500, { erro: "Não foi possível salvar agora." }); }
   const c = await fetch(`${SB}/rest/v1/match_leads?id=eq.${b.id}&token=eq.${b.token}&select=consentimento`, { headers: H }).then((x) => x.json()).catch(() => []);
   return c?.[0]?.consentimento ? out(200, { ok: true }) : out(403, { erro: "Sem permissão" });
 });
