@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>FotoMatch · Nota grátis das suas fotos de perfil</title>
+<title>FotoMatch · Por que você não está dando match</title>
 <meta name="description" content="Descubra em 2 minutos por que suas fotos não dão match. Mande de 3 a 6 fotos e receba uma nota grátis, foto a foto, com os 3 erros que mais pesam.">
 <meta name="robots" content="noindex,nofollow"><!-- RASCUNHO: tirar quando o Othon aprovar a publicação -->
 <meta name="theme-color" content="#14110F">
@@ -19,126 +19,140 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
 </header>
 
 <main id="app">
-  <!-- 0 · Abertura (v2 padrão Roast: antes P&B 3,1 → depois 8,9 + checklist; fotos v2 entram em img/v2/ quando o motor for liberado) -->
+  <!-- Página A · ISCA (modelo roastdating.com, 31/10/2026): quiz longo com reforços → foto → análise → contato para liberar → nota → oferta -->
   <section class="tela ativa" data-tela="inicio">
-    <p class="kicker">Fotos de perfil para apps de namoro</p>
-    <h1>Descubra em 2 minutos por que suas fotos não dão match.</h1>
-    <p class="sub">O papo nem chega a ser lido. Quem decide é a foto. Mande de 3 a 6 fotos e receba uma <b>nota grátis</b>, foto a foto, com os 3 erros que mais pesam.</p>
-    <button class="btn" data-ir="idade">Quero minha nota grátis</button>
-    <ul class="confianca">
-      <li>Grátis, sem cartão</li><li>Resultado em cerca de 1 minuto</li><li>Fotos privadas, apagadas em até 30 dias</li>
-    </ul>
-    <div class="exemplo" id="exemplo">
-      <div class="par on" data-i="0">
-        <figure class="ph antes"><span class="nt ruim">3,1</span><img src="img/r1-base.jpg" alt="Selfie comum de um homem fictício" loading="eager" width="640" height="960"><figcaption>antes · selfie comum</figcaption></figure>
-        <div class="seta">→</div>
-        <figure class="ph ph2 depois"><span class="nt boa">8,9</span><img src="img/r1-jantar.jpg" alt="O mesmo rosto fictício em foto de jantar à noite" loading="eager" width="640" height="960"><figcaption>mesma cara, jantar à noite</figcaption></figure>
-      </div>
-      <div class="par" data-i="1">
-        <figure class="ph antes"><span class="nt ruim">3,1</span><img src="img/r2-base.jpg" alt="Selfie comum de um homem fictício" loading="lazy" width="640" height="960"><figcaption>antes · selfie comum</figcaption></figure>
-        <div class="seta">→</div>
-        <figure class="ph ph2 depois"><span class="nt boa">8,9</span><img src="img/r2-terno.jpg" alt="O mesmo rosto fictício em foto de terno na rua" loading="lazy" width="640" height="960"><figcaption>mesma cara, terno na rua</figcaption></figure>
-      </div>
-      <div class="par" data-i="2">
-        <figure class="ph antes"><span class="nt ruim">3,1</span><img src="img/r3-base.jpg" alt="Selfie comum de um homem fictício" loading="lazy" width="640" height="960"><figcaption>antes · selfie comum</figcaption></figure>
-        <div class="seta">→</div>
-        <figure class="ph ph2 depois"><span class="nt boa">8,9</span><img src="img/r3-praia.jpg" alt="O mesmo rosto fictício em foto de pôr do sol na praia" loading="lazy" width="640" height="960"><figcaption>mesma cara, pôr do sol na praia</figcaption></figure>
-      </div>
+    <h1 class="h-isca">Por que você não está dando match</h1>
+    <p class="sub centro">Nota grátis do seu perfil e um plano exato, a partir das suas fotos de verdade.</p>
+    <div class="vai-ver"><p class="kicker">Você vai ver:</p>
+      <ol><li>Qual a nota de cada foto sua, de 0 a 100</li><li>Os erros que estão derrubando seus matches</li><li>Quais fotos <b>manter, cortar ou trocar</b></li></ol></div>
+    <h2 class="centro">Onde você mais trava?</h2>
+    <div class="opcoes ic" data-campo="trava">
+      <button data-v="poucos_matches"><span class="em">😞</span>Quase não tenho match</button>
+      <button data-v="match_nao_e_meu_tipo"><span class="em">🙁</span>Tenho match, mas nunca é quem eu queria</button>
+      <button data-v="match_nao_vira_encontro"><span class="em">😩</span>Dou match, mas não vira encontro</button>
+      <button data-v="quero_mais_animacao"><span class="em">🎉</span>Quero uma vida amorosa mais animada</button>
     </div>
-    <div class="pontos" id="pontos"><button aria-label="Exemplo 1" class="on"></button><button aria-label="Exemplo 2"></button><button aria-label="Exemplo 3"></button></div>
-    <div class="checklist">
-      <div class="col ruim"><p class="tt">Antes</p><ul><li>Foto de baixa qualidade</li><li>Pose sem graça</li><li>Luz ruim</li><li>Primeira impressão fraca</li></ul></div>
-      <div class="col boa"><p class="tt">Depois</p><ul><li>Foto de qualidade</li><li>Pose confiante</li><li>Luz forte</li><li>Primeira impressão marcante</li></ul></div>
-    </div>
-    <button class="btn" data-ir="idade">Quero minha nota grátis</button>
+    <p class="mini">Grátis, sem cartão · Fotos privadas, apagadas em até 30 dias</p>
   </section>
 
-  <!-- 1 · Idade -->
-  <section class="tela" data-tela="idade" data-passo="1">
-    <div class="faixa" aria-hidden="true"><img src="img/r1-jantar.jpg" alt="" loading="lazy"><img src="img/r2-terno.jpg" alt="" loading="lazy"><img src="img/r3-praia.jpg" alt="" loading="lazy"></div>
+  <section class="tela" data-tela="lugar" data-passo="1">
+    <div class="ref"><div class="ref-ico" aria-hidden="true">👏</div>
+      <h2>Você está no lugar certo!</h2><p class="sub">Namorar por app é difícil mesmo. Em 2 minutos você descobre o que está segurando o seu perfil e o que trocar primeiro.</p></div>
+    <button class="btn" data-proximo>Continuar</button>
+  </section>
+  <section class="tela" data-tela="interesse" data-passo="2">
+    <h2>Você tem interesse em:</h2>
+    <div class="opcoes ic" data-campo="interesse"><button data-v="mulheres"><span class="em">👩</span>Mulheres</button><button data-v="homens"><span class="em">👨</span>Homens</button><button data-v="ambos"><span class="em">🧑‍🤝‍🧑</span>Ambos</button></div>
+  </section>
+  <section class="tela" data-tela="idade" data-passo="3">
     <h2>Qual a sua idade?</h2>
-    <div class="opcoes" data-campo="idade">
-      <button data-v="18-24">18 a 24</button><button data-v="25-34">25 a 34</button><button data-v="35-44">35 a 44</button>
-      <button data-v="45-54">45 a 54</button><button data-v="55+">55 ou mais</button>
-    </div>
+    <div class="opcoes ic" data-campo="idade"><button data-v="18-24"><span class="em"></span>18 a 24</button><button data-v="25-34"><span class="em"></span>25 a 34</button><button data-v="35-44"><span class="em"></span>35 a 44</button><button data-v="45-54"><span class="em"></span>45 a 54</button><button data-v="55+"><span class="em"></span>55 ou mais</button></div>
   </section>
-
-  <!-- 2 · Onde trava -->
-  <section class="tela" data-tela="trava" data-passo="2">
-    <h2>Onde você mais trava?</h2>
-    <div class="opcoes" data-campo="trava">
-      <button data-v="poucos_matches">Quase não tenho match</button>
-      <button data-v="match_nao_e_meu_tipo">Tenho match, mas não é quem eu queria</button>
-      <button data-v="match_nao_vira_encontro">Tenho match, mas não vira encontro</button>
-      <button data-v="quero_mais_animacao">Quero uma vida amorosa mais animada</button>
-    </div>
+  <section class="tela" data-tela="unico" data-passo="4">
+    <div class="ref"><div class="ref-ico" aria-hidden="true">📸</div>
+      <h2>Não existe receita única</h2><p class="sub">O FotoMatch olha as <b>suas</b> fotos e mostra o que funciona para você chegar onde quer.</p></div>
+    <button class="btn" data-proximo>Continuar</button>
   </section>
-
-  <!-- 3 · Objetivo -->
-  <section class="tela" data-tela="objetivo" data-passo="3">
-    <h2>O que você procura agora?</h2>
-    <div class="opcoes" data-campo="objetivo">
-      <button data-v="serio">Algo sério</button><button data-v="conhecer_gente">Conhecer gente nova</button>
-      <button data-v="aberto">Estou aberto ao que vier</button><button data-v="ainda_nao_sei">Ainda não sei</button>
-    </div>
+  <section class="tela" data-tela="objetivo" data-passo="5">
+    <h2>Qual o seu principal objetivo?</h2>
+    <div class="opcoes ic" data-campo="objetivo"><button data-v="serio"><span class="em">💖</span>Encontrar um relacionamento sério</button><button data-v="conhecer_gente"><span class="em">🔥</span>Conhecer gente nova, sem pressão</button><button data-v="aberto"><span class="em">🌟</span>Aberto ao que vier, se tiver conexão</button><button data-v="ainda_nao_sei"><span class="em">🤔</span>Ainda não sei</button></div>
   </section>
-
-  <!-- 4 · O que mais segura (múltipla) -->
-  <section class="tela" data-tela="segura" data-passo="4">
-    <h2>O que mais te segura hoje?</h2>
+  <section class="tela" data-tela="objetivo_ok" data-passo="6">
+    <div class="ref"><div class="ref-ico" aria-hidden="true">❤️</div>
+      <h2 id="refObjTit">Vamos te ajudar com isso</h2><p class="sub">A primeira foto decide se a pessoa para no seu perfil. E ela é a parte mais fácil de melhorar.</p></div>
+    <button class="btn" data-proximo>Continuar</button>
+  </section>
+  <section class="tela" data-tela="frustracao" data-passo="7">
+    <h2>O que mais te frustra hoje?</h2>
+    <div class="opcoes ic" data-campo="frustracao"><button data-v="deslizar"><span class="em">💔</span>Deslizar sem fim, sem conexão de verdade</button><button data-v="somem"><span class="em">👻</span>Gente que some depois de duas mensagens</button><button data-v="perfil_fraco"><span class="em">😞</span>Sinto que meu perfil não é bom o suficiente</button><button data-v="nao_sei"><span class="em">❓</span>Não sei, só quero resultado melhor</button></div>
+  </section>
+  <section class="tela" data-tela="rapido" data-passo="8">
+    <div class="ref"><div class="ref-ico" aria-hidden="true">⚡</div>
+      <h2>Seu perfil pode melhorar hoje</h2><p class="sub">Luz, ângulo e cenário mudam a primeira impressão mais do que qualquer bio. Não é mágica: é foto bem feita.</p></div>
+    <button class="btn" data-proximo>Continuar</button>
+  </section>
+  <section class="tela" data-tela="segura" data-passo="9">
+    <h2>O que mais te segura?</h2>
     <p class="dica">Pode marcar mais de um.</p>
-    <div class="opcoes multi" data-campo="segura">
-      <button data-v="fotos">Minhas fotos</button><button data-v="conversa">Puxar conversa</button>
-      <button data-v="estilo">Estilo e roupa</button><button data-v="tempo">Falta de tempo</button><button data-v="algoritmo">O algoritmo do app</button>
+    <div class="opcoes ic multi" data-campo="segura">
+      <button data-v="fotos"><span class="em">📷</span>Minhas fotos não chamam atenção</button>
+      <button data-v="conversa"><span class="em">💬</span>Tenho dificuldade de puxar conversa</button>
+      <button data-v="algoritmo"><span class="em">🤖</span>O app não me mostra para as pessoas certas</button>
+      <button data-v="estilo"><span class="em">👔</span>Não gosto do meu estilo e das minhas roupas</button>
+      <button data-v="tempo"><span class="em">⏰</span>Falta de tempo</button>
     </div>
     <button class="btn" id="seguraOk" disabled>Continuar</button>
   </section>
 
-  <!-- 5 · Reforço -->
-  <section class="tela" data-tela="reforco" data-passo="5">
-    <div class="reforco">
-      <p class="grande" id="reforcoNum">Antes do papo</p>
-      <h2 id="reforcoTit">A primeira foto decide se ela para no seu perfil.</h2>
-      <p class="sub" id="reforcoTxt">Luz, ângulo e cenário mudam a primeira impressão mais do que qualquer bio. A boa notícia: é o ponto mais fácil de corrigir.</p>
-    </div>
-    <button class="btn" data-ir="contato">Ver a nota das minhas fotos</button>
+  <section class="tela" data-tela="solucao" data-passo="10">
+    <div class="ref"><div class="ref-ico" aria-hidden="true">👏</div>
+      <h2>Tem solução pra cada trava</h2><p class="sub">Foto, conversa ou falta de tempo: a sua nota mostra por onde começar.</p></div>
+    <button class="btn" data-proximo>Continuar</button>
+  </section>
+  <section class="tela" data-tela="ajuda" data-passo="11">
+    <h2>Que tipo de ajuda você quer?</h2>
+    <div class="opcoes ic" data-campo="ajuda"><button data-v="faca_por_mim"><span class="em">🎯</span>Façam por mim: quero tudo pronto</button><button data-v="comigo"><span class="em">🤝</span>Me guiem, quero fazer junto</button><button data-v="sozinho"><span class="em">🛠️</span>Me deem as dicas, eu faço sozinho</button></div>
+  </section>
+  <section class="tela" data-tela="orcamento" data-passo="12">
+    <h2>Quanto você quer investir nisso?</h2>
+    <div class="opcoes ic" data-campo="orcamento"><button data-v="sem_limite"><span class="em">💎</span>O que for preciso</button><button data-v="medio"><span class="em">💰</span>Um valor razoável</button><button data-v="enxuto"><span class="em">🪙</span>Pouco, preciso de opção barata</button></div>
+  </section>
+  <section class="tela" data-tela="jeito" data-passo="13">
+    <div class="ref"><div class="ref-ico" aria-hidden="true">❤️</div>
+      <h2>Do seu jeito</h2><p class="sub">Você pode só ajustar as fotos que já tem ou receber fotos novas com o seu rosto, prontas em até 30 minutos.</p></div>
+    <button class="btn" data-proximo>Continuar</button>
+  </section>
+  <section class="tela" data-tela="motivacao" data-passo="14">
+    <h2>Quanto você está a fim de mudar isso?</h2>
+    <div class="opcoes ic" data-campo="motivacao"><button data-v="total"><span class="em">💪</span>100%, sem desculpa</button><button data-v="bem"><span class="em">😊</span>Bem motivado</button><button data-v="curioso"><span class="em">🤔</span>Curioso, mas ainda não sei</button><button data-v="passando"><span class="em">😴</span>Só passando o tempo</button></div>
+  </section>
+  <section class="tela" data-tela="junto" data-passo="15">
+    <div class="ref"><div class="ref-ico" aria-hidden="true">🤝</div>
+      <h2>A gente te ajuda!</h2><p class="sub">Se mostrar num app não é fácil. Vamos deixar o seu perfil do jeito que dá vontade de abrir o app.</p></div>
+    <button class="btn" data-proximo>Continuar</button>
+  </section>
+  <section class="tela" data-tela="envio" data-passo="16">
+    <h2 class="centro">Mande suas fotos</h2>
+    <p class="sub centro">Ganhe a sua nota grátis e um plano exato em 2 minutos.</p>
+    <div class="grade" id="grade"></div>
+    <label class="btn sec" id="addFoto">+ Escolher de 1 a 6 fotos<input type="file" id="arquivos" accept="image/jpeg,image/png,image/webp" multiple hidden></label>
+    <p class="dica centro">As que você usa (ou usaria) no app. Só você na foto, rosto visível. Uma selfie já serve.</p>
+    <label class="check"><input type="checkbox" id="aceite"> <span>Aceito que minhas fotos sejam analisadas por IA só para gerar a minha nota, guardadas em ambiente privado e apagadas em até 30 dias. Li a <a href="privacidade.html" target="_blank">privacidade</a>.</span></label>
+    <p class="erro" id="erroEnvio" role="alert"></p>
+    <button class="btn" id="enviar" disabled>Analisar minhas fotos</button>
+    <p class="mini">🔒 Suas fotos ficam privadas. Nunca usamos suas fotos em anúncios sem sua autorização por escrito.</p>
   </section>
 
-  <!-- 6 · Contato + upload -->
-  <section class="tela" data-tela="contato" data-passo="6">
-    <h2>Para onde mandamos o seu resultado?</h2>
+  <!-- Contato depois da análise: "sua nota está pronta" -->
+  <section class="tela" data-tela="contato">
+    <h2 class="centro">Sua nota está pronta!</h2>
+    <p class="sub centro">Coloque seu WhatsApp ou e-mail para ver o resultado.</p>
     <form id="formContato" novalidate>
       <label>WhatsApp com DDD<input id="whats" inputmode="tel" autocomplete="tel" placeholder="(11) 91234-5678"></label>
       <label>ou e-mail<input id="email" type="email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></label>
-      <label class="check"><input type="checkbox" id="aceite"> <span>Aceito que minhas fotos sejam analisadas por IA só para gerar a minha nota, guardadas em ambiente privado e apagadas em até 30 dias. Li a <a href="privacidade.html" target="_blank">privacidade</a>.</span></label>
     </form>
     <p class="erro" id="erroContato" role="alert"></p>
-    <button class="btn" id="contatoOk" disabled>Continuar</button>
-    <p class="mini">Grátis, sem cartão. A gente só usa o contato para mandar a sua nota.</p>
-  </section>
-
-  <section class="tela" data-tela="envio" data-passo="7">
-    <h2>Agora, 1 foto sua</h2>
-    <p class="dica">Uma selfie já serve. Quer uma nota mais completa? Mande até 6, as que você usa (ou usaria) no app. Só você na foto, rosto visível.</p>
-    <div class="grade" id="grade"></div>
-    <label class="btn sec" id="addFoto">+ Adicionar foto<input type="file" id="arquivos" accept="image/jpeg,image/png,image/webp" multiple hidden></label>
-    <p class="erro" id="erroEnvio" role="alert"></p>
-    <button class="btn" id="enviar" disabled>Ver minha nota grátis</button>
-    <p class="mini">Suas fotos são usadas só para gerar a sua nota (e, se você comprar, as suas fotos) e são apagadas em 30 dias. Nunca usamos suas fotos em anúncios sem sua autorização por escrito.</p>
+    <button class="btn" id="contatoOk" disabled>Ver minha nota</button>
+    <p class="mini">A gente só usa o seu contato para mandar a nota e dicas do FotoMatch.</p>
   </section>
 
   <!-- Analisando -->
   <section class="tela" data-tela="analisando">
-    <div class="carregando"><div class="anel"></div>
-      <h2>Analisando suas fotos…</h2>
+    <div class="carregando">
+      <h2>Em instantes, a sua nota e o seu plano…</h2>
+      <div class="pct" id="pctAnel" style="--p:0"><span id="pctNum">0%</span></div>
       <p class="sub" id="statusAnalise">Enviando com segurança</p>
     </div>
   </section>
 
   <!-- Resultado -->
   <section class="tela" data-tela="resultado">
-    <p class="kicker" id="resKicker">Sua nota</p>
-    <div class="nota"><span id="notaGeral">–</span><small>/10</small></div>
+    <h2 class="centro">Sua nota está pronta</h2>
+    <p class="kicker centro" id="resKicker">Nota do seu perfil</p>
+    <div class="nota centro"><span id="notaGeral">0</span><small>/100</small></div>
+    <p class="centro"><b class="ruim-txt" id="nErros">3 motivos</b> que estão derrubando seus matches.</p>
+    <div class="arq"><p class="kicker">Seu perfil hoje</p><h3 id="arqNome">–</h3><p class="sub" id="arqTxt"></p>
+      <div class="arq-n"><div><b id="arqAlertas">3</b><span>alertas</span></div><div><b id="arqFalta">–</b><span>pontos até 80</span></div></div></div>
     <p class="sub" id="resFrase"></p>
     <div class="fotosNota" id="fotosNota"></div>
     <div class="previa" id="previa" hidden>

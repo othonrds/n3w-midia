@@ -31,8 +31,12 @@ async function api(acao, dados = {}) {
 }
 
 
+/* ---------- sequência (modelo roastdating.com: quiz longo com reforços → foto → análise → contato → nota) ---------- */
+const SEQ = ["inicio", "lugar", "interesse", "idade", "unico", "objetivo", "objetivo_ok", "frustracao", "rapido", "segura", "solucao", "ajuda", "orcamento", "jeito", "motivacao", "junto", "envio"];
+const ACEITE_FN = "https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/match-aceite";
+
 /* ---------- registro de telas (sem dado pessoal): onde as pessoas desistem ---------- */
-const ORDEM_TELA = { inicio: 0, idade: 1, trava: 2, objetivo: 3, segura: 4, reforco: 5, contato: 6, envio: 7, analisando: 8, resultado: 9, pendente: 9, checkout: 10 };
+const ORDEM_TELA = Object.assign(Object.fromEntries(SEQ.map((t, i) => [t, i])), { analisando: 17, contato: 18, resultado: 19, pendente: 19, checkout: 20 });
 const SESSAO = (() => { const n = () => Array.from(crypto.getRandomValues(new Uint8Array(10)), (x) => x.toString(16).padStart(2, "0")).join("");
   try { let v = sessionStorage.getItem("fm_s"); if (!v) { v = n(); sessionStorage.setItem("fm_s", v); } return v; } catch { return n(); } })();
 function marca(tela) {
@@ -42,23 +46,25 @@ function marca(tela) {
 }
 
 /* ---------- navegação ---------- */
-const TOTAL = 7;
+const TOTAL = SEQ.length - 1;
+const OBJ_TIT = { serio: "Vamos te ajudar a encontrar algo sério", conhecer_gente: "Vamos te ajudar a conhecer gente nova", aberto: "Vamos te ajudar a ter mais encontros", ainda_nao_sei: "Vamos descobrir isso juntos" };
 function ir(nome) {
   marca(nome);
+  if (nome === "objetivo_ok") $("#refObjTit").textContent = OBJ_TIT[estado.respostas.objetivo] || OBJ_TIT.ainda_nao_sei;
   $$(".tela").forEach((t) => t.classList.toggle("ativa", t.dataset.tela === nome));
   const t = $(`.tela[data-tela="${nome}"]`); const passo = Number(t?.dataset.passo || 0);
   $("#barra").hidden = !passo; $("#barraFill").style.width = (passo / TOTAL * 100) + "%";
   window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
-  if (nome === "reforco") montaReforco();
 }
+const proximo = (de) => ir(SEQ[SEQ.indexOf(de) + 1] || "envio");
 $$("[data-ir]").forEach((b) => b.addEventListener("click", () => ir(b.dataset.ir)));
+$$("[data-proximo]").forEach((b) => b.addEventListener("click", () => proximo(b.closest(".tela").dataset.tela)));
 
-const ORDEM = { idade: "trava", trava: "objetivo", objetivo: "segura" };
 $$(".opcoes:not(.multi)").forEach((g) => g.addEventListener("click", (e) => {
   const b = e.target.closest("button"); if (!b) return;
   $$("button", g).forEach((x) => x.classList.toggle("on", x === b));
   estado.respostas[g.dataset.campo] = b.dataset.v;
-  setTimeout(() => ir(ORDEM[g.dataset.campo]), 180);
+  setTimeout(() => proximo(g.closest(".tela").dataset.tela), 200);
 }));
 $(".opcoes.multi").addEventListener("click", (e) => {
   const b = e.target.closest("button"); if (!b) return;
@@ -66,18 +72,12 @@ $(".opcoes.multi").addEventListener("click", (e) => {
   estado.respostas.segura = $$(".opcoes.multi button.on").map((x) => x.dataset.v);
   $("#seguraOk").disabled = !estado.respostas.segura.length;
 });
-$("#seguraOk").addEventListener("click", async () => {
-  ir("reforco");
-  if (!estado.lead && !DEMO) {
-    const r = await api("lead", { respostas: estado.respostas, utm });
-    if (r.id) { estado.lead = { id: r.id, token: r.token }; try { sessionStorage.setItem("fm_lead", JSON.stringify(estado.lead)); } catch { /* */ } }
-  }
-});
+$("#seguraOk").addEventListener("click", () => proximo("segura"));
 
-function montaReforco() {
-  // Sem número nem estatística: frase fixa aprovada. (Owner: só usar número quando tivermos dados próprios.)
-  $("#reforcoNum").textContent = "Antes do papo";
-  $("#reforcoTit").textContent = "A primeira foto decide se ela para no seu perfil.";
+function utmComQuiz() {
+  const r = estado.respostas;
+  const quiz = ["interesse", "frustracao", "ajuda", "orcamento", "motivacao"].map((k) => k.slice(0, 3) + "=" + (r[k] || "")).join(";");
+  return { fm_quiz: quiz, fm_variante: "a", ...utm };
 }
 
 /* ---------- fotos ---------- */
@@ -112,55 +112,67 @@ $("#arquivos").addEventListener("change", async (e) => {
   }
   e.target.value = ""; desenhaGrade();
 });
+function confere() { $("#enviar").disabled = !(estado.fotos.length >= MIN && $("#aceite").checked); }
+$("#aceite").addEventListener("change", confere);
+
+/* ---------- análise com porcentagem ---------- */
+const FRASES = ["Enviando com segurança", "Analisando a luz…", "Analisando seus ângulos…", "Analisando a sua expressão…", "Analisando os cenários…", "Montando o seu plano…"];
+function progresso() {
+  let p = 0, alvo = 95, fim = false; const t0 = Date.now();
+  const desenha = () => { $("#pctAnel").style.setProperty("--p", p); $("#pctNum").textContent = Math.round(p) + "%"; $("#statusAnalise").textContent = FRASES[Math.min(FRASES.length - 1, Math.floor(p / (100 / FRASES.length)))]; };
+  const timer = setInterval(() => { const dt = (Date.now() - t0) / 1000; p = fim ? Math.min(100, p + 6) : Math.min(alvo, 100 * (1 - Math.exp(-dt / 9))); desenha(); }, 120);
+  return { termina: () => new Promise((ok) => { fim = true; const chk = setInterval(() => { if (p >= 100) { clearInterval(chk); clearInterval(timer); desenha(); setTimeout(ok, 350); } }, 80); }), para: () => clearInterval(timer) };
+}
+
+let notaPronta = null;
+$("#enviar").addEventListener("click", async () => {
+  $("#erroEnvio").textContent = "";
+  ir("analisando"); const pr = progresso();
+  if (DEMO) { setTimeout(async () => { await pr.termina(); notaPronta = EXEMPLO; ir("contato"); }, 2500); return; }
+  if (!estado.lead) {
+    const r = await api("lead", { respostas: estado.respostas, utm: utmComQuiz() });
+    if (!r.id) { pr.para(); ir("envio"); $("#erroEnvio").textContent = r.erro || "Sem conexão. Tente de novo."; return; }
+    estado.lead = { id: r.id, token: r.token }; try { sessionStorage.setItem("fm_lead", JSON.stringify(estado.lead)); } catch { /* */ }
+  }
+  const ac = await fetch(ACEITE_FN, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...estado.lead, consentimento: true }) }).then((x) => x.json()).catch(() => ({}));
+  if (!ac.ok) { pr.para(); ir("envio"); $("#erroEnvio").textContent = ac.erro || "Sem conexão. Tente de novo."; return; }
+  const paths = [];
+  for (let i = 0; i < estado.fotos.length; i++) {
+    const r = await api("foto", { ...estado.lead, img: estado.fotos[i] });
+    if (!r.path) { pr.para(); ir("envio"); $("#erroEnvio").textContent = r.erro || "Falha ao enviar a foto."; return; }
+    paths.push(r.path);
+  }
+  const n = await api("nota", { ...estado.lead, paths });
+  notaPronta = n.nota || null; estado.notaErro = n.codigo || n.erro || "";
+  await pr.termina();
+  ir("contato");
+});
+
+/* ---------- contato para liberar a nota ---------- */
 function contatoOk() {
   const w = $("#whats").value.replace(/\D/g, ""), m = $("#email").value.trim();
   return (w.length >= 10 && w.length <= 13) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m);
 }
-function confereContato() { $("#contatoOk").disabled = !(contatoOk() && $("#aceite").checked); }
-function confere() { $("#enviar").disabled = estado.fotos.length < MIN; }
-["#whats", "#email", "#aceite"].forEach((s) => $(s).addEventListener("input", confereContato));
-$("#aceite").addEventListener("change", confereContato);
-
+["#whats", "#email"].forEach((s) => $(s).addEventListener("input", () => { $("#contatoOk").disabled = !contatoOk(); }));
 $("#contatoOk").addEventListener("click", async () => {
   $("#erroContato").textContent = "";
-  if (DEMO) { ir("envio"); return; }
+  if (DEMO) return mostraResultado(EXEMPLO, true);
   $("#contatoOk").disabled = true;
-  if (!estado.lead) {
-    const r = await api("lead", { respostas: estado.respostas, utm });
-    if (!r.id) { $("#erroContato").textContent = r.erro || "Sem conexão. Tente de novo."; confereContato(); return; }
-    estado.lead = { id: r.id, token: r.token };
-  }
-  const c = await api("contato", { ...estado.lead, whats: $("#whats").value, email: $("#email").value, consentimento: $("#aceite").checked });
-  confereContato();
+  const c = await api("contato", { ...estado.lead, whats: $("#whats").value, email: $("#email").value, consentimento: true });
+  $("#contatoOk").disabled = !contatoOk();
   if (!c.ok) { $("#erroContato").textContent = c.erro || "Confira seus dados."; return; }
   try { if (window.fbq) fbq("track", "Lead", { content_name: "fotomatch_nota_gratis" }); } catch { /* */ }
-  ir("envio");
-});
-
-$("#enviar").addEventListener("click", async () => {
-  $("#erroEnvio").textContent = "";
-  if (DEMO) { ir("analisando"); setTimeout(() => mostraResultado(EXEMPLO, true), 1400); return; }
-  if (!estado.lead) { ir("contato"); return; }
-  ir("analisando");
-  const paths = [];
-  for (let i = 0; i < estado.fotos.length; i++) { // em sequência (o servidor acrescenta na lista do lead)
-    $("#statusAnalise").textContent = `Enviando foto ${i + 1} de ${estado.fotos.length}`;
-    const r = await api("foto", { ...estado.lead, img: estado.fotos[i] });
-    if (!r.path) { ir("envio"); $("#erroEnvio").textContent = r.erro || "Falha ao enviar a foto."; return; }
-    paths.push(r.path);
-  }
-  $("#statusAnalise").textContent = "Avaliando luz, ângulo, expressão e cenário";
-  const n = await api("nota", { ...estado.lead, paths });
-  if (n.nota) return mostraResultado(n.nota, false);
+  if (notaPronta) return mostraResultado(notaPronta, false);
   $("#pendenteTxt").textContent = "A análise demorou mais que o normal. Toque em tentar de novo em alguns minutos.";
-  $("#pendenteCod").textContent = n.codigo ? "código: " + n.codigo : (n.erro || "");
+  $("#pendenteCod").textContent = estado.notaErro ? "código: " + estado.notaErro : "";
   ir("pendente");
 });
 
 $("#tentarNota").addEventListener("click", async () => {
   if (!estado.lead) return;
-  ir("analisando"); $("#statusAnalise").textContent = "Avaliando luz, ângulo, expressão e cenário";
+  ir("analisando"); const pr = progresso();
   const n = await api("nota", { ...estado.lead });
+  await pr.termina();
   if (n.nota) return mostraResultado(n.nota, false);
   $("#pendenteCod").textContent = n.codigo ? "código: " + n.codigo : (n.erro || ""); ir("pendente");
 });
@@ -186,8 +198,7 @@ function previaPronta(url) {
   $("#previaTxt").textContent = "Uma foto sua, com luz e cenário certos. As 15 do pacote saem sem marca d'água.";
 }
 function previaDepois() {
-  const viaWhats = $("#whats").value.replace(/\D/g, "").length >= 10;
-  $("#previaCarregando").innerHTML = "<span>Sua prévia está sendo gerada e chega no seu " + (viaWhats ? "WhatsApp" : "e-mail") + " em até 30 minutos.</span>";
+  $("#previaCarregando").innerHTML = "<span>A prévia está demorando mais que o normal. As 15 fotos do pacote saem do mesmo jeito, com o seu rosto.</span>";
 }
 async function pedePrevia(exemplo) {
   $("#previa").hidden = false;
@@ -202,17 +213,29 @@ async function pedePrevia(exemplo) {
 }
 
 /* ---------- resultado ---------- */
+function arquetipo(n100) {
+  if (n100 < 40) return ["Invisível no feed", "Hoje as suas fotos não dão motivo para alguém parar de deslizar: luz fraca, ângulo de selfie e nada que mostre como é a sua vida."];
+  if (n100 < 60) return ["Mais um no feed", "Suas fotos não espantam ninguém, mas também não chamam atenção. Falta uma foto que faça a pessoa parar."];
+  if (n100 < 75) return ["Quase lá", "Você tem fotos boas, mas uma ou duas puxam a nota para baixo. Trocando essas, o perfil sobe de nível."];
+  return ["Destaque", "Suas fotos já trabalham a seu favor. Dá para ajustar a ordem e variar os cenários para ir ainda mais longe."];
+}
+function contaAte(el, alvo) { const t0 = performance.now(); const passo = (t) => { const k = Math.min(1, (t - t0) / 1600); el.textContent = Math.round(alvo * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(passo); }; requestAnimationFrame(passo); }
 function mostraResultado(nota, exemplo) {
-  $("#resKicker").textContent = exemplo ? "Exemplo de resultado (demonstração)" : "Sua nota";
-  $("#notaGeral").textContent = String(nota.nota_geral).replace(".", ",");
+  $("#resKicker").textContent = exemplo ? "Exemplo de resultado (demonstração)" : "Nota do seu perfil";
+  const n100 = Math.round(Number(nota.nota_geral) * 10);
+  const [nome, txt] = arquetipo(n100);
+  $("#arqNome").textContent = nome; $("#arqTxt").textContent = txt;
+  $("#arqAlertas").textContent = String((nota.erros || []).length || 3); $("#nErros").textContent = ((nota.erros || []).length || 3) + " motivos";
+  $("#arqFalta").textContent = String(Math.max(0, 80 - n100));
   $("#resFrase").textContent = nota.com_fotos_certas || "";
+  setTimeout(() => contaAte($("#notaGeral"), n100), 250);
   const box = $("#fotosNota"); box.innerHTML = "";
   nota.fotos.forEach((f, i) => {
     const fig = document.createElement("figure");
     if (i === nota.melhor_indice) fig.className = "melhor"; else if (i === nota.pior_indice) fig.className = "pior";
     fig.innerHTML = `<img alt=""><figcaption></figcaption>`;
     if (estado.fotos[i]) $("img", fig).src = estado.fotos[i];
-    $("figcaption", fig).textContent = String(f.nota).replace(".", ",");
+    $("figcaption", fig).textContent = String(Math.round(Number(f.nota) * 10));
     fig.title = [f.ponto_forte, f.ajuste].filter(Boolean).join(" · ");
     box.appendChild(fig);
   });

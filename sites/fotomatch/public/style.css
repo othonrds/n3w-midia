@@ -94,3 +94,28 @@ footer{max-width:520px;margin:0 auto;padding:20px 16px 40px;color:var(--muted);f
 .checklist .boa li::before{content:"✓ ";color:var(--ok);font-weight:800}
 .faixa{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0 4px}
 .faixa img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:10px}
+
+/* ---------- página A · isca (modelo roastdating.com) ---------- */
+.centro{text-align:center}
+.h-isca{text-align:center;text-transform:uppercase;font-size:36px;line-height:1.02;margin:18px 0 10px}
+.vai-ver{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 0;margin:16px 0 4px}
+.vai-ver .kicker{color:var(--ok);margin:0 0 8px}
+.vai-ver ol{list-style:none;counter-reset:v;padding:0;margin:0;display:grid;gap:10px}
+.vai-ver li{counter-increment:v;display:flex;gap:10px;align-items:center;font-size:15px}
+.vai-ver li::before{content:counter(v);flex:none;width:24px;height:24px;border-radius:6px;background:var(--surface2);color:var(--ok);font-weight:700;display:grid;place-items:center;font-size:13px}
+.opcoes.ic button{display:flex;align-items:center;gap:12px;text-align:left}
+.opcoes.ic .em{font-size:22px;line-height:1;flex:none;width:28px;text-align:center}
+.opcoes.ic .em:empty{display:none}
+.ref{text-align:center;padding:34px 6px 8px}
+.ref-ico{font-size:96px;line-height:1;margin-bottom:18px;filter:drop-shadow(0 10px 24px #0008)}
+.ref h2{text-transform:uppercase;font-size:28px;margin:8px 0 12px}
+.pct{--p:0;width:170px;height:170px;border-radius:50%;margin:26px auto 18px;display:grid;place-items:center;
+  background:conic-gradient(var(--ok) calc(var(--p)*1%),var(--surface2) 0)}
+.pct span{width:136px;height:136px;border-radius:50%;background:var(--bg);display:grid;place-items:center;font:700 30px var(--display)}
+.ruim-txt{color:var(--bad)}
+.arq{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin:16px 0}
+.arq .kicker{color:var(--ok);font-style:italic;text-transform:none;letter-spacing:0;font-size:15px;margin:0}
+.arq h3{font:800 34px/1.05 var(--display);margin:4px 0 8px;text-transform:uppercase}
+.arq-n{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.arq-n div{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.arq-n b{display:block;font:800 30px var(--display)}.arq-n span{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
