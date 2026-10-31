@@ -20,20 +20,16 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
 
 <main id="app">
   <!-- Página A · ISCA (modelo roastdating.com, 31/10/2026): quiz longo com reforços → foto → análise → contato para liberar → nota → oferta -->
-  <section class="tela ativa" data-tela="inicio">
-    <div class="faixa-topo">★ Nota grátis das suas fotos · pronta em 2 minutos</div>
-    <h1 class="h-isca">Por que você não está dando match?</h1>
-    <p class="sub centro sub-isca">Responda 9 toques rápidos e descubra a nota das suas fotos.</p>
-    <h2 class="centro q-isca">Onde você mais trava?</h2>
-    <div class="opcoes ic compacta" data-campo="trava">
+  <section class="tela ativa" data-tela="inicio" data-passo="0">
+    <p class="kicker centro k-teste">Teste de perfil gratuito · 2 minutos</p>
+    <h2>Onde você mais trava?</h2>
+    <div class="opcoes ic" data-campo="trava">
       <button data-v="poucos_matches"><span class="em">😞</span>Quase não tenho match</button>
       <button data-v="match_nao_e_meu_tipo"><span class="em">🙁</span>Tenho match, mas nunca é quem eu queria</button>
       <button data-v="match_nao_vira_encontro"><span class="em">😩</span>Dou match, mas não vira encontro</button>
       <button data-v="quero_mais_animacao"><span class="em">🎉</span>Quero uma vida amorosa mais animada</button>
     </div>
-    <div class="vai-ver"><p class="kicker">Você vai ver:</p>
-      <ol><li><span>Qual a nota de cada foto sua, de 0 a 100</span></li><li><span>Os erros que estão derrubando seus matches</span></li><li><span>Quais fotos <b>manter, cortar ou trocar</b></span></li></ol></div>
-    <p class="mini">Grátis, sem cartão · Fotos privadas, apagadas em até 30 dias</p>
+    <p class="mini centro">Grátis, sem cartão · Fotos privadas, apagadas em até 30 dias</p>
   </section>
 
   <section class="tela" data-tela="lugar" data-passo="1">
@@ -202,7 +198,7 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
   </section>
 </main>
 
-<div class="barra" id="barra" hidden><div id="barraFill"></div></div>
+<div class="barra" id="barra"><div id="barraFill" style="width:6%"></div></div>
 
 <footer>
   <p>FotoMatch é um serviço de fotos e edição com IA. Não somos um app de namoro e não temos ligação com nenhum app de namoro. Fotos geradas com IA a partir das selfies enviadas pelo próprio cliente. As imagens de exemplo desta página mostram pessoas fictícias geradas por IA.</p>

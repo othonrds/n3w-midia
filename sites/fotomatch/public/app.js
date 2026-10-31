@@ -66,8 +66,8 @@ function ir(nome) {
   marca(nome);
   if (nome === "objetivo_ok") $("#refObjTit").textContent = OBJ_TIT[estado.respostas.objetivo] || OBJ_TIT.ainda_nao_sei;
   $$(".tela").forEach((t) => t.classList.toggle("ativa", t.dataset.tela === nome));
-  const t = $(`.tela[data-tela="${nome}"]`); const passo = Number(t?.dataset.passo || 0);
-  $("#barra").hidden = !passo; $("#barraFill").style.width = (passo / TOTAL * 100) + "%";
+  const t = $(`.tela[data-tela="${nome}"]`); const temPasso = t && t.dataset.passo !== undefined; const passo = Number(t?.dataset.passo || 0);
+  $("#barra").hidden = !temPasso; $("#barraFill").style.width = ((passo + 1) / (TOTAL + 1) * 100) + "%";
   const fixo = nome === "resultado"; $("#barraOferta").hidden = !fixo; document.body.classList.toggle("com-fixo", fixo);
   window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
 }
