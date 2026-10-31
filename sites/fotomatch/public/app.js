@@ -1,0 +1,338 @@
+// FotoMatch · LP-quiz (rascunho). Fala só com a Edge Function match-nota (verify_jwt=false; autorização por token do lead).
+// ?demo=1 mostra um resultado de EXEMPLO sem chamar a IA (para revisão do Othon na prévia).
+const FN = "https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/match-nota";
+// Checkout Payt do FotoMatch (produto RB7EQO, checkout RKOPW6; R$ 29,90 PIX + cartão). Aprovado pelo Othon em 11/10.
+const CHECKOUT_URL = "https://checkout.payt.com.br/1c8f9b1e8a2f69d9ae85268e8854d13b";
+const CHECKOUT_PARAM_LEAD = "src"; // id do lead vai neste parâmetro (Checkout Expert confirma o nome aceito pela Payt).
+const PRECO = 29.90; // BRL. Oferta "15 fotos com o seu rosto" (mesmo valor do botão e do Purchase em obrigado.html).
+const DEMO = new URLSearchParams(location.search).has("demo");
+const MIN = 1, MAX = 9;
+
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const estado = { respostas: { segura: [] }, lead: null, fotos: [] };
+try { const s = JSON.parse(sessionStorage.getItem("fm_lead") || "null"); if (s && s.id) estado.lead = s; } catch { /* sem storage */ }
+
+const utm = (() => { const p = new URLSearchParams(location.search), o = {};
+  ["utm_source","utm_medium","utm_campaign","utm_content","utm_term","fbclid"].forEach((k) => p.get(k) && (o[k] = p.get(k))); return o; })();
+
+// Link do checkout com o id do lead + UTMs/fbclid da visita (liga a venda ao lead e ao anúncio).
+function linkCheckout() {
+  const u = new URL(CHECKOUT_URL);
+  if (estado.lead && estado.lead.id) u.searchParams.set(CHECKOUT_PARAM_LEAD, estado.lead.id);
+  Object.entries(utm).forEach(([k, v]) => u.searchParams.set(k, v));
+  return u.toString();
+}
+
+async function api(acao, dados = {}) {
+  const r = await fetch(FN, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ acao, ...dados }) });
+  let j = {}; try { j = await r.json(); } catch { /* */ }
+  return { status: r.status, ...j };
+}
+
+
+/* ---------- sequência (modelo roastdating.com: quiz longo com reforços → foto → análise → contato → nota) ---------- */
+const SEQ = ["inicio", "lugar", "interesse", "idade", "unico", "objetivo", "objetivo_ok", "frustracao", "rapido", "segura", "solucao", "ajuda", "orcamento", "jeito", "motivacao", "junto", "envio"];
+const ACEITE_FN = "https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/match-aceite";
+
+/* ---------- registro de telas (sem dado pessoal): onde as pessoas desistem ---------- */
+const ORDEM_TELA = Object.assign(Object.fromEntries(SEQ.map((t, i) => [t, i])), { analisando: 17, contato: 18, resultado: 19, pendente: 19, oferta: 20, checkout: 21 });
+const ENTRADA_DIRETA = /^FM-S\d/i.test(utm.utm_content || "") || new URLSearchParams(location.search).get("entrada") === "direta";
+document.body.classList.toggle("entrada-direta", ENTRADA_DIRETA);
+const SESSAO = (() => { const n = () => Array.from(crypto.getRandomValues(new Uint8Array(10)), (x) => x.toString(16).padStart(2, "0")).join("");
+  try { let v = sessionStorage.getItem("fm_s"); if (!v) { v = n(); sessionStorage.setItem("fm_s", v); } return v; } catch { return n(); } })();
+function marca(tela) {
+  if (DEMO) return;
+  try { fetch(FN, { method: "POST", headers: { "Content-Type": "application/json" }, keepalive: true,
+    body: JSON.stringify({ acao: "evento", sessao: SESSAO, pagina: "A", tela, ordem: ORDEM_TELA[tela] ?? null, anuncio: utm.utm_content || null, lead: estado.lead && estado.lead.id }) }).catch(() => {}); } catch { /* */ }
+}
+
+// Diagnóstico da 1ª tela: quanto tempo a pessoa ficou e se rolou, quando sai sem responder (ordem 50 = fora do funil).
+const T0 = Date.now(); let rolou = false, saidaMarcada = false;
+addEventListener("scroll", () => { if (scrollY > 120) rolou = true; }, { passive: true });
+function marcaSaida() {
+  if (DEMO || saidaMarcada) return;
+  const ativa = document.querySelector(".tela.ativa"); if (!ativa || ativa.dataset.tela !== "inicio") return;
+  saidaMarcada = true;
+  const s = (Date.now() - T0) / 1000, faixa = s < 3 ? "0-3s" : s < 10 ? "3-10s" : s < 30 ? "10-30s" : "30s+";
+  const body = JSON.stringify({ acao: "evento", sessao: SESSAO, pagina: "A", tela: "saiu-" + faixa + (rolou ? "-rolou" : ""), ordem: 50, anuncio: utm.utm_content || null });
+  try { navigator.sendBeacon(FN, new Blob([body], { type: "text/plain" })); } catch { /* */ }
+}
+addEventListener("pagehide", marcaSaida);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") marcaSaida(); });
+
+/* ---------- navegação ---------- */
+const TOTAL = SEQ.length - 1;
+const OBJ_TIT = { serio: "Vamos te ajudar a encontrar algo sério", conhecer_gente: "Vamos te ajudar a conhecer gente nova", aberto: "Vamos te ajudar a ter mais encontros", ainda_nao_sei: "Vamos descobrir isso juntos" };
+function ir(nome) {
+  marca(nome);
+  if (nome === "objetivo_ok") $("#refObjTit").textContent = OBJ_TIT[estado.respostas.objetivo] || OBJ_TIT.ainda_nao_sei;
+  $$(".tela").forEach((t) => t.classList.toggle("ativa", t.dataset.tela === nome));
+  const t = $(`.tela[data-tela="${nome}"]`); const temPasso = t && t.dataset.passo !== undefined; const passo = Number(t?.dataset.passo || 0);
+  $("#barra").hidden = !temPasso; $("#barraFill").style.width = ((passo + 1) / (TOTAL + 1) * 100) + "%";
+  const fixo = nome === "resultado"; $("#barraOferta").hidden = !fixo; document.body.classList.toggle("com-fixo", fixo);
+  window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+}
+const proximo = (de) => ir(SEQ[SEQ.indexOf(de) + 1] || "envio");
+$$("[data-ir]").forEach((b) => b.addEventListener("click", () => ir(b.dataset.ir)));
+$$("[data-proximo]").forEach((b) => b.addEventListener("click", () => proximo(b.closest(".tela").dataset.tela)));
+
+$$(".opcoes:not(.multi)").forEach((g) => g.addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  $$("button", g).forEach((x) => x.classList.toggle("on", x === b));
+  estado.respostas[g.dataset.campo] = b.dataset.v;
+  setTimeout(() => proximo(g.closest(".tela").dataset.tela), 200);
+}));
+$(".opcoes.multi").addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  b.classList.toggle("on");
+  estado.respostas.segura = $$(".opcoes.multi button.on").map((x) => x.dataset.v);
+  $("#seguraOk").disabled = !estado.respostas.segura.length;
+});
+$("#seguraOk").addEventListener("click", () => proximo("segura"));
+
+function utmComQuiz() {
+  const r = estado.respostas;
+  const quiz = ["interesse", "frustracao", "ajuda", "orcamento", "motivacao"].map((k) => k.slice(0, 3) + "=" + (r[k] || "")).join(";");
+  return { fm_quiz: quiz, fm_variante: "a", fm_entrada: ENTRADA_DIRETA ? "direta" : "topo", ...utm };
+}
+
+/* ---------- fotos ---------- */
+function reduz(file) {
+  return new Promise((ok, erro) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const lado = 1280, k = Math.min(1, lado / Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      ok(c.toDataURL("image/jpeg", 0.85));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); erro(new Error("Não consegui abrir essa imagem.")); };
+    img.src = url;
+  });
+}
+function desenhaGrade() {
+  $("#grade").innerHTML = "";
+  estado.fotos.forEach((f, i) => {
+    const fig = document.createElement("figure");
+    fig.innerHTML = `<img alt="Sua foto ${i + 1}"><button type="button" aria-label="Remover foto ${i + 1}">×</button>`;
+    $("img", fig).src = f; $("button", fig).onclick = () => { estado.fotos.splice(i, 1); desenhaGrade(); };
+    $("#grade").appendChild(fig);
+  });
+  $("#addFoto").style.display = estado.fotos.length >= MAX ? "none" : "";
+  confere();
+}
+$("#arquivos").addEventListener("change", async (e) => {
+  $("#erroEnvio").textContent = "";
+  for (const f of [...e.target.files].slice(0, MAX - estado.fotos.length)) {
+    try { estado.fotos.push(await reduz(f)); } catch (x) { $("#erroEnvio").textContent = x.message; }
+  }
+  e.target.value = ""; desenhaGrade();
+});
+function confere() { $("#enviar").disabled = !(estado.fotos.length >= MIN && $("#aceite").checked); }
+$("#aceite").addEventListener("change", confere);
+
+/* ---------- análise com porcentagem ---------- */
+const FRASES = ["Enviando com segurança", "Analisando a luz…", "Analisando seus ângulos…", "Analisando a sua expressão…", "Analisando os cenários…", "Montando o seu plano…"];
+function progresso() {
+  let p = 0, alvo = 95, fim = false; const t0 = Date.now();
+  const desenha = () => { $("#pctAnel").style.setProperty("--p", p); $("#pctNum").textContent = Math.round(p) + "%"; $("#statusAnalise").textContent = FRASES[Math.min(FRASES.length - 1, Math.floor(p / (100 / FRASES.length)))]; };
+  const timer = setInterval(() => { const dt = (Date.now() - t0) / 1000; p = fim ? Math.min(100, p + 6) : Math.min(alvo, 100 * (1 - Math.exp(-dt / 9))); desenha(); }, 120);
+  return { termina: () => new Promise((ok) => { fim = true; const chk = setInterval(() => { if (p >= 100) { clearInterval(chk); clearInterval(timer); desenha(); setTimeout(ok, 350); } }, 80); }), para: () => clearInterval(timer) };
+}
+
+let notaPronta = null;
+$("#enviar").addEventListener("click", async () => {
+  $("#erroEnvio").textContent = "";
+  ir("analisando"); const pr = progresso();
+  if (DEMO) { setTimeout(async () => { await pr.termina(); mostraResultado(EXEMPLO, true); }, 2500); return; }
+  if (!estado.lead) {
+    const r = await api("lead", { respostas: estado.respostas, utm: utmComQuiz() });
+    if (!r.id) { pr.para(); ir("envio"); $("#erroEnvio").textContent = r.erro || "Sem conexão. Tente de novo."; return; }
+    estado.lead = { id: r.id, token: r.token }; try { sessionStorage.setItem("fm_lead", JSON.stringify(estado.lead)); } catch { /* */ }
+  }
+  const ac = await fetch(ACEITE_FN, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...estado.lead, consentimento: true }) }).then((x) => x.json()).catch(() => ({}));
+  if (!ac.ok) { pr.para(); ir("envio"); $("#erroEnvio").textContent = ac.erro || "Sem conexão. Tente de novo."; return; }
+  const paths = [];
+  for (let i = 0; i < estado.fotos.length; i++) {
+    const r = await api("foto", { ...estado.lead, img: estado.fotos[i] });
+    if (!r.path) { pr.para(); ir("envio"); $("#erroEnvio").textContent = r.erro || "Falha ao enviar a foto."; return; }
+    paths.push(r.path);
+  }
+  const n = await api("nota", { ...estado.lead, paths });
+  notaPronta = n.nota || null; estado.notaErro = n.codigo || n.erro || "";
+  await pr.termina();
+  liberaResultado();
+});
+
+// Sem bloqueio de e-mail (decisão do Othon, 31/10): a nota aparece direto depois da análise, já com a oferta.
+function liberaResultado() {
+  if (notaPronta) {
+    try { if (window.fbq) fbq("track", "Lead", { content_name: "fotomatch_nota_gratis" }); } catch { /* */ }
+    return mostraResultado(notaPronta, false);
+  }
+  $("#pendenteTxt").textContent = "A análise demorou mais que o normal. Toque em tentar de novo em alguns minutos.";
+  $("#pendenteCod").textContent = estado.notaErro ? "código: " + estado.notaErro : "";
+  ir("pendente");
+}
+
+/* ---------- contato para liberar a nota ---------- */
+function contatoOk() {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($("#email").value.trim());
+}
+["#email"].forEach((s) => $(s).addEventListener("input", () => { $("#contatoOk").disabled = !contatoOk(); }));
+$("#contatoOk").addEventListener("click", async () => {
+  $("#erroContato").textContent = "";
+  if (DEMO) return mostraResultado(EXEMPLO, true);
+  $("#contatoOk").disabled = true;
+  const c = await api("contato", { ...estado.lead, email: $("#email").value, consentimento: true });
+  $("#contatoOk").disabled = !contatoOk();
+  if (!c.ok) { $("#erroContato").textContent = c.erro || "Confira seus dados."; return; }
+  try { if (window.fbq) fbq("track", "Lead", { content_name: "fotomatch_nota_gratis" }); } catch { /* */ }
+  if (notaPronta) return mostraResultado(notaPronta, false);
+  $("#pendenteTxt").textContent = "A análise demorou mais que o normal. Toque em tentar de novo em alguns minutos.";
+  $("#pendenteCod").textContent = estado.notaErro ? "código: " + estado.notaErro : "";
+  ir("pendente");
+});
+
+$("#tentarNota").addEventListener("click", async () => {
+  if (!estado.lead) return;
+  ir("analisando"); const pr = progresso();
+  const n = await api("nota", { ...estado.lead });
+  await pr.termina();
+  if (n.nota) return mostraResultado(n.nota, false);
+  $("#pendenteCod").textContent = n.codigo ? "código: " + n.codigo : (n.erro || ""); ir("pendente");
+});
+
+/* ---------- exemplos do topo (carrossel) ---------- */
+(() => {
+  const pares = $$("#exemplo .par"), pts = $$("#pontos button"); if (pares.length < 2) return;
+  let i = 0, timer;
+  const mostra = (n) => { i = n % pares.length; pares.forEach((p, k) => p.classList.toggle("on", k === i)); pts.forEach((b, k) => b.classList.toggle("on", k === i)); };
+  const roda = () => { clearInterval(timer); timer = setInterval(() => mostra(i + 1), 3500); };
+  pts.forEach((b, k) => b.addEventListener("click", () => { mostra(k); roda(); }));
+  roda();
+})();
+
+/* ---------- prévia com marca d'água ---------- */
+// Pede 1 foto gerada do próprio cliente à match-nota (ação "previa"). Se o servidor ainda não gera
+// (motor travado/sem verba), avisa que a prévia chega no contato deixado — a página não quebra.
+const PREVIA_EXEMPLO = "img/r1-jantar.jpg";
+function previaPronta(url) {
+  const img = $("#previaImg");
+  img.onload = () => { $("#previaCarregando").hidden = true; img.hidden = false; };
+  img.src = url;
+  $("#previaTxt").textContent = "Uma foto sua, com luz e cenário certos. As 15 do pacote saem sem marca d'água.";
+}
+function previaDepois() {
+  $("#previaCarregando").innerHTML = "<span>A prévia está demorando mais que o normal. As 15 fotos do pacote saem do mesmo jeito, com o seu rosto.</span>";
+}
+async function pedePrevia(exemplo) {
+  $("#previa").hidden = false;
+  if (exemplo) { setTimeout(() => previaPronta(PREVIA_EXEMPLO), 1200); return; }
+  const fim = Date.now() + 3 * 60 * 1000;
+  let r = await api("previa", { ...estado.lead });
+  while (!r.url && (r.status === 202 || r.pendente) && Date.now() < fim) {
+    await new Promise((ok) => setTimeout(ok, 6000));
+    r = await api("previa", { ...estado.lead, consulta: true });
+  }
+  if (r.url) previaPronta(r.url); else previaDepois();
+}
+
+/* ---------- resultado ---------- */
+function arquetipo(n100) {
+  if (n100 < 40) return ["Invisível no feed", "Hoje as suas fotos não dão motivo para alguém parar de deslizar: luz fraca, ângulo de selfie e nada que mostre como é a sua vida."];
+  if (n100 < 60) return ["Mais um no feed", "Suas fotos não espantam ninguém, mas também não chamam atenção. Falta uma foto que faça a pessoa parar."];
+  if (n100 < 75) return ["Quase lá", "Você tem fotos boas, mas uma ou duas puxam a nota para baixo. Trocando essas, o perfil sobe de nível."];
+  return ["Destaque", "Suas fotos já trabalham a seu favor. Dá para ajustar a ordem e variar os cenários para ir ainda mais longe."];
+}
+function contaAte(el, alvo) { const t0 = performance.now(); const passo = (t) => { const k = Math.min(1, (t - t0) / 1600); el.textContent = Math.round(alvo * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(passo); }; requestAnimationFrame(passo); }
+function mostraResultado(nota, exemplo) {
+  $("#resKicker").textContent = exemplo ? "Exemplo de resultado (demonstração)" : "Nota do seu perfil";
+  const n100 = Math.round(Number(nota.nota_geral) * 10);
+  const [nome, txt] = arquetipo(n100);
+  $("#arqNome").textContent = nome; $("#arqTxt").textContent = txt;
+  $("#arqAlertas").textContent = String((nota.erros || []).length || 3); $("#nErros").textContent = ((nota.erros || []).length || 3) + " motivos";
+  $("#arqFalta").textContent = String(Math.max(0, 80 - n100));
+  $("#resFrase").textContent = nota.com_fotos_certas || "";
+  setTimeout(() => contaAte($("#notaGeral"), n100), 250);
+  const box = $("#fotosNota"); box.innerHTML = "";
+  nota.fotos.forEach((f, i) => {
+    const fig = document.createElement("figure");
+    if (i === nota.melhor_indice) fig.className = "melhor"; else if (i === nota.pior_indice) fig.className = "pior";
+    fig.innerHTML = `<img alt=""><figcaption></figcaption>`;
+    if (estado.fotos[i]) $("img", fig).src = estado.fotos[i];
+    $("figcaption", fig).textContent = String(Math.round(Number(f.nota) * 10));
+    fig.title = [f.ponto_forte, f.ajuste].filter(Boolean).join(" · ");
+    box.appendChild(fig);
+  });
+  desenhaDims(nota.dimensoes);
+  $("#errosLista").innerHTML = "";
+  nota.erros.forEach((e) => { const li = document.createElement("li"); li.textContent = e; $("#errosLista").appendChild(li); });
+  if (CHECKOUT_URL) { const a = $("#ctaCheckout"); a.href = linkCheckout(); a.removeAttribute("aria-disabled"); $("#ctaNota").textContent = "Pagamento seguro pela Payt."; }
+  ir("resultado");
+  pedePrevia(exemplo).catch(previaDepois);
+  iniciaCron();
+}
+const NOME_DIM = { luz: ["Luz e nitidez", "Como a luz bate no rosto e se a foto está nítida"], enquadramento: ["Enquadramento", "Distância, ângulo e corte da foto"], expressao: ["Expressão", "Sorriso e olhar: o que a foto passa"], cenario: ["Cenário e estilo", "Fundo, lugar e roupa"], variedade: ["Variedade", "Se as fotos mostram coisas diferentes da sua vida"] };
+function desenhaDims(dims) {
+  const box = $("#dims"), lista = $("#dimsLista");
+  if (!Array.isArray(dims) || !dims.some((d) => Number(d.nota) > 0)) { box.hidden = true; return; }
+  const ord = [...dims].sort((a, b) => Number(a.nota) - Number(b.nota));
+  lista.innerHTML = "";
+  ord.forEach((d, i) => {
+    const [nome, sub] = NOME_DIM[d.chave] || [d.chave, ""];
+    const el = document.createElement("div"); el.className = "dim" + (i === 0 ? " aberta" : " trancada");
+    el.innerHTML = '<div class="dim-top"><b></b><span class="dim-n"></span></div><p class="dim-sub"></p><div class="dim-bar"><i></i></div><p class="dim-dica"></p>';
+    $("b", el).textContent = nome; $(".dim-sub", el).textContent = sub;
+    $(".dim-n", el).textContent = i === 0 ? Math.round(Number(d.nota) * 10) + "/100" : "🔒";
+    $(".dim-bar i", el).style.width = Math.max(4, Number(d.nota) * 10) + "%";
+    $(".dim-dica", el).textContent = i === 0 ? (d.dica || "") : "Corrigido nas suas 15 fotos";
+    lista.appendChild(el);
+  });
+  box.hidden = false;
+}
+// Cronômetro real: a prévia fica visível por 10 min nesta tela; quando zera, ela é borrada de verdade. O preço não muda.
+let cronFim = 0, cronTimer = 0;
+function iniciaCron() {
+  if (!cronFim) cronFim = Date.now() + 10 * 60 * 1000;
+  clearInterval(cronTimer);
+  const tick = () => {
+    const s = Math.max(0, Math.round((cronFim - Date.now()) / 1000));
+    const mmss = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+    $("#cron").textContent = mmss; $$(".cron-ref").forEach((e) => { e.textContent = mmss; });
+    if (!s) {
+      clearInterval(cronTimer);
+      $("#previa").classList.add("expirada");
+      $("#previaTxt").textContent = "A prévia expirou. As 15 fotos completas continuam disponíveis por R$ 29,90.";
+      $("#cronNota").textContent = "A prévia expirou. As 15 fotos continuam disponíveis.";
+      $(".cron-t").firstChild.textContent = "PRÉVIA EXPIRADA ";
+      $("#cron").textContent = "00:00";
+    }
+  };
+  tick(); cronTimer = setInterval(tick, 1000);
+}
+$$("[data-oferta]").forEach((b) => b.addEventListener("click", () => { marca("oferta"); $("#oferta").scrollIntoView({ behavior: "smooth", block: "start" }); }));
+$("#ctaCheckout").addEventListener("click", (e) => {
+  if (!CHECKOUT_URL) { e.preventDefault(); return; }
+  e.currentTarget.href = linkCheckout(); // o lead pode ter sido criado depois de montar o resultado
+  // Pixel N3w FotoMatch: InitiateCheckout ao abrir o checkout; guarda o preço para o Purchase da obrigado.html.
+  try { localStorage.setItem("fm_preco", String(PRECO)); if (estado.lead && estado.lead.id) localStorage.setItem("fm_lead_id", estado.lead.id); } catch { /* sem storage */ }
+  marca("checkout");
+  try { if (window.fbq) fbq("track", "InitiateCheckout", { content_name: "fotomatch_15_fotos", currency: "BRL", value: PRECO }); } catch { /* */ }
+});
+
+const EXEMPLO = {
+  nota_geral: 5.4,
+  fotos: [{ nota: 6.8 }, { nota: 4.1 }, { nota: 5.3 }],
+  melhor_indice: 0, pior_indice: 1,
+  dimensoes: [{ chave: "luz", nota: 4.2, dica: "Troque a luz de teto por luz de janela ou fim de tarde." }, { chave: "enquadramento", nota: 5.1, dica: "" }, { chave: "expressao", nota: 6.3, dica: "" }, { chave: "cenario", nota: 3.8, dica: "Saia do quarto: rua, café ou parque já mudam a primeira impressão." }, { chave: "variedade", nota: 4.6, dica: "" }],
+  erros: [
+    "Todas são selfies de braço esticado: falta uma foto de corpo inteiro tirada por outra pessoa.",
+    "Luz de cima ou de tela deixa sombra no rosto: prefira luz de janela ou fim de tarde.",
+    "Mesmo cenário em todas: varie (rua, café, viagem, esporte) para mostrar como é sua vida.",
+  ],
+  com_fotos_certas: "Com luz natural, enquadramento de meio corpo e cenários variados, o mesmo rosto passa uma impressão bem mais forte.",
+};
+
+marca("inicio");

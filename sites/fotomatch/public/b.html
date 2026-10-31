@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>FotoMatch · Fotos de perfil com o seu rosto</title>
+<meta name="description" content="Fotos de perfil para apps de namoro com o seu rosto, em cenários reais. Responda 5 perguntas, escolha seus estilos e mande suas selfies.">
+<meta name="robots" content="noindex,nofollow"><!-- RASCUNHO · versão B do teste A/B (modelo "fotos direto"). Tirar quando o Othon aprovar a publicação -->
+<meta name="theme-color" content="#14110F">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="b.css">
+<!-- Meta Pixel N3w FotoMatch (39072077939073915) · mesmo pixel e mesmos eventos da versão A -->
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent',{content_name:'fotomatch_15_fotos',currency:'BRL',value:29.90});</script>
+</head>
+<body class="vb">
+<header class="top">
+  <span class="logo">Foto<b>Match</b></span>
+  <span class="selo">Feito com IA</span>
+</header>
+
+<main id="app">
+  <!-- 0 · Abertura: 3 fotos no topo + promessa -->
+  <section class="tela ativa" data-tela="inicio">
+    <div class="topo3">
+      <figure><img src="img/r2-terno.jpg" alt="Homem fictício de terno andando na rua" loading="eager" width="640" height="960"></figure>
+      <figure class="meio"><img src="img/r1-jantar.jpg" alt="Homem fictício em jantar ao ar livre com luzinhas" loading="eager" width="640" height="960"></figure>
+      <figure><img src="img/r3-praia.jpg" alt="Homem fictício no pôr do sol à beira-mar" loading="eager" width="640" height="960"></figure>
+    </div>
+    <p class="kicker">Fotos de perfil para apps de namoro</p>
+    <h1>Fotos de perfil com o seu rosto, prontas em minutos.</h1>
+    <p class="sub">Você manda selfies comuns. A gente devolve <b>15 fotos</b> suas com luz, roupa e cenário certos, como se um amigo bom de foto tivesse tirado.</p>
+    <button class="btn" data-ir="idade">Montar minhas fotos</button>
+    <ul class="confianca">
+      <li>Leva 2 minutos para começar</li><li>Fotos prontas em até 30 minutos</li><li>Selfies privadas, apagadas em até 30 dias</li>
+    </ul>
+    <div class="passos">
+      <div><b>1</b><span>Conte como você é e escolha seus estilos</span></div>
+      <div><b>2</b><span>Mande de 3 a 6 selfies</span></div>
+      <div><b>3</b><span>Receba 15 fotos e use as melhores</span></div>
+    </div>
+  </section>
+
+  <!-- 1 · Idade -->
+  <section class="tela" data-tela="idade" data-passo="1">
+    <h2>Qual a sua idade?</h2>
+    <p class="dica">Para as fotos combinarem com você.</p>
+    <div class="opcoes" data-campo="idade">
+      <button data-v="18-24">18 a 24</button><button data-v="25-34">25 a 34</button><button data-v="35-44">35 a 44</button>
+      <button data-v="45-54">45 a 54</button><button data-v="55+">55 ou mais</button>
+    </div>
+  </section>
+
+  <!-- 2 · Reforço -->
+  <section class="tela" data-tela="lugar" data-passo="2">
+    <div class="reforco">
+      <p class="grande">Lugar certo.</p>
+      <h2>A primeira foto decide se ela para no seu perfil.</h2>
+      <p class="sub">Agora 3 perguntas rápidas sobre a sua aparência, para as fotos saírem parecidas com você de verdade.</p>
+    </div>
+    <button class="btn" data-ir="cabelo">Continuar</button>
+  </section>
+
+  <!-- 3 · Cabelo -->
+  <section class="tela" data-tela="cabelo" data-passo="3">
+    <h2>Como é o seu cabelo hoje?</h2>
+    <div class="opcoes" data-campo="cabelo">
+      <button data-v="raspado">Raspado ou careca</button><button data-v="curto">Curto</button>
+      <button data-v="medio">Médio</button><button data-v="comprido">Comprido</button><button data-v="cacheado">Cacheado ou crespo</button>
+    </div>
+  </section>
+
+  <!-- 4 · Barba -->
+  <section class="tela" data-tela="barba" data-passo="4">
+    <h2>E a barba?</h2>
+    <div class="opcoes" data-campo="barba">
+      <button data-v="sem">Sem barba</button><button data-v="por_fazer">Barba por fazer</button>
+      <button data-v="cheia">Barba cheia</button><button data-v="bigode">Bigode ou cavanhaque</button>
+    </div>
+  </section>
+
+  <!-- 5 · Corpo -->
+  <section class="tela" data-tela="corpo" data-passo="5">
+    <h2>Qual tipo de corpo mais parece com o seu?</h2>
+    <p class="dica">As fotos respeitam o seu corpo. A gente não muda quem você é.</p>
+    <div class="opcoes" data-campo="corpo">
+      <button data-v="magro">Magro</button><button data-v="medio">Médio</button>
+      <button data-v="atletico">Atlético</button><button data-v="forte">Forte</button><button data-v="acima">Acima do peso</button>
+    </div>
+  </section>
+
+  <!-- 6 · Galeria de looks (catálogo que vende antes do pagamento) -->
+  <section class="tela" data-tela="looks" data-passo="6">
+    <h2>Escolha os seus estilos</h2>
+    <p class="dica">Marque de 2 a 6. As suas 15 fotos são divididas entre eles.</p>
+    <div class="looks" id="looks">
+      <button data-v="executivo"><img src="img/r2-terno.jpg" alt="" loading="lazy"><span class="nome">O Executivo</span><span class="desc">terno, rua, luz do dia</span></button>
+      <button data-v="social"><img src="img/r1-jantar.jpg" alt="" loading="lazy"><span class="nome">O Social</span><span class="desc">jantar, bar, luzinhas</span></button>
+      <button data-v="praia"><img src="img/r3-praia.jpg" alt="" loading="lazy"><span class="nome">O Cara da Praia</span><span class="desc">pôr do sol, mar, leveza</span></button>
+      <button data-v="aventureiro"><img src="https://cdtfglylekiyxdmrgbne.supabase.co/storage/v1/object/public/match-site/estilos/aventureiro-v2.jpg" alt="" loading="lazy"><span class="nome">O Aventureiro</span><span class="desc">trilha, viagem, estrada</span></button>
+      <button data-v="atleta"><img src="https://cdtfglylekiyxdmrgbne.supabase.co/storage/v1/object/public/match-site/estilos/atleta.jpg" alt="" loading="lazy"><span class="nome">O Atleta</span><span class="desc">corrida, quadra, academia</span></button>
+      <button data-v="cavalheiro"><img src="https://cdtfglylekiyxdmrgbne.supabase.co/storage/v1/object/public/match-site/estilos/cavalheiro.jpg" alt="" loading="lazy"><span class="nome">O Cavalheiro</span><span class="desc">camisa social, rooftop, noite</span></button>
+    </div>
+    <button class="btn" id="looksOk" disabled>Continuar</button>
+  </section>
+
+  <!-- 7 · Hora da sessão: contato + selfies -->
+  <section class="tela" data-tela="contato" data-passo="7">
+    <p class="kicker">Hora da sessão</p>
+    <h2>Para onde mandamos as suas fotos?</h2>
+    <form id="formContato" novalidate>
+      <label>Seu e-mail<input id="email" type="email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></label>
+      <label class="check"><input type="checkbox" id="aceite"> <span>Aceito que minhas selfies sejam usadas por IA só para gerar as minhas fotos, guardadas em ambiente privado e apagadas em até 30 dias. Li a <a href="privacidade.html" target="_blank">privacidade</a>.</span></label>
+    </form>
+    <p class="erro" id="erroContato" role="alert"></p>
+    <button class="btn" id="contatoOk" disabled>Continuar</button>
+  </section>
+
+  <section class="tela" data-tela="envio" data-passo="8">
+    <h2>Agora, 1 selfie sua</h2>
+    <p class="dica">Uma já serve. Com 3 ou mais, de ângulos diferentes, as fotos ficam ainda mais parecidas com você.</p>
+    <ul class="req">
+      <li>Só você na foto, rosto bem visível</li><li>Sem óculos escuros, boné ou filtro</li>
+    </ul>
+    <div class="grade" id="grade"></div>
+    <label class="btn sec" id="addFoto">+ Adicionar selfie<input type="file" id="arquivos" accept="image/jpeg,image/png,image/webp" multiple hidden></label>
+    <p class="erro" id="erroEnvio" role="alert"></p>
+    <button class="btn" id="enviar" disabled>Continuar</button>
+    <p class="mini">Suas selfies são usadas só para gerar as suas fotos e são apagadas em 30 dias. Nunca usamos suas fotos em anúncios sem sua autorização por escrito.</p>
+  </section>
+
+  <!-- Enviando -->
+  <section class="tela" data-tela="enviando">
+    <div class="carregando"><div class="anel"></div>
+      <h2>Preparando a sua sessão…</h2>
+      <p class="sub" id="statusEnvio">Enviando com segurança</p>
+    </div>
+  </section>
+
+  <!-- 8 · Oferta -->
+  <section class="tela" data-tela="oferta">
+    <p class="kicker">Sua sessão está pronta para começar</p>
+    <h2>15 fotos de perfil com o <u>seu</u> rosto.</h2>
+    <p class="sub" id="ofertaLooks">Nos estilos que você escolheu, com luz, roupa e cenário certos. É você, mais bem fotografado.</p>
+    <p class="preco"><s>R$ 97</s> <b>R$ 29,90</b> <span>ou <b>R$ 27,90 no PIX</b> · pagamento único, sem mensalidade</span></p>
+    <a class="btn" id="ctaCheckout" href="#" aria-disabled="true">Quero minhas 15 fotos · R$ 29,90</a>
+    <p class="mini" id="ctaNota">Checkout em montagem (rascunho).</p>
+    <ul class="confianca"><li>Fotos prontas em até 30 minutos</li><li>Refazemos 3 fotos se você não gostar</li><li>Garantia de 7 dias</li></ul>
+
+    <h3>Como ficam as fotos</h3>
+    <p class="dica">Exemplos com pessoas fictícias geradas por IA: o antes é a selfie, o depois é a mesma cara.</p>
+    <div class="galeria">
+      <figure><img src="img/r1-jantar.jpg" alt="Exemplo fictício: jantar ao ar livre" loading="lazy"><figcaption>jantar à noite</figcaption></figure>
+      <figure><img src="img/r2-terno.jpg" alt="Exemplo fictício: terno na rua" loading="lazy"><figcaption>terno na rua</figcaption></figure>
+      <figure><img src="img/r3-praia.jpg" alt="Exemplo fictício: pôr do sol na praia" loading="lazy"><figcaption>pôr do sol</figcaption></figure>
+      <figure class="antes"><img src="img/r1-base.jpg" alt="Exemplo fictício: selfie comum" loading="lazy"><figcaption>a selfie de antes</figcaption></figure>
+      <figure class="antes"><img src="img/r2-base.jpg" alt="Exemplo fictício: selfie comum" loading="lazy"><figcaption>a selfie de antes</figcaption></figure>
+      <figure class="antes"><img src="img/r3-base.jpg" alt="Exemplo fictício: selfie comum" loading="lazy"><figcaption>a selfie de antes</figcaption></figure>
+    </div>
+
+    <h3>FotoMatch × ensaio com fotógrafo</h3>
+    <table class="compara">
+      <thead><tr><th></th><th>FotoMatch</th><th>Fotógrafo</th></tr></thead>
+      <tbody>
+        <tr><td>Preço</td><td class="sim">R$ 29,90 (R$ 27,90 no PIX)</td><td>R$ 300 a R$ 800</td></tr>
+        <tr><td>Tempo</td><td class="sim">até 30 minutos</td><td>dias para marcar e editar</td></tr>
+        <tr><td>Cenários</td><td class="sim">vários, sem sair de casa</td><td>1 ou 2 locais</td></tr>
+        <tr><td>Fotos</td><td class="sim">15 com o seu rosto</td><td>depende do pacote</td></tr>
+        <tr><td>Vergonha de posar</td><td class="sim">nenhuma</td><td>na frente de um estranho</td></tr>
+      </tbody>
+    </table>
+    <p class="mini">Faixa de preço de um ensaio individual com fotógrafo; varia por cidade.</p>
+
+    <div class="garantia">
+      <p class="tt">Garantia</p>
+      <p>Se alguma foto não ficar com a sua cara, a gente refaz 3 fotos. E você tem 7 dias de garantia.</p>
+    </div>
+
+    <h3>Perguntas frequentes</h3>
+    <div class="faq">
+      <details><summary>As fotos ficam parecidas comigo?</summary><p>Usamos as suas selfies como referência para manter rosto, cabelo, barba e tom de pele. O que muda é luz, roupa, cenário e enquadramento. Por isso pedimos selfies com o rosto bem visível.</p></details>
+      <details><summary>Quanto tempo demora?</summary><p>Até 30 minutos depois do pagamento. Você acompanha na página logo depois do pagamento, e o link também chega no e-mail da compra.</p></details>
+      <details><summary>Quantas fotos eu recebo?</summary><p>15 fotos, divididas entre os estilos que você escolheu.</p></details>
+      <details><summary>E se eu não gostar?</summary><p>Refazemos 3 fotos e você tem 7 dias de garantia.</p></details>
+      <details><summary>Que selfies eu devo mandar?</summary><p>De 3 a 6, só você na foto, com o rosto visível, sem óculos escuros, boné ou filtro. Ângulos e lugares diferentes ajudam.</p></details>
+      <details><summary>O que acontece com as minhas selfies?</summary><p>São usadas só para gerar as suas fotos, ficam em ambiente privado e são apagadas em até 30 dias. Nunca usamos suas fotos em anúncios sem sua autorização por escrito.</p></details>
+      <details><summary>Posso usar as fotos onde quiser?</summary><p>Sim, as fotos são suas. Cada app tem as próprias regras de perfil; confira as do app que você usa.</p></details>
+      <details><summary>Vocês são um app de namoro?</summary><p>Não. FotoMatch é um serviço de fotos com IA e não tem ligação com nenhum app de namoro.</p></details>
+      <details><summary>Como pago?</summary><p>PIX ou cartão, em pagamento único pela Payt. Sem mensalidade.</p></details>
+    </div>
+
+    <a class="btn" id="ctaCheckout2" href="#" aria-disabled="true">Quero minhas 15 fotos · R$ 29,90</a>
+    <p class="mini">As selfies são usadas só para gerar as suas fotos e apagadas em 30 dias.</p>
+  </section>
+</main>
+
+<div class="barra" id="barra" hidden><div id="barraFill"></div></div>
+
+<footer>
+  <p>FotoMatch é um serviço de fotos e edição com IA. Não somos um app de namoro e não temos ligação com nenhum app de namoro. Fotos geradas com IA a partir das selfies enviadas pelo próprio cliente. As imagens de exemplo desta página mostram pessoas fictícias geradas por IA.</p>
+  <p><a href="privacidade.html">Privacidade</a></p>
+</footer>
+<script src="b.js"></script>
+</body></html>
