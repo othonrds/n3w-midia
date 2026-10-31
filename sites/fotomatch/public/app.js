@@ -143,7 +143,7 @@ let notaPronta = null;
 $("#enviar").addEventListener("click", async () => {
   $("#erroEnvio").textContent = "";
   ir("analisando"); const pr = progresso();
-  if (DEMO) { setTimeout(async () => { await pr.termina(); notaPronta = EXEMPLO; ir("contato"); }, 2500); return; }
+  if (DEMO) { setTimeout(async () => { await pr.termina(); mostraResultado(EXEMPLO, true); }, 2500); return; }
   if (!estado.lead) {
     const r = await api("lead", { respostas: estado.respostas, utm: utmComQuiz() });
     if (!r.id) { pr.para(); ir("envio"); $("#erroEnvio").textContent = r.erro || "Sem conexão. Tente de novo."; return; }
@@ -160,8 +160,19 @@ $("#enviar").addEventListener("click", async () => {
   const n = await api("nota", { ...estado.lead, paths });
   notaPronta = n.nota || null; estado.notaErro = n.codigo || n.erro || "";
   await pr.termina();
-  ir("contato");
+  liberaResultado();
 });
+
+// Sem bloqueio de e-mail (decisão do Othon, 31/10): a nota aparece direto depois da análise, já com a oferta.
+function liberaResultado() {
+  if (notaPronta) {
+    try { if (window.fbq) fbq("track", "Lead", { content_name: "fotomatch_nota_gratis" }); } catch { /* */ }
+    return mostraResultado(notaPronta, false);
+  }
+  $("#pendenteTxt").textContent = "A análise demorou mais que o normal. Toque em tentar de novo em alguns minutos.";
+  $("#pendenteCod").textContent = estado.notaErro ? "código: " + estado.notaErro : "";
+  ir("pendente");
+}
 
 /* ---------- contato para liberar a nota ---------- */
 function contatoOk() {
