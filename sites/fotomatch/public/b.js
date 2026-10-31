@@ -109,12 +109,11 @@ $("#arquivos").addEventListener("change", async (e) => {
   e.target.value = ""; desenhaGrade();
 });
 function contatoOk() {
-  const w = $("#whats").value.replace(/\D/g, ""), m = $("#email").value.trim();
-  return (w.length >= 10 && w.length <= 13) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($("#email").value.trim());
 }
 function confereContato() { $("#contatoOk").disabled = !(contatoOk() && $("#aceite").checked); }
 function confere() { $("#enviar").disabled = estado.fotos.length < MIN; }
-["#whats", "#email", "#aceite"].forEach((s) => $(s).addEventListener("input", confereContato));
+["#email", "#aceite"].forEach((s) => $(s).addEventListener("input", confereContato));
 $("#aceite").addEventListener("change", confereContato);
 
 $("#contatoOk").addEventListener("click", async () => {
@@ -126,7 +125,7 @@ $("#contatoOk").addEventListener("click", async () => {
     if (!r.id) { $("#erroContato").textContent = r.erro || "Sem conexão. Tente de novo."; confereContato(); return; }
     estado.lead = { id: r.id, token: r.token }; guarda();
   }
-  const c = await api("contato", { ...estado.lead, whats: $("#whats").value, email: $("#email").value, consentimento: $("#aceite").checked });
+  const c = await api("contato", { ...estado.lead, email: $("#email").value, consentimento: $("#aceite").checked });
   confereContato();
   if (!c.ok) { $("#erroContato").textContent = c.erro || "Confira seus dados."; return; }
   try { if (window.fbq) fbq("track", "Lead", { content_name: "fotomatch_fotos_direto" }); } catch { /* */ }

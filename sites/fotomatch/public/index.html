@@ -127,14 +127,13 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
   <!-- Contato depois da análise: "sua nota está pronta" -->
   <section class="tela" data-tela="contato">
     <h2 class="centro">Sua nota está pronta!</h2>
-    <p class="sub centro">Coloque seu WhatsApp ou e-mail para ver o resultado.</p>
+    <p class="sub centro">Coloque seu e-mail para liberar a análise.</p>
     <form id="formContato" novalidate>
-      <label>WhatsApp com DDD<input id="whats" inputmode="tel" autocomplete="tel" placeholder="(11) 91234-5678"></label>
-      <label>ou e-mail<input id="email" type="email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></label>
+      <label>Seu e-mail<input id="email" type="email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></label>
     </form>
     <p class="erro" id="erroContato" role="alert"></p>
     <button class="btn" id="contatoOk" disabled>Ver minha nota</button>
-    <p class="mini">A gente só usa o seu contato para mandar a nota e dicas do FotoMatch.</p>
+    <p class="mini">A gente só usa o seu e-mail para mandar a nota e dicas do FotoMatch.</p>
     <div class="galeria-ex" aria-hidden="true"><img src="img/r1-jantar.jpg" alt=""><img src="img/r2-terno.jpg" alt=""><img src="img/r3-praia.jpg" alt=""></div>
     <p class="mini centro">Exemplos de fotos feitas pelo FotoMatch (pessoas fictícias geradas por IA).</p>
   </section>
@@ -156,6 +155,7 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
     <p class="centro"><b class="ruim-txt" id="nErros">3 motivos</b> que estão derrubando seus matches.</p>
     <div class="arq"><p class="kicker">Seu perfil hoje</p><h3 id="arqNome">–</h3><p class="sub" id="arqTxt"></p>
       <div class="arq-n"><div><b id="arqAlertas">3</b><span>alertas</span></div><div><b id="arqFalta">–</b><span>pontos até 80</span></div></div></div>
+    <button class="btn ouro" type="button" data-oferta>Liberar meu plano completo</button>
     <p class="sub" id="resFrase"></p>
     <div class="fotosNota" id="fotosNota"></div>
     <div class="previa" id="previa" hidden>
@@ -170,20 +170,28 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
     </div>
     <h3>Os 3 erros que mais pesam</h3>
     <ol class="erros" id="errosLista"></ol>
-    <div class="oferta">
-      <p class="kicker">Com fotos certas</p>
-      <h2>Com as fotos que você já mandou, receba 15 fotos de perfil com o <u>seu</u> rosto.</h2>
-      <p class="sub">Luz, cenário, roupa e enquadramento certos. É você, mais bem fotografado. Pronto em até 30 minutos.</p>
-      <p class="preco"><s>R$ 97</s> <b>R$ 29,90</b> <span>ou <b>R$ 27,90 no PIX</b> · pagamento único, sem mensalidade</span></p>
-      <a class="btn" id="ctaCheckout" href="#" aria-disabled="true">Quero minhas 15 fotos · R$ 29,90</a>
-      <p class="mini" id="ctaNota">Checkout em montagem (rascunho).</p>
-      <ul class="confianca"><li>Refazemos 3 fotos se você não gostar</li><li>Garantia de 7 dias</li></ul>
-      <p class="mini" id="cronNota">Sua prévia fica guardada por 10 minutos nesta tela.</p>
+    <div class="oferta" id="oferta">
+      <h2 class="oferta-t">Corrija os 3 erros que estão matando seus matches.</h2>
+      <p class="sub">15 fotos de perfil com o <u>seu</u> rosto, feitas a partir das fotos que você já mandou.</p>
+      <ul class="confianca">
+        <li>Correção dos 3 erros, foto por foto</li>
+        <li>Luz, cenário, roupa e enquadramento certos, sem cara de IA</li>
+        <li>Prontas em até 30 minutos, sem marca d'água</li>
+      </ul>
+      <div class="preco-box">
+        <div class="preco-l"><b>FotoMatch · hoje</b><span>vs. ensaio com fotógrafo</span></div>
+        <div class="preco-v">R$ 29,90</div>
+        <p class="preco-s">✓ Pagamento único de R$ 29,90. Sem mensalidade.</p>
+      </div>
+      <div class="garantia"><b>Garantia</b><span>Refazemos 3 fotos se você não gostar · 7 dias para pedir o dinheiro de volta</span></div>
+      <p class="mini centro" id="cronNota">Sua prévia fica reservada por <b class="cron-ref">10:00</b></p>
+      <a class="btn ouro" id="ctaCheckout" href="#" aria-disabled="true">Quero minhas 15 fotos</a>
+      <p class="mini centro" id="ctaNota">Checkout em montagem (rascunho).</p>
       <p class="mini">As selfies são usadas só para gerar as suas fotos e apagadas em 30 dias. Nunca usamos suas fotos em anúncios sem sua autorização por escrito.</p>
     </div>
   </section>
 
-  <div class="fixo" id="barraOferta" hidden><span class="cron-t">Prévia reservada por <b id="cron">10:00</b></span><button class="btn" id="ctaFixo" type="button">Quero minhas fotos</button></div>
+  <div class="fixo" id="barraOferta" hidden><p class="cron-t">PRÉVIA RESERVADA POR <b id="cron">10:00</b></p><button class="btn" id="ctaFixo" type="button" data-oferta>Liberar meu plano completo</button></div>
 
   <!-- Resultado pendente (sem chave/erro) -->
   <section class="tela" data-tela="pendente">

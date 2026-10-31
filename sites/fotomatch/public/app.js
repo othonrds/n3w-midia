@@ -36,7 +36,7 @@ const SEQ = ["inicio", "lugar", "interesse", "idade", "unico", "objetivo", "obje
 const ACEITE_FN = "https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/match-aceite";
 
 /* ---------- registro de telas (sem dado pessoal): onde as pessoas desistem ---------- */
-const ORDEM_TELA = Object.assign(Object.fromEntries(SEQ.map((t, i) => [t, i])), { analisando: 17, contato: 18, resultado: 19, pendente: 19, checkout: 20 });
+const ORDEM_TELA = Object.assign(Object.fromEntries(SEQ.map((t, i) => [t, i])), { analisando: 17, contato: 18, resultado: 19, pendente: 19, oferta: 20, checkout: 21 });
 const SESSAO = (() => { const n = () => Array.from(crypto.getRandomValues(new Uint8Array(10)), (x) => x.toString(16).padStart(2, "0")).join("");
   try { let v = sessionStorage.getItem("fm_s"); if (!v) { v = n(); sessionStorage.setItem("fm_s", v); } return v; } catch { return n(); } })();
 function marca(tela) {
@@ -151,15 +151,14 @@ $("#enviar").addEventListener("click", async () => {
 
 /* ---------- contato para liberar a nota ---------- */
 function contatoOk() {
-  const w = $("#whats").value.replace(/\D/g, ""), m = $("#email").value.trim();
-  return (w.length >= 10 && w.length <= 13) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($("#email").value.trim());
 }
-["#whats", "#email"].forEach((s) => $(s).addEventListener("input", () => { $("#contatoOk").disabled = !contatoOk(); }));
+["#email"].forEach((s) => $(s).addEventListener("input", () => { $("#contatoOk").disabled = !contatoOk(); }));
 $("#contatoOk").addEventListener("click", async () => {
   $("#erroContato").textContent = "";
   if (DEMO) return mostraResultado(EXEMPLO, true);
   $("#contatoOk").disabled = true;
-  const c = await api("contato", { ...estado.lead, whats: $("#whats").value, email: $("#email").value, consentimento: true });
+  const c = await api("contato", { ...estado.lead, email: $("#email").value, consentimento: true });
   $("#contatoOk").disabled = !contatoOk();
   if (!c.ok) { $("#erroContato").textContent = c.erro || "Confira seus dados."; return; }
   try { if (window.fbq) fbq("track", "Lead", { content_name: "fotomatch_nota_gratis" }); } catch { /* */ }
@@ -243,7 +242,7 @@ function mostraResultado(nota, exemplo) {
   desenhaDims(nota.dimensoes);
   $("#errosLista").innerHTML = "";
   nota.erros.forEach((e) => { const li = document.createElement("li"); li.textContent = e; $("#errosLista").appendChild(li); });
-  if (CHECKOUT_URL) { const a = $("#ctaCheckout"); a.href = linkCheckout(); a.removeAttribute("aria-disabled"); $("#ctaNota").textContent = "Pagamento seguro pela Payt · R$ 27,90 no PIX, na hora."; }
+  if (CHECKOUT_URL) { const a = $("#ctaCheckout"); a.href = linkCheckout(); a.removeAttribute("aria-disabled"); $("#ctaNota").textContent = "Pagamento seguro pela Payt."; }
   ir("resultado");
   pedePrevia(exemplo).catch(previaDepois);
   iniciaCron();
@@ -273,19 +272,20 @@ function iniciaCron() {
   clearInterval(cronTimer);
   const tick = () => {
     const s = Math.max(0, Math.round((cronFim - Date.now()) / 1000));
-    $("#cron").textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+    const mmss = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+    $("#cron").textContent = mmss; $$(".cron-ref").forEach((e) => { e.textContent = mmss; });
     if (!s) {
       clearInterval(cronTimer);
       $("#previa").classList.add("expirada");
       $("#previaTxt").textContent = "A prévia expirou. As 15 fotos completas continuam disponíveis por R$ 29,90.";
-      $("#cronNota").textContent = "A prévia expirou.";
-      $(".cron-t").firstChild.textContent = "Prévia expirada";
+      $("#cronNota").textContent = "A prévia expirou. As 15 fotos continuam disponíveis.";
+      $(".cron-t").firstChild.textContent = "PRÉVIA EXPIRADA ";
       $("#cron").textContent = "00:00";
     }
   };
   tick(); cronTimer = setInterval(tick, 1000);
 }
-$("#ctaFixo").addEventListener("click", () => $("#ctaCheckout").click());
+$$("[data-oferta]").forEach((b) => b.addEventListener("click", () => { marca("oferta"); $("#oferta").scrollIntoView({ behavior: "smooth", block: "start" }); }));
 $("#ctaCheckout").addEventListener("click", (e) => {
   if (!CHECKOUT_URL) { e.preventDefault(); return; }
   e.currentTarget.href = linkCheckout(); // o lead pode ter sido criado depois de montar o resultado
