@@ -119,3 +119,15 @@ footer{max-width:520px;margin:0 auto;padding:20px 16px 40px;color:var(--muted);f
 .arq-n{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .arq-n div{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
 .arq-n b{display:block;font:800 30px var(--display)}.arq-n span{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+
+.dado{margin:18px auto 0;max-width:330px;border:1px solid var(--line);border-radius:14px;padding:14px 16px;text-align:center;background:var(--surface)}
+.dado b{display:block;font-size:40px;line-height:1;color:var(--accent);font-weight:800}
+.dado p{margin:6px 0 6px;font-size:15px}
+.dado .fonte{display:block;font-size:11px;opacity:.6}
+.fixo{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;align-items:center;gap:10px;justify-content:space-between;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:var(--surface);border-top:1px solid var(--line)}
+.fixo .cron-t{font-size:13px;line-height:1.2}
+.fixo .cron-t b{display:block;font-size:20px;font-variant-numeric:tabular-nums;color:var(--accent)}
+.fixo .btn{width:auto;flex:1;max-width:220px;margin:0;padding:12px 14px}
+.previa.expirada .previaFoto img{filter:blur(14px)}
+body.com-fixo #app{padding-bottom:90px}
+.fixo[hidden]{display:none}

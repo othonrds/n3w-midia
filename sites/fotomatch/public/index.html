@@ -50,7 +50,7 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
   </section>
   <section class="tela" data-tela="unico" data-passo="4">
     <div class="ref"><div class="ref-ico" aria-hidden="true">📸</div>
-      <h2>Não existe receita única</h2><p class="sub">O FotoMatch olha as <b>suas</b> fotos e mostra o que funciona para você chegar onde quer.</p></div>
+      <h2>Não existe receita única</h2><p class="sub">O FotoMatch olha as <b>suas</b> fotos e mostra o que funciona para você chegar onde quer.</p><div class="dado"><b>34%</b><p>dos usuários de app recusam na hora quem tem fotos de baixa qualidade.</p><span class="fonte">Pesquisa YouGov para a Skylum, EUA, 2020, com 1.030 usuários de apps de namoro.</span></div></div>
     <button class="btn" data-proximo>Continuar</button>
   </section>
   <section class="tela" data-tela="objetivo" data-passo="5">
@@ -68,7 +68,7 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
   </section>
   <section class="tela" data-tela="rapido" data-passo="8">
     <div class="ref"><div class="ref-ico" aria-hidden="true">⚡</div>
-      <h2>Seu perfil pode melhorar hoje</h2><p class="sub">Luz, ângulo e cenário mudam a primeira impressão mais do que qualquer bio. Não é mágica: é foto bem feita.</p></div>
+      <h2>Seu perfil pode melhorar hoje</h2><p class="sub">Luz, ângulo e cenário mudam a primeira impressão mais do que qualquer bio. Não é mágica: é foto bem feita.</p><div class="dado"><b>38%</b><p>dizem que fotos melhores aumentam a chance de darem like.</p><span class="fonte">Pesquisa YouGov para a Skylum, EUA, 2020, com 1.030 usuários de apps de namoro.</span></div></div>
     <button class="btn" data-proximo>Continuar</button>
   </section>
   <section class="tela" data-tela="segura" data-passo="9">
@@ -86,7 +86,7 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
 
   <section class="tela" data-tela="solucao" data-passo="10">
     <div class="ref"><div class="ref-ico" aria-hidden="true">👏</div>
-      <h2>Tem solução pra cada trava</h2><p class="sub">Foto, conversa ou falta de tempo: a sua nota mostra por onde começar.</p></div>
+      <h2>Tem solução pra cada trava</h2><p class="sub">Foto, conversa ou falta de tempo: a sua nota mostra por onde começar.</p><div class="dado"><b>28%</b><p>deixam passar até diferença de hábitos, como beber ou fumar, quando a foto é boa.</p><span class="fonte">Pesquisa YouGov para a Skylum, EUA, 2020, com 1.030 usuários de apps de namoro.</span></div></div>
     <button class="btn" data-proximo>Continuar</button>
   </section>
   <section class="tela" data-tela="ajuda" data-passo="11">
@@ -99,7 +99,7 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
   </section>
   <section class="tela" data-tela="jeito" data-passo="13">
     <div class="ref"><div class="ref-ico" aria-hidden="true">❤️</div>
-      <h2>Do seu jeito</h2><p class="sub">Você pode só ajustar as fotos que já tem ou receber fotos novas com o seu rosto, prontas em até 30 minutos.</p></div>
+      <h2>Do seu jeito</h2><p class="sub">Você pode só ajustar as fotos que já tem ou receber fotos novas com o seu rosto, prontas em até 30 minutos.</p><div class="dado"><b>31%</b><p>recusam fotos com filtro. As nossas não usam filtro: é luz, cenário e enquadramento.</p><span class="fonte">Pesquisa YouGov para a Skylum, EUA, 2020, com 1.030 usuários de apps de namoro.</span></div></div>
     <button class="btn" data-proximo>Continuar</button>
   </section>
   <section class="tela" data-tela="motivacao" data-passo="14">
@@ -170,9 +170,12 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
       <a class="btn" id="ctaCheckout" href="#" aria-disabled="true">Quero minhas 15 fotos · R$ 29,90</a>
       <p class="mini" id="ctaNota">Checkout em montagem (rascunho).</p>
       <ul class="confianca"><li>Refazemos 3 fotos se você não gostar</li><li>Garantia de 7 dias</li></ul>
+      <p class="mini" id="cronNota">Sua prévia fica guardada por 10 minutos nesta tela.</p>
       <p class="mini">As selfies são usadas só para gerar as suas fotos e apagadas em 30 dias. Nunca usamos suas fotos em anúncios sem sua autorização por escrito.</p>
     </div>
   </section>
+
+  <div class="fixo" id="barraOferta" hidden><span class="cron-t">Prévia reservada por <b id="cron">10:00</b></span><button class="btn" id="ctaFixo" type="button">Quero minhas fotos</button></div>
 
   <!-- Resultado pendente (sem chave/erro) -->
   <section class="tela" data-tela="pendente">

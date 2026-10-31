@@ -54,6 +54,7 @@ function ir(nome) {
   $$(".tela").forEach((t) => t.classList.toggle("ativa", t.dataset.tela === nome));
   const t = $(`.tela[data-tela="${nome}"]`); const passo = Number(t?.dataset.passo || 0);
   $("#barra").hidden = !passo; $("#barraFill").style.width = (passo / TOTAL * 100) + "%";
+  const fixo = nome === "resultado"; $("#barraOferta").hidden = !fixo; document.body.classList.toggle("com-fixo", fixo);
   window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
 }
 const proximo = (de) => ir(SEQ[SEQ.indexOf(de) + 1] || "envio");
@@ -244,7 +245,28 @@ function mostraResultado(nota, exemplo) {
   if (CHECKOUT_URL) { const a = $("#ctaCheckout"); a.href = linkCheckout(); a.removeAttribute("aria-disabled"); $("#ctaNota").textContent = "Pagamento seguro pela Payt · R$ 27,90 no PIX, na hora."; }
   ir("resultado");
   pedePrevia(exemplo).catch(previaDepois);
+  iniciaCron();
 }
+// Cronômetro real: a prévia fica visível por 10 min nesta tela; quando zera, ela é borrada de verdade. O preço não muda.
+let cronFim = 0, cronTimer = 0;
+function iniciaCron() {
+  if (!cronFim) cronFim = Date.now() + 10 * 60 * 1000;
+  clearInterval(cronTimer);
+  const tick = () => {
+    const s = Math.max(0, Math.round((cronFim - Date.now()) / 1000));
+    $("#cron").textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+    if (!s) {
+      clearInterval(cronTimer);
+      $("#previa").classList.add("expirada");
+      $("#previaTxt").textContent = "A prévia expirou. As 15 fotos completas continuam disponíveis por R$ 29,90.";
+      $("#cronNota").textContent = "A prévia expirou.";
+      $(".cron-t").firstChild.textContent = "Prévia expirada";
+      $("#cron").textContent = "00:00";
+    }
+  };
+  tick(); cronTimer = setInterval(tick, 1000);
+}
+$("#ctaFixo").addEventListener("click", () => $("#ctaCheckout").click());
 $("#ctaCheckout").addEventListener("click", (e) => {
   if (!CHECKOUT_URL) { e.preventDefault(); return; }
   e.currentTarget.href = linkCheckout(); // o lead pode ter sido criado depois de montar o resultado
