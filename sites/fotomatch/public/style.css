@@ -160,7 +160,7 @@ body.com-fixo #app{padding-bottom:110px}
 .cron-ref{color:var(--accent);font-variant-numeric:tabular-nums}
 
 .sub-isca{margin:0 0 10px;font-size:15px}
-.q-isca{margin:6px 0 10px;font-size:20px}
+.q-isca{margin:14px 0 16px;font-size:44px;line-height:1.02;color:var(--accent);letter-spacing:-.02em}
 .opcoes.compacta button{padding-top:11px;padding-bottom:11px;min-height:0}
 .tela[data-tela="inicio"] .faixa-topo{margin-bottom:8px;padding:6px 12px}
 
