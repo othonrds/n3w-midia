@@ -56,10 +56,30 @@ function encodeParams(params) {
   return p;
 }
 
+// Token da Página (cache curto): necessário para moderar comentários de posts de anúncio
+// (conta do Instagram "criada pela Página", sem Instagram vinculado). Nunca é exposto.
+const _pageTok = {};
+async function tokenDaPagina(env, pageId) {
+  const id = pageId || env.PAGE_ID; const c = _pageTok[id];
+  if (c && c.exp > Date.now()) return c.t;
+  const r = await graph(env, "GET", id, { fields: "access_token" });
+  if (!r.access_token) throw new Error("sem token da Página " + id);
+  _pageTok[id] = { t: r.access_token, exp: Date.now() + 30 * 60 * 1000 };
+  return r.access_token;
+}
+// Tenta com o token do sistema; se a Meta exigir token da Página (#10/#190/#200), repete com ele.
+async function graphComoPagina(env, method, path, params, pageId) {
+  try { return await graph(env, method, path, params); }
+  catch (e) {
+    if (![10, 190, 200].includes(e.code)) throw e;
+    return graph(env, method, path, params, { token: await tokenDaPagina(env, pageId) });
+  }
+}
+
 async function graph(env, method, path, params = {}, ctx = {}) {
   const base = `https://graph.facebook.com/${env.GRAPH_VERSION}/${path.replace(/^\//, "")}`;
   const body = encodeParams(params);
-  const headers = { Authorization: `Bearer ${env.META_TOKEN}` };
+  const headers = { Authorization: `Bearer ${ctx.token || env.META_TOKEN}` };
   let url = base, init = { method, headers };
   if (method === "GET") url = `${base}?${body}`;
   else { init.body = body; headers["Content-Type"] = "application/x-www-form-urlencoded"; }
@@ -568,14 +588,14 @@ const TOOLS = [
   {
     name: "ig_responder",
     description: "Responde a um comentário do Instagram.",
-    inputSchema: S({ comentario_id: str("id do comentário"), texto: str("resposta") }, ["comentario_id", "texto"]),
-    run: async (env, a) => graph(env, "POST", `${a.comentario_id}/replies`, { message: a.texto }),
+    inputSchema: S({ comentario_id: str("id do comentário"), texto: str("resposta"), pagina_id: str("opcional: Página dona do anúncio (padrão PAGE_ID)") }, ["comentario_id", "texto"]),
+    run: async (env, a) => graphComoPagina(env, "POST", `${a.comentario_id}/replies`, { message: a.texto }, a.pagina_id),
   },
   {
     name: "ig_ocultar",
     description: "Oculta (ou volta a mostrar) um comentário do Instagram. Não apaga.",
-    inputSchema: S({ comentario_id: str("id do comentário"), ocultar: { type: "boolean", description: "padrão true" } }, ["comentario_id"]),
-    run: async (env, a) => graph(env, "POST", a.comentario_id, { hide: a.ocultar !== false }),
+    inputSchema: S({ comentario_id: str("id do comentário"), ocultar: { type: "boolean", description: "padrão true" }, pagina_id: str("opcional: Página dona do anúncio (padrão PAGE_ID)") }, ["comentario_id"]),
+    run: async (env, a) => graphComoPagina(env, "POST", a.comentario_id, { hide: a.ocultar !== false }, a.pagina_id),
   },
   // ------------------------------------------------------------ Mídia (bucket R2 "n3w-midia")
   // Organização: <projeto>/criativos/<CRIATIVO>/arquivo · <projeto>/testes/<AAAA-MM-DD>_<T##>/teste.json|metricas-<hora>.json|resultado.json
