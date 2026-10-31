@@ -6,7 +6,7 @@
 //   contato  → grava WhatsApp/e-mail + consentimento (LGPD)
 //   foto     → recebe 1 selfie (dataURL jpeg/png/webp ≤ 6 MB) e guarda no bucket PRIVADO match-selfies/<lead>/...
 //   evento   → registra que uma sessão chegou numa tela do funil (match_eventos), sem dado pessoal
-//   nota     → analisa 1–6 fotos (paths do bucket, do próprio lead) com visão da OpenAI → nota 0–10 por foto + 3 erros
+//   nota     → analisa 1–9 fotos (paths do bucket, do próprio lead) com visão da OpenAI → nota 0–10 por foto, 3 erros e 5 áreas
 //   limpeza  → (cron diário, header x-cron-key do Vault) apaga selfies com mais de 30 dias pela Storage API
 //   previa   → 1 foto gerada do próprio lead (gpt-image-2, cena "jantar"), marca d'água "FotoMatch · prévia" aplicada AQUI,
 //              guardada no bucket privado (<lead>/previa-*.jpg) e devolvida por URL assinada. 1 por lead; teto US$ 10/dia
@@ -24,7 +24,7 @@ const OPENAI = Deno.env.get("OPENAI_API_KEY") || "";
 const MODELO = Deno.env.get("MATCH_NOTA_MODELO") || "gpt-4.1-mini";
 const BUCKET = "match-selfies";
 const IMG_MODELO = Deno.env.get("OPENAI_IMAGE_MODEL") || "gpt-image-2";
-const MAX_FOTOS = 6, MIN_FOTOS = 1, MAX_TENTATIVAS = 3, MAX_BYTES = 6 * 1024 * 1024;
+const MAX_FOTOS = 9, MIN_FOTOS = 1, MAX_TENTATIVAS = 3, MAX_BYTES = 6 * 1024 * 1024;
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -85,10 +85,13 @@ Responda APENAS JSON neste formato:
   "alertas": [ "varias_pessoas" | "rosto_nao_visivel" | "oculos_escuros" | "escura" | "possivel_menor" ]}],
  "melhor_indice": int, "pior_indice": int,
  "erros": [string, string, string],
+ "dimensoes": [{"chave": "luz" | "enquadramento" | "expressao" | "cenario" | "variedade", "nota": number, "dica": string}],
  "com_fotos_certas": string}
 "erros" = exatamente os 3 erros mais importantes do conjunto, cada um com a correção (ex.: "Todas são selfies de braço esticado: falta uma foto de corpo inteiro tirada por outra pessoa").
+"dimensoes" = exatamente 5 itens, um para cada chave, nota de 0 a 10 do CONJUNTO de fotos nessa área (luz = luz e nitidez; enquadramento = enquadramento e ângulo; expressao = sorriso e olhar, nunca aparência; cenario = fundo, cenário e roupa da produção; variedade = fotos diferentes entre si), e "dica" com 1 frase curta de como corrigir.
 "com_fotos_certas" = 1 frase sobre como o perfil ficaria com fotos certas (luz, cenário, enquadramento), sem prometer resultado.`;
 
+const DIMS = ["luz", "enquadramento", "expressao", "cenario", "variedade"];
 async function nota(b: any) {
   const lead = await leadAutorizado(b);
   if (!lead) return out(403, { erro: "Sem permissão" });
@@ -107,7 +110,7 @@ async function nota(b: any) {
 
   const r = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST", headers: { Authorization: "Bearer " + OPENAI, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: MODELO, temperature: 0.2, response_format: { type: "json_object" }, max_tokens: 1200,
+    body: JSON.stringify({ model: MODELO, temperature: 0.2, response_format: { type: "json_object" }, max_tokens: 1600,
       messages: [{ role: "system", content: PROMPT }, { role: "user", content }] }),
   });
   if (!r.ok) {
@@ -127,6 +130,7 @@ async function nota(b: any) {
     nota_geral: clamp(res.nota_geral ?? fotos.reduce((s, f) => s + f.nota, 0) / fotos.length),
     fotos, melhor_indice: Number.isInteger(res.melhor_indice) ? res.melhor_indice : 0, pior_indice: Number.isInteger(res.pior_indice) ? res.pior_indice : 0,
     erros: (Array.isArray(res.erros) ? res.erros : []).map((e: unknown) => txt(e, 220)).filter(Boolean).slice(0, 3),
+    dimensoes: DIMS.map((k) => { const d0 = (Array.isArray(res.dimensoes) ? res.dimensoes : []).find((x: any) => x && x.chave === k) || {}; return { chave: k, nota: clamp(d0.nota), dica: txt(d0.dica, 160) }; }),
     com_fotos_certas: txt(res.com_fotos_certas, 240), modelo: MODELO, bloqueado: possivelMenor ? "possivel_menor" : null,
   };
   await db(`match_leads?id=eq.${lead.id}`, { method: "PATCH", prefer: "return=minimal", body: { nota: final, nota_em: new Date().toISOString(), status: "nota", atualizado_em: new Date().toISOString() } });

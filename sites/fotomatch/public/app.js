@@ -6,7 +6,7 @@ const CHECKOUT_URL = "https://checkout.payt.com.br/1c8f9b1e8a2f69d9ae85268e8854d
 const CHECKOUT_PARAM_LEAD = "src"; // id do lead vai neste parâmetro (Checkout Expert confirma o nome aceito pela Payt).
 const PRECO = 29.90; // BRL. Oferta "15 fotos com o seu rosto" (mesmo valor do botão e do Purchase em obrigado.html).
 const DEMO = new URLSearchParams(location.search).has("demo");
-const MIN = 1, MAX = 6;
+const MIN = 1, MAX = 9;
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -240,12 +240,31 @@ function mostraResultado(nota, exemplo) {
     fig.title = [f.ponto_forte, f.ajuste].filter(Boolean).join(" · ");
     box.appendChild(fig);
   });
+  desenhaDims(nota.dimensoes);
   $("#errosLista").innerHTML = "";
   nota.erros.forEach((e) => { const li = document.createElement("li"); li.textContent = e; $("#errosLista").appendChild(li); });
   if (CHECKOUT_URL) { const a = $("#ctaCheckout"); a.href = linkCheckout(); a.removeAttribute("aria-disabled"); $("#ctaNota").textContent = "Pagamento seguro pela Payt · R$ 27,90 no PIX, na hora."; }
   ir("resultado");
   pedePrevia(exemplo).catch(previaDepois);
   iniciaCron();
+}
+const NOME_DIM = { luz: ["Luz e nitidez", "Como a luz bate no rosto e se a foto está nítida"], enquadramento: ["Enquadramento", "Distância, ângulo e corte da foto"], expressao: ["Expressão", "Sorriso e olhar: o que a foto passa"], cenario: ["Cenário e estilo", "Fundo, lugar e roupa"], variedade: ["Variedade", "Se as fotos mostram coisas diferentes da sua vida"] };
+function desenhaDims(dims) {
+  const box = $("#dims"), lista = $("#dimsLista");
+  if (!Array.isArray(dims) || !dims.some((d) => Number(d.nota) > 0)) { box.hidden = true; return; }
+  const ord = [...dims].sort((a, b) => Number(a.nota) - Number(b.nota));
+  lista.innerHTML = "";
+  ord.forEach((d, i) => {
+    const [nome, sub] = NOME_DIM[d.chave] || [d.chave, ""];
+    const el = document.createElement("div"); el.className = "dim" + (i === 0 ? " aberta" : " trancada");
+    el.innerHTML = '<div class="dim-top"><b></b><span class="dim-n"></span></div><p class="dim-sub"></p><div class="dim-bar"><i></i></div><p class="dim-dica"></p>';
+    $("b", el).textContent = nome; $(".dim-sub", el).textContent = sub;
+    $(".dim-n", el).textContent = i === 0 ? Math.round(Number(d.nota) * 10) + "/100" : "🔒";
+    $(".dim-bar i", el).style.width = Math.max(4, Number(d.nota) * 10) + "%";
+    $(".dim-dica", el).textContent = i === 0 ? (d.dica || "") : "Corrigido nas suas 15 fotos";
+    lista.appendChild(el);
+  });
+  box.hidden = false;
 }
 // Cronômetro real: a prévia fica visível por 10 min nesta tela; quando zera, ela é borrada de verdade. O preço não muda.
 let cronFim = 0, cronTimer = 0;
@@ -280,6 +299,7 @@ const EXEMPLO = {
   nota_geral: 5.4,
   fotos: [{ nota: 6.8 }, { nota: 4.1 }, { nota: 5.3 }],
   melhor_indice: 0, pior_indice: 1,
+  dimensoes: [{ chave: "luz", nota: 4.2, dica: "Troque a luz de teto por luz de janela ou fim de tarde." }, { chave: "enquadramento", nota: 5.1, dica: "" }, { chave: "expressao", nota: 6.3, dica: "" }, { chave: "cenario", nota: 3.8, dica: "Saia do quarto: rua, café ou parque já mudam a primeira impressão." }, { chave: "variedade", nota: 4.6, dica: "" }],
   erros: [
     "Todas são selfies de braço esticado: falta uma foto de corpo inteiro tirada por outra pessoa.",
     "Luz de cima ou de tela deixa sombra no rosto: prefira luz de janela ou fim de tarde.",

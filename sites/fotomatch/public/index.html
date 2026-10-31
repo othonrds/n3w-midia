@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>FotoMatch · Por que você não está dando match</title>
-<meta name="description" content="Descubra em 2 minutos por que suas fotos não dão match. Mande de 3 a 6 fotos e receba uma nota grátis, foto a foto, com os 3 erros que mais pesam.">
+<meta name="description" content="Descubra em 2 minutos por que suas fotos não dão match. Mande de 1 a 9 fotos e receba uma nota grátis, foto a foto, com os 3 erros que mais pesam.">
 <meta name="robots" content="noindex,nofollow"><!-- RASCUNHO: tirar quando o Othon aprovar a publicação -->
 <meta name="theme-color" content="#14110F">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,6 +21,7 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
 <main id="app">
   <!-- Página A · ISCA (modelo roastdating.com, 31/10/2026): quiz longo com reforços → foto → análise → contato para liberar → nota → oferta -->
   <section class="tela ativa" data-tela="inicio">
+    <div class="faixa-topo">★ Nota grátis · resultado em 2 minutos · fotos apagadas em 30 dias</div>
     <h1 class="h-isca">Por que você não está dando match</h1>
     <p class="sub centro">Nota grátis do seu perfil e um plano exato, a partir das suas fotos de verdade.</p>
     <div class="vai-ver"><p class="kicker">Você vai ver:</p>
@@ -115,7 +116,7 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
     <h2 class="centro">Mande suas fotos</h2>
     <p class="sub centro">Ganhe a sua nota grátis e um plano exato em 2 minutos.</p>
     <div class="grade" id="grade"></div>
-    <label class="btn sec" id="addFoto">+ Escolher de 1 a 6 fotos<input type="file" id="arquivos" accept="image/jpeg,image/png,image/webp" multiple hidden></label>
+    <label class="btn sec" id="addFoto">+ Escolher de 1 a 9 fotos<input type="file" id="arquivos" accept="image/jpeg,image/png,image/webp" multiple hidden></label>
     <p class="dica centro">As que você usa (ou usaria) no app. Só você na foto, rosto visível. Uma selfie já serve.</p>
     <label class="check"><input type="checkbox" id="aceite"> <span>Aceito que minhas fotos sejam analisadas por IA só para gerar a minha nota, guardadas em ambiente privado e apagadas em até 30 dias. Li a <a href="privacidade.html" target="_blank">privacidade</a>.</span></label>
     <p class="erro" id="erroEnvio" role="alert"></p>
@@ -134,6 +135,8 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
     <p class="erro" id="erroContato" role="alert"></p>
     <button class="btn" id="contatoOk" disabled>Ver minha nota</button>
     <p class="mini">A gente só usa o seu contato para mandar a nota e dicas do FotoMatch.</p>
+    <div class="galeria-ex" aria-hidden="true"><img src="img/r1-jantar.jpg" alt=""><img src="img/r2-terno.jpg" alt=""><img src="img/r3-praia.jpg" alt=""></div>
+    <p class="mini centro">Exemplos de fotos feitas pelo FotoMatch (pessoas fictícias geradas por IA).</p>
   </section>
 
   <!-- Analisando -->
@@ -159,6 +162,11 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
       <p class="kicker">Sua prévia</p>
       <figure class="previaFoto" id="previaFoto"><div class="previaCarregando" id="previaCarregando"><div class="anel"></div><span>Sua prévia está sendo gerada…</span></div><img id="previaImg" alt="Prévia de uma foto sua gerada com IA" hidden><span class="marca">FotoMatch · prévia</span></figure>
       <p class="mini" id="previaTxt">Uma foto sua, com luz e cenário certos. Leva cerca de 1 minuto.</p>
+    </div>
+    <div class="dims" id="dims" hidden>
+      <h3>O que está te puxando para baixo</h3>
+      <p class="sub">5 áreas das suas fotos. A mais fraca está aberta; as outras são corrigidas nas 15 fotos.</p>
+      <div id="dimsLista"></div>
     </div>
     <h3>Os 3 erros que mais pesam</h3>
     <ol class="erros" id="errosLista"></ol>
