@@ -15,7 +15,26 @@ fbq('init','39072077939073915');fbq('track','PageView');try{var k='fm_px_purchas
   <p class="kicker">Pedido confirmado</p>
   <h1>Pronto! Suas 15 fotos estão a caminho.</h1>
   <p class="sub">Vamos usar as fotos que você já mandou no quiz. Em até 30 minutos as suas 15 fotos chegam no WhatsApp ou e-mail que você deixou.</p>
+  <div id="acompanhar" style="margin:18px 0"><p class="mini" id="acTxt">Procurando o seu pedido…</p><a class="btn" id="acBtn" href="#" hidden>Acompanhar minhas fotos</a></div>
   <p class="mini">As selfies são usadas só para gerar as suas fotos e apagadas em 30 dias. Nunca usamos suas fotos em anúncios sem sua autorização por escrito.</p>
   <p><a href="privacidade.html">Privacidade</a></p>
 </main>
+<script>
+(function(){
+  var F="https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/match-entrega", lead=null;
+  try{ lead=JSON.parse(sessionStorage.getItem("fm_lead")||"null"); }catch(e){}
+  if(!lead){ try{ var b=JSON.parse(sessionStorage.getItem("fm_b")||"null"); lead=b&&b.lead; }catch(e){} }
+  var txt=document.getElementById("acTxt"), btn=document.getElementById("acBtn"), n=0;
+  if(!lead||!lead.id||!lead.token){ txt.textContent="O link das suas fotos chega no seu e-mail assim que ficarem prontas."; return; }
+  function busca(){
+    fetch(F,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({acao:"do_lead",id:lead.id,token:lead.token})})
+    .then(function(r){return r.json()}).then(function(j){
+      if(j.achou){ btn.href="pedido.html?p="+j.p+"&k="+j.k; btn.hidden=false; txt.textContent="Pagamento confirmado. Acompanhe as suas fotos ficando prontas:"; }
+      else if(++n<40){ txt.textContent="Confirmando o pagamento… (no PIX leva alguns segundos)"; setTimeout(busca,6000); }
+      else txt.textContent="O link das suas fotos chega no seu e-mail assim que ficarem prontas.";
+    }).catch(function(){ if(++n<40) setTimeout(busca,6000); });
+  }
+  busca();
+})();
+</script>
 </body></html>
