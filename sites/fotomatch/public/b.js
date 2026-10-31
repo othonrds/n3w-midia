@@ -59,7 +59,7 @@ $("#looks").addEventListener("click", (e) => {
 $("#looksOk").addEventListener("click", async () => {
   ir("envio");
   if (!estado.lead && !DEMO) {
-    const r = await api("lead", { respostas: { idade: estado.respostas.idade }, utm: { ...utm, fm_variante: VARIANTE } });
+    const r = await api("lead", { respostas: { idade: estado.respostas.idade }, utm: { ...utm, fm_variante: VARIANTE, fm_estilos: (estado.respostas.looks || []).join(",") } });
     if (r.id) { estado.lead = { id: r.id, token: r.token }; guarda(); }
   }
 });
@@ -108,7 +108,7 @@ $("#enviar").addEventListener("click", async () => {
   $("#erroEnvio").textContent = "";
   if (DEMO) { ir("enviando"); setTimeout(mostraOferta, 1200); return; }
   if (!estado.lead) {
-    const r = await api("lead", { respostas: { idade: estado.respostas.idade }, utm: { ...utm, fm_variante: VARIANTE } });
+    const r = await api("lead", { respostas: { idade: estado.respostas.idade }, utm: { ...utm, fm_variante: VARIANTE, fm_estilos: (estado.respostas.looks || []).join(",") } });
     if (!r.id) { $("#erroEnvio").textContent = r.erro || "Sem conexão. Tente de novo."; return; }
     estado.lead = { id: r.id, token: r.token }; guarda();
   }

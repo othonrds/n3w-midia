@@ -51,6 +51,16 @@ const CENAS: string[] = [
   "num barco em dia de sol, camisa de linho, óculos escuros, mar ao fundo, sorriso relaxado",
 ];
 
+// Página B: o cliente escolhe estilos; as cenas desses estilos vêm primeiro (índices em CENAS).
+const ESTILOS: Record<string, number[]> = {
+  executivo: [1, 13, 2], social: [0, 6, 5], praia: [3, 14, 4], aventureiro: [4, 8, 11], atleta: [9, 7, 10], cavalheiro: [5, 0, 13],
+};
+function ordemCenas(estilos: string): string[] {
+  const pri: number[] = [];
+  for (const e of String(estilos || "").split(",")) for (const i of ESTILOS[e.trim()] || []) if (!pri.includes(i)) pri.push(i);
+  const resto = CENAS.map((_, i) => i).filter((i) => !pri.includes(i));
+  return [...pri, ...resto].map((i) => CENAS[i]);
+}
 async function urlAssinada(path: string, s = 7 * 86400) {
   const r = await fetch(`${SB}/storage/v1/object/sign/${BUCKET}/${path}`, { method: "POST", headers: { ...H, "Content-Type": "application/json" }, body: JSON.stringify({ expiresIn: s }) });
   if (!r.ok) return null; const j = await r.json(); return j.signedURL ? SB + "/storage/v1" + j.signedURL : null;
@@ -131,7 +141,7 @@ async function processar(req: Request) {
         const refs = (await Promise.all(ordem.slice(0, 3).map(baixa))).filter(Boolean) as Blob[];
         const idx = Array.from({ length: Math.min(LOTE, alvo - fotos.length) }, (_, i) => fotos.length + i);
         const res = await Promise.allSettled(idx.map(async (i) => {
-          const g = await gera(CENAS[i % CENAS.length] + (i >= CENAS.length ? ", outro ângulo e outra roupa" : ""), refs);
+          const cenas = ordemCenas(lead.utm?.fm_estilos); const g = await gera(cenas[i % cenas.length] + (i >= cenas.length ? ", outro ângulo e outra roupa" : ""), refs);
           const path = `${o.lead_id}/pedido-${o.id}/${String(i + 1).padStart(2, "0")}-${rnd(2)}.jpg`;
           const up = await fetch(`${SB}/storage/v1/object/${BUCKET}/${path}`, { method: "POST", headers: { ...H, "Content-Type": "image/jpeg" }, body: g.bytes });
           if (!up.ok) throw new Error("upload " + up.status);
