@@ -160,14 +160,6 @@ body.com-fixo #app{padding-bottom:110px}
 .cron-ref{color:var(--accent);font-variant-numeric:tabular-nums}
 
 .sub-isca{margin:0 0 10px;font-size:15px}
-.q-isca{margin:14px 0 16px;font-size:44px;line-height:1.02;color:var(--accent);letter-spacing:-.02em}
+.q-isca{margin:6px 0 10px;font-size:20px}
 .opcoes.compacta button{padding-top:11px;padding-bottom:11px;min-height:0}
 .tela[data-tela="inicio"] .faixa-topo{margin-bottom:8px;padding:6px 12px}
-
-.nota-ex{display:flex;align-items:baseline;justify-content:center;gap:2px;margin:0 0 4px;line-height:1}
-.nota-ex b{font:800 40px var(--display);color:var(--accent)}
-.nota-ex span{font-size:16px;color:var(--muted)}
-.nota-ex em{font-style:normal;font-size:11px;color:var(--muted);margin-left:8px;text-transform:uppercase;letter-spacing:.08em}
-
-.h-isca.h-foco{font-size:46px;line-height:1;margin:18px 0 22px;letter-spacing:-.02em}
-.h-isca.h-foco span{color:var(--accent)}
