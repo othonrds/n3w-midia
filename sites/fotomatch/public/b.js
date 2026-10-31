@@ -114,6 +114,7 @@ $("#enviar").addEventListener("click", async () => {
   }
   const c = await api("contato", { ...estado.lead, whats: $("#whats").value, email: $("#email").value, consentimento: $("#aceite").checked });
   if (!c.ok) { $("#erroEnvio").textContent = c.erro || "Confira seus dados."; return; }
+  try { if (window.fbq) fbq("track", "Lead", { content_name: "fotomatch_nota_gratis" }); } catch { /* */ }
   ir("enviando");
   for (let i = 0; i < estado.fotos.length; i++) {
     $("#statusEnvio").textContent = `Enviando selfie ${i + 1} de ${estado.fotos.length}`;

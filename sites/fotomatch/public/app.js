@@ -118,6 +118,7 @@ $("#enviar").addEventListener("click", async () => {
   }
   const c = await api("contato", { ...estado.lead, whats: $("#whats").value, email: $("#email").value, consentimento: $("#aceite").checked });
   if (!c.ok) { $("#erroEnvio").textContent = c.erro || "Confira seus dados."; return; }
+  try { if (window.fbq) fbq("track", "Lead", { content_name: "fotomatch_nota_gratis" }); } catch { /* */ }
   ir("analisando");
   const paths = [];
   for (let i = 0; i < estado.fotos.length; i++) { // em sequência (o servidor acrescenta na lista do lead)
