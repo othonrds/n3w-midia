@@ -163,3 +163,8 @@ body.com-fixo #app{padding-bottom:110px}
 .q-isca{margin:6px 0 10px;font-size:20px}
 .opcoes.compacta button{padding-top:11px;padding-bottom:11px;min-height:0}
 .tela[data-tela="inicio"] .faixa-topo{margin-bottom:8px;padding:6px 12px}
+
+.nota-ex{display:flex;align-items:baseline;justify-content:center;gap:2px;margin:0 0 4px;line-height:1}
+.nota-ex b{font:800 40px var(--display);color:var(--accent)}
+.nota-ex span{font-size:16px;color:var(--muted)}
+.nota-ex em{font-style:normal;font-size:11px;color:var(--muted);margin-left:8px;text-transform:uppercase;letter-spacing:.08em}
