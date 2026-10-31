@@ -37,6 +37,8 @@ const ACEITE_FN = "https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/match-a
 
 /* ---------- registro de telas (sem dado pessoal): onde as pessoas desistem ---------- */
 const ORDEM_TELA = Object.assign(Object.fromEntries(SEQ.map((t, i) => [t, i])), { analisando: 17, contato: 18, resultado: 19, pendente: 19, oferta: 20, checkout: 21 });
+const ENTRADA_DIRETA = /^FM-S\d/i.test(utm.utm_content || "") || new URLSearchParams(location.search).get("entrada") === "direta";
+document.body.classList.toggle("entrada-direta", ENTRADA_DIRETA);
 const SESSAO = (() => { const n = () => Array.from(crypto.getRandomValues(new Uint8Array(10)), (x) => x.toString(16).padStart(2, "0")).join("");
   try { let v = sessionStorage.getItem("fm_s"); if (!v) { v = n(); sessionStorage.setItem("fm_s", v); } return v; } catch { return n(); } })();
 function marca(tela) {
@@ -92,7 +94,7 @@ $("#seguraOk").addEventListener("click", () => proximo("segura"));
 function utmComQuiz() {
   const r = estado.respostas;
   const quiz = ["interesse", "frustracao", "ajuda", "orcamento", "motivacao"].map((k) => k.slice(0, 3) + "=" + (r[k] || "")).join(";");
-  return { fm_quiz: quiz, fm_variante: "a", ...utm };
+  return { fm_quiz: quiz, fm_variante: "a", fm_entrada: ENTRADA_DIRETA ? "direta" : "topo", ...utm };
 }
 
 /* ---------- fotos ---------- */
