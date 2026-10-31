@@ -45,6 +45,20 @@ function marca(tela) {
     body: JSON.stringify({ acao: "evento", sessao: SESSAO, pagina: "A", tela, ordem: ORDEM_TELA[tela] ?? null, anuncio: utm.utm_content || null, lead: estado.lead && estado.lead.id }) }).catch(() => {}); } catch { /* */ }
 }
 
+// Diagnóstico da 1ª tela: quanto tempo a pessoa ficou e se rolou, quando sai sem responder (ordem 50 = fora do funil).
+const T0 = Date.now(); let rolou = false, saidaMarcada = false;
+addEventListener("scroll", () => { if (scrollY > 120) rolou = true; }, { passive: true });
+function marcaSaida() {
+  if (DEMO || saidaMarcada) return;
+  const ativa = document.querySelector(".tela.ativa"); if (!ativa || ativa.dataset.tela !== "inicio") return;
+  saidaMarcada = true;
+  const s = (Date.now() - T0) / 1000, faixa = s < 3 ? "0-3s" : s < 10 ? "3-10s" : s < 30 ? "10-30s" : "30s+";
+  const body = JSON.stringify({ acao: "evento", sessao: SESSAO, pagina: "A", tela: "saiu-" + faixa + (rolou ? "-rolou" : ""), ordem: 50, anuncio: utm.utm_content || null });
+  try { navigator.sendBeacon(FN, new Blob([body], { type: "text/plain" })); } catch { /* */ }
+}
+addEventListener("pagehide", marcaSaida);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") marcaSaida(); });
+
 /* ---------- navegação ---------- */
 const TOTAL = SEQ.length - 1;
 const OBJ_TIT = { serio: "Vamos te ajudar a encontrar algo sério", conhecer_gente: "Vamos te ajudar a conhecer gente nova", aberto: "Vamos te ajudar a ter mais encontros", ainda_nao_sei: "Vamos descobrir isso juntos" };

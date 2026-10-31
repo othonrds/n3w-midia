@@ -97,7 +97,7 @@ footer{max-width:520px;margin:0 auto;padding:20px 16px 40px;color:var(--muted);f
 
 /* ---------- página A · isca (modelo roastdating.com) ---------- */
 .centro{text-align:center}
-.h-isca{text-align:center;text-transform:uppercase;font-size:36px;line-height:1.02;margin:18px 0 10px}
+.h-isca{text-align:center;text-transform:uppercase;font-size:28px;line-height:1.05;margin:10px 0 6px}
 .vai-ver{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 0;margin:16px 0 4px}
 .vai-ver .kicker{color:var(--ok);margin:0 0 8px}
 .vai-ver ol{list-style:none;counter-reset:v;padding:0;margin:0;display:grid;gap:10px}
@@ -158,3 +158,8 @@ body.com-fixo #app{padding-bottom:110px}
 .garantia{display:flex;flex-direction:column;gap:2px;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:0 0 8px;font-size:13px;color:var(--muted)}
 .garantia b{color:var(--ink);font-size:14px}
 .cron-ref{color:var(--accent);font-variant-numeric:tabular-nums}
+
+.sub-isca{margin:0 0 10px;font-size:15px}
+.q-isca{margin:6px 0 10px;font-size:20px}
+.opcoes.compacta button{padding-top:11px;padding-bottom:11px;min-height:0}
+.tela[data-tela="inicio"] .faixa-topo{margin-bottom:8px;padding:6px 12px}
