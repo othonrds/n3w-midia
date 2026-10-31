@@ -6,7 +6,7 @@ const CHECKOUT_URL = "https://checkout.payt.com.br/1c8f9b1e8a2f69d9ae85268e8854d
 const CHECKOUT_PARAM_LEAD = "src"; // id do lead vai neste parâmetro (Checkout Expert confirma o nome aceito pela Payt).
 const PRECO = 29.90; // BRL. Oferta "15 fotos com o seu rosto" (mesmo valor do botão e do Purchase em obrigado.html).
 const DEMO = new URLSearchParams(location.search).has("demo");
-const MIN = 3, MAX = 6;
+const MIN = 1, MAX = 6;
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -30,9 +30,21 @@ async function api(acao, dados = {}) {
   return { status: r.status, ...j };
 }
 
+
+/* ---------- registro de telas (sem dado pessoal): onde as pessoas desistem ---------- */
+const ORDEM_TELA = { inicio: 0, idade: 1, trava: 2, objetivo: 3, segura: 4, reforco: 5, contato: 6, envio: 7, analisando: 8, resultado: 9, pendente: 9, checkout: 10 };
+const SESSAO = (() => { const n = () => Array.from(crypto.getRandomValues(new Uint8Array(10)), (x) => x.toString(16).padStart(2, "0")).join("");
+  try { let v = sessionStorage.getItem("fm_s"); if (!v) { v = n(); sessionStorage.setItem("fm_s", v); } return v; } catch { return n(); } })();
+function marca(tela) {
+  if (DEMO) return;
+  try { fetch(FN, { method: "POST", headers: { "Content-Type": "application/json" }, keepalive: true,
+    body: JSON.stringify({ acao: "evento", sessao: SESSAO, pagina: "A", tela, ordem: ORDEM_TELA[tela] ?? null, anuncio: utm.utm_content || null, lead: estado.lead && estado.lead.id }) }).catch(() => {}); } catch { /* */ }
+}
+
 /* ---------- navegação ---------- */
-const TOTAL = 6;
+const TOTAL = 7;
 function ir(nome) {
+  marca(nome);
   $$(".tela").forEach((t) => t.classList.toggle("ativa", t.dataset.tela === nome));
   const t = $(`.tela[data-tela="${nome}"]`); const passo = Number(t?.dataset.passo || 0);
   $("#barra").hidden = !passo; $("#barraFill").style.width = (passo / TOTAL * 100) + "%";
@@ -104,21 +116,31 @@ function contatoOk() {
   const w = $("#whats").value.replace(/\D/g, ""), m = $("#email").value.trim();
   return (w.length >= 10 && w.length <= 13) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m);
 }
-function confere() { $("#enviar").disabled = !(contatoOk() && $("#aceite").checked && estado.fotos.length >= MIN); }
-["#whats", "#email", "#aceite"].forEach((s) => $(s).addEventListener("input", confere));
-$("#aceite").addEventListener("change", confere);
+function confereContato() { $("#contatoOk").disabled = !(contatoOk() && $("#aceite").checked); }
+function confere() { $("#enviar").disabled = estado.fotos.length < MIN; }
+["#whats", "#email", "#aceite"].forEach((s) => $(s).addEventListener("input", confereContato));
+$("#aceite").addEventListener("change", confereContato);
+
+$("#contatoOk").addEventListener("click", async () => {
+  $("#erroContato").textContent = "";
+  if (DEMO) { ir("envio"); return; }
+  $("#contatoOk").disabled = true;
+  if (!estado.lead) {
+    const r = await api("lead", { respostas: estado.respostas, utm });
+    if (!r.id) { $("#erroContato").textContent = r.erro || "Sem conexão. Tente de novo."; confereContato(); return; }
+    estado.lead = { id: r.id, token: r.token };
+  }
+  const c = await api("contato", { ...estado.lead, whats: $("#whats").value, email: $("#email").value, consentimento: $("#aceite").checked });
+  confereContato();
+  if (!c.ok) { $("#erroContato").textContent = c.erro || "Confira seus dados."; return; }
+  try { if (window.fbq) fbq("track", "Lead", { content_name: "fotomatch_nota_gratis" }); } catch { /* */ }
+  ir("envio");
+});
 
 $("#enviar").addEventListener("click", async () => {
   $("#erroEnvio").textContent = "";
   if (DEMO) { ir("analisando"); setTimeout(() => mostraResultado(EXEMPLO, true), 1400); return; }
-  if (!estado.lead) {
-    const r = await api("lead", { respostas: estado.respostas, utm });
-    if (!r.id) { $("#erroEnvio").textContent = r.erro || "Sem conexão. Tente de novo."; return; }
-    estado.lead = { id: r.id, token: r.token };
-  }
-  const c = await api("contato", { ...estado.lead, whats: $("#whats").value, email: $("#email").value, consentimento: $("#aceite").checked });
-  if (!c.ok) { $("#erroEnvio").textContent = c.erro || "Confira seus dados."; return; }
-  try { if (window.fbq) fbq("track", "Lead", { content_name: "fotomatch_nota_gratis" }); } catch { /* */ }
+  if (!estado.lead) { ir("contato"); return; }
   ir("analisando");
   const paths = [];
   for (let i = 0; i < estado.fotos.length; i++) { // em sequência (o servidor acrescenta na lista do lead)
@@ -130,10 +152,17 @@ $("#enviar").addEventListener("click", async () => {
   $("#statusAnalise").textContent = "Avaliando luz, ângulo, expressão e cenário";
   const n = await api("nota", { ...estado.lead, paths });
   if (n.nota) return mostraResultado(n.nota, false);
-  const viaWhats = $("#whats").value.replace(/\D/g, "").length >= 10;
-  $("#pendenteTxt").textContent = viaWhats ? "Sua nota chega em até 10 min no seu WhatsApp." : "Sua nota chega em até 10 min no seu e-mail.";
+  $("#pendenteTxt").textContent = "A análise demorou mais que o normal. Toque em tentar de novo em alguns minutos.";
   $("#pendenteCod").textContent = n.codigo ? "código: " + n.codigo : (n.erro || "");
   ir("pendente");
+});
+
+$("#tentarNota").addEventListener("click", async () => {
+  if (!estado.lead) return;
+  ir("analisando"); $("#statusAnalise").textContent = "Avaliando luz, ângulo, expressão e cenário";
+  const n = await api("nota", { ...estado.lead });
+  if (n.nota) return mostraResultado(n.nota, false);
+  $("#pendenteCod").textContent = n.codigo ? "código: " + n.codigo : (n.erro || ""); ir("pendente");
 });
 
 /* ---------- exemplos do topo (carrossel) ---------- */
@@ -198,6 +227,7 @@ $("#ctaCheckout").addEventListener("click", (e) => {
   e.currentTarget.href = linkCheckout(); // o lead pode ter sido criado depois de montar o resultado
   // Pixel N3w FotoMatch: InitiateCheckout ao abrir o checkout; guarda o preço para o Purchase da obrigado.html.
   try { localStorage.setItem("fm_preco", String(PRECO)); if (estado.lead && estado.lead.id) localStorage.setItem("fm_lead_id", estado.lead.id); } catch { /* sem storage */ }
+  marca("checkout");
   try { if (window.fbq) fbq("track", "InitiateCheckout", { content_name: "fotomatch_15_fotos", currency: "BRL", value: PRECO }); } catch { /* */ }
 });
 
@@ -212,3 +242,5 @@ const EXEMPLO = {
   ],
   com_fotos_certas: "Com luz natural, enquadramento de meio corpo e cenários variados, o mesmo rosto passa uma impressão bem mais forte.",
 };
+
+marca("inicio");

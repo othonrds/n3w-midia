@@ -5,7 +5,8 @@
 //   lead     → cria o lead com as respostas do quiz            → {id, token}
 //   contato  → grava WhatsApp/e-mail + consentimento (LGPD)
 //   foto     → recebe 1 selfie (dataURL jpeg/png/webp ≤ 6 MB) e guarda no bucket PRIVADO match-selfies/<lead>/...
-//   nota     → analisa 3–6 fotos (paths do bucket, do próprio lead) com visão da OpenAI → nota 0–10 por foto + 3 erros
+//   evento   → registra que uma sessão chegou numa tela do funil (match_eventos), sem dado pessoal
+//   nota     → analisa 1–6 fotos (paths do bucket, do próprio lead) com visão da OpenAI → nota 0–10 por foto + 3 erros
 //   limpeza  → (cron diário, header x-cron-key do Vault) apaga selfies com mais de 30 dias pela Storage API
 //   previa   → 1 foto gerada do próprio lead (gpt-image-2, cena "jantar"), marca d'água "FotoMatch · prévia" aplicada AQUI,
 //              guardada no bucket privado (<lead>/previa-*.jpg) e devolvida por URL assinada. 1 por lead; teto US$ 10/dia
@@ -23,7 +24,7 @@ const OPENAI = Deno.env.get("OPENAI_API_KEY") || "";
 const MODELO = Deno.env.get("MATCH_NOTA_MODELO") || "gpt-4.1-mini";
 const BUCKET = "match-selfies";
 const IMG_MODELO = Deno.env.get("OPENAI_IMAGE_MODEL") || "gpt-image-2";
-const MAX_FOTOS = 6, MIN_FOTOS = 3, MAX_TENTATIVAS = 3, MAX_BYTES = 6 * 1024 * 1024;
+const MAX_FOTOS = 6, MIN_FOTOS = 1, MAX_TENTATIVAS = 3, MAX_BYTES = 6 * 1024 * 1024;
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -96,7 +97,7 @@ async function nota(b: any) {
   if (lead.nota_tentativas >= MAX_TENTATIVAS) return out(429, { erro: "Limite de análises atingido para este envio." });
   const pedidos: string[] = Array.isArray(b.paths) && b.paths.length ? b.paths.map(String) : lead.fotos;
   const paths = pedidos.filter((p) => lead.fotos.includes(p) && p.startsWith(lead.id + "/")).slice(0, MAX_FOTOS);
-  if (paths.length < MIN_FOTOS) return out(400, { erro: `Envie pelo menos ${MIN_FOTOS} fotos.` });
+  if (paths.length < MIN_FOTOS) return out(400, { erro: `Envie pelo menos ${MIN_FOTOS} foto.` });
   await db(`match_leads?id=eq.${lead.id}`, { method: "PATCH", prefer: "return=minimal", body: { nota_tentativas: lead.nota_tentativas + 1 } });
 
   const urls = await Promise.all(paths.map(urlAssinada));
@@ -330,6 +331,14 @@ async function acao(b: any, req: Request) {
       const fotos = [...lead.fotos, path];
       await db(`match_leads?id=eq.${lead.id}`, { method: "PATCH", prefer: "return=minimal", body: { fotos, status: "fotos", atualizado_em: new Date().toISOString() } });
       return out(200, { path, total: fotos.length });
+    }
+    case "evento": {
+      const sessao = txt(b.sessao, 40), pagina = String(b.pagina || "").toUpperCase(), tela = txt(b.tela, 30);
+      if (!/^[a-z0-9]{8,40}$/.test(sessao) || !["A", "B"].includes(pagina) || !/^[a-z0-9_-]{2,30}$/.test(tela)) return out(400, { erro: "evento inválido" });
+      const lead_id = UUID.test(String(b.lead || "")) ? String(b.lead) : null;
+      await db("match_eventos?on_conflict=sessao,pagina,tela", { method: "POST", prefer: "resolution=ignore-duplicates,return=minimal", body: {
+        sessao, pagina, tela, ordem: Number.isInteger(b.ordem) ? Math.max(0, Math.min(50, b.ordem)) : null, anuncio: txt(b.anuncio, 80) || null, lead_id } });
+      return out(200, { ok: true });
     }
     case "nota":
       return await nota(b);

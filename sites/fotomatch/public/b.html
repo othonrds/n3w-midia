@@ -97,15 +97,15 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
       <button data-v="executivo"><img src="img/r2-terno.jpg" alt="" loading="lazy"><span class="nome">O Executivo</span><span class="desc">terno, rua, luz do dia</span></button>
       <button data-v="social"><img src="img/r1-jantar.jpg" alt="" loading="lazy"><span class="nome">O Social</span><span class="desc">jantar, bar, luzinhas</span></button>
       <button data-v="praia"><img src="img/r3-praia.jpg" alt="" loading="lazy"><span class="nome">O Cara da Praia</span><span class="desc">pôr do sol, mar, leveza</span></button>
-      <button data-v="aventureiro" class="semfoto"><span class="ilu">⛰</span><span class="nome">O Aventureiro</span><span class="desc">trilha, viagem, estrada</span></button>
-      <button data-v="atleta" class="semfoto"><span class="ilu">◎</span><span class="nome">O Atleta</span><span class="desc">corrida, quadra, academia</span></button>
-      <button data-v="cavalheiro" class="semfoto"><span class="ilu">✦</span><span class="nome">O Cavalheiro</span><span class="desc">camisa social, rooftop, noite</span></button>
+      <button data-v="aventureiro"><img src="https://cdtfglylekiyxdmrgbne.supabase.co/storage/v1/object/public/match-site/estilos/aventureiro.jpg" alt="" loading="lazy"><span class="nome">O Aventureiro</span><span class="desc">trilha, viagem, estrada</span></button>
+      <button data-v="atleta"><img src="https://cdtfglylekiyxdmrgbne.supabase.co/storage/v1/object/public/match-site/estilos/atleta.jpg" alt="" loading="lazy"><span class="nome">O Atleta</span><span class="desc">corrida, quadra, academia</span></button>
+      <button data-v="cavalheiro"><img src="https://cdtfglylekiyxdmrgbne.supabase.co/storage/v1/object/public/match-site/estilos/cavalheiro.jpg" alt="" loading="lazy"><span class="nome">O Cavalheiro</span><span class="desc">camisa social, rooftop, noite</span></button>
     </div>
     <button class="btn" id="looksOk" disabled>Continuar</button>
   </section>
 
   <!-- 7 · Hora da sessão: contato + selfies -->
-  <section class="tela" data-tela="envio" data-passo="7">
+  <section class="tela" data-tela="contato" data-passo="7">
     <p class="kicker">Hora da sessão</p>
     <h2>Para onde mandamos as suas fotos?</h2>
     <form id="formContato" novalidate>
@@ -113,12 +113,18 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
       <label>ou e-mail<input id="email" type="email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></label>
       <label class="check"><input type="checkbox" id="aceite"> <span>Aceito que minhas selfies sejam usadas por IA só para gerar as minhas fotos, guardadas em ambiente privado e apagadas em até 30 dias. Li a <a href="privacidade.html" target="_blank">privacidade</a>.</span></label>
     </form>
-    <h3>Agora, de 3 a 6 selfies suas</h3>
+    <p class="erro" id="erroContato" role="alert"></p>
+    <button class="btn" id="contatoOk" disabled>Continuar</button>
+  </section>
+
+  <section class="tela" data-tela="envio" data-passo="8">
+    <h2>Agora, 1 selfie sua</h2>
+    <p class="dica">Uma já serve. Com 3 ou mais, de ângulos diferentes, as fotos ficam ainda mais parecidas com você.</p>
     <ul class="req">
-      <li>Só você na foto, rosto bem visível</li><li>Ângulos e lugares diferentes</li><li>Sem óculos escuros, boné ou filtro</li>
+      <li>Só você na foto, rosto bem visível</li><li>Sem óculos escuros, boné ou filtro</li>
     </ul>
     <div class="grade" id="grade"></div>
-    <label class="btn sec" id="addFoto">+ Adicionar selfies<input type="file" id="arquivos" accept="image/jpeg,image/png,image/webp" multiple hidden></label>
+    <label class="btn sec" id="addFoto">+ Adicionar selfie<input type="file" id="arquivos" accept="image/jpeg,image/png,image/webp" multiple hidden></label>
     <p class="erro" id="erroEnvio" role="alert"></p>
     <button class="btn" id="enviar" disabled>Continuar</button>
     <p class="mini">Suas selfies são usadas só para gerar as suas fotos e são apagadas em 30 dias. Nunca usamos suas fotos em anúncios sem sua autorização por escrito.</p>
@@ -174,7 +180,7 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
     <h3>Perguntas frequentes</h3>
     <div class="faq">
       <details><summary>As fotos ficam parecidas comigo?</summary><p>Usamos as suas selfies como referência para manter rosto, cabelo, barba e tom de pele. O que muda é luz, roupa, cenário e enquadramento. Por isso pedimos selfies com o rosto bem visível.</p></details>
-      <details><summary>Quanto tempo demora?</summary><p>Até 30 minutos depois do pagamento. As fotos chegam no WhatsApp ou e-mail que você deixou.</p></details>
+      <details><summary>Quanto tempo demora?</summary><p>Até 30 minutos depois do pagamento. Você acompanha na página logo depois do pagamento, e o link também chega no e-mail da compra.</p></details>
       <details><summary>Quantas fotos eu recebo?</summary><p>15 fotos, divididas entre os estilos que você escolheu.</p></details>
       <details><summary>E se eu não gostar?</summary><p>Refazemos 3 fotos e você tem 7 dias de garantia.</p></details>
       <details><summary>Que selfies eu devo mandar?</summary><p>De 3 a 6, só você na foto, com o rosto visível, sem óculos escuros, boné ou filtro. Ângulos e lugares diferentes ajudam.</p></details>

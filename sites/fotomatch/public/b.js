@@ -9,7 +9,7 @@ const CHECKOUT_PARAM_LEAD = "src";
 const PRECO = 29.90;
 const VARIANTE = "b";
 const DEMO = new URLSearchParams(location.search).has("demo");
-const MIN = 3, MAX = 6, LOOKS_MIN = 2;
+const MIN = 1, MAX = 6, LOOKS_MIN = 2;
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -31,9 +31,21 @@ async function api(acao, dados = {}) {
 }
 function guarda() { try { sessionStorage.setItem("fm_b", JSON.stringify({ respostas: estado.respostas, lead: estado.lead })); } catch { /* */ } }
 
+
+/* ---------- registro de telas (sem dado pessoal): onde as pessoas desistem ---------- */
+const ORDEM_TELA = { inicio: 0, idade: 1, lugar: 2, cabelo: 3, barba: 4, corpo: 5, looks: 6, contato: 7, envio: 8, enviando: 9, oferta: 10, checkout: 11 };
+const SESSAO = (() => { const n = () => Array.from(crypto.getRandomValues(new Uint8Array(10)), (x) => x.toString(16).padStart(2, "0")).join("");
+  try { let v = sessionStorage.getItem("fm_s"); if (!v) { v = n(); sessionStorage.setItem("fm_s", v); } return v; } catch { return n(); } })();
+function marca(tela) {
+  if (DEMO) return;
+  try { fetch(FN, { method: "POST", headers: { "Content-Type": "application/json" }, keepalive: true,
+    body: JSON.stringify({ acao: "evento", sessao: SESSAO, pagina: "B", tela, ordem: ORDEM_TELA[tela] ?? null, anuncio: utm.utm_content || null, lead: estado.lead && estado.lead.id }) }).catch(() => {}); } catch { /* */ }
+}
+
 /* ---------- navegação ---------- */
-const TOTAL = 7;
+const TOTAL = 8;
 function ir(nome) {
+  marca(nome);
   $$(".tela").forEach((t) => t.classList.toggle("ativa", t.dataset.tela === nome));
   const t = $(`.tela[data-tela="${nome}"]`); const passo = Number(t?.dataset.passo || 0);
   $("#barra").hidden = !passo; $("#barraFill").style.width = (passo / TOTAL * 100) + "%";
@@ -57,7 +69,7 @@ $("#looks").addEventListener("click", (e) => {
   $("#looksOk").disabled = estado.respostas.looks.length < LOOKS_MIN; guarda();
 });
 $("#looksOk").addEventListener("click", async () => {
-  ir("envio");
+  ir("contato");
   if (!estado.lead && !DEMO) {
     const r = await api("lead", { respostas: { idade: estado.respostas.idade }, utm: { ...utm, fm_variante: VARIANTE, fm_estilos: (estado.respostas.looks || []).join(",") } });
     if (r.id) { estado.lead = { id: r.id, token: r.token }; guarda(); }
@@ -100,21 +112,31 @@ function contatoOk() {
   const w = $("#whats").value.replace(/\D/g, ""), m = $("#email").value.trim();
   return (w.length >= 10 && w.length <= 13) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m);
 }
-function confere() { $("#enviar").disabled = !(contatoOk() && $("#aceite").checked && estado.fotos.length >= MIN); }
-["#whats", "#email", "#aceite"].forEach((s) => $(s).addEventListener("input", confere));
-$("#aceite").addEventListener("change", confere);
+function confereContato() { $("#contatoOk").disabled = !(contatoOk() && $("#aceite").checked); }
+function confere() { $("#enviar").disabled = estado.fotos.length < MIN; }
+["#whats", "#email", "#aceite"].forEach((s) => $(s).addEventListener("input", confereContato));
+$("#aceite").addEventListener("change", confereContato);
+
+$("#contatoOk").addEventListener("click", async () => {
+  $("#erroContato").textContent = "";
+  if (DEMO) { ir("envio"); return; }
+  $("#contatoOk").disabled = true;
+  if (!estado.lead) {
+    const r = await api("lead", { respostas: { idade: estado.respostas.idade }, utm: { ...utm, fm_variante: VARIANTE, fm_estilos: (estado.respostas.looks || []).join(",") } });
+    if (!r.id) { $("#erroContato").textContent = r.erro || "Sem conexão. Tente de novo."; confereContato(); return; }
+    estado.lead = { id: r.id, token: r.token }; guarda();
+  }
+  const c = await api("contato", { ...estado.lead, whats: $("#whats").value, email: $("#email").value, consentimento: $("#aceite").checked });
+  confereContato();
+  if (!c.ok) { $("#erroContato").textContent = c.erro || "Confira seus dados."; return; }
+  try { if (window.fbq) fbq("track", "Lead", { content_name: "fotomatch_fotos_direto" }); } catch { /* */ }
+  ir("envio");
+});
 
 $("#enviar").addEventListener("click", async () => {
   $("#erroEnvio").textContent = "";
   if (DEMO) { ir("enviando"); setTimeout(mostraOferta, 1200); return; }
-  if (!estado.lead) {
-    const r = await api("lead", { respostas: { idade: estado.respostas.idade }, utm: { ...utm, fm_variante: VARIANTE, fm_estilos: (estado.respostas.looks || []).join(",") } });
-    if (!r.id) { $("#erroEnvio").textContent = r.erro || "Sem conexão. Tente de novo."; return; }
-    estado.lead = { id: r.id, token: r.token }; guarda();
-  }
-  const c = await api("contato", { ...estado.lead, whats: $("#whats").value, email: $("#email").value, consentimento: $("#aceite").checked });
-  if (!c.ok) { $("#erroEnvio").textContent = c.erro || "Confira seus dados."; return; }
-  try { if (window.fbq) fbq("track", "Lead", { content_name: "fotomatch_nota_gratis" }); } catch { /* */ }
+  if (!estado.lead) { ir("contato"); return; }
   ir("enviando");
   for (let i = 0; i < estado.fotos.length; i++) {
     $("#statusEnvio").textContent = `Enviando selfie ${i + 1} de ${estado.fotos.length}`;
@@ -139,8 +161,11 @@ function mostraOferta() {
   if (!CHECKOUT_URL) { e.preventDefault(); return; }
   e.currentTarget.href = linkCheckout();
   try { localStorage.setItem("fm_preco", String(PRECO)); localStorage.setItem("fm_variante", VARIANTE); if (estado.lead && estado.lead.id) localStorage.setItem("fm_lead_id", estado.lead.id); } catch { /* */ }
+  marca("checkout");
   try { if (window.fbq) fbq("track", "InitiateCheckout", { content_name: "fotomatch_15_fotos", currency: "BRL", value: PRECO }); } catch { /* */ }
 }));
 
 // ?demo=1&tela=oferta abre direto numa tela (revisão e prints, sem chamar o servidor).
 (() => { const t = new URLSearchParams(location.search).get("tela"); if (DEMO && t) { if (t === "oferta") { estado.respostas.looks = ["executivo", "social", "praia"]; mostraOferta(); } else ir(t); } })();
+
+marca("inicio");

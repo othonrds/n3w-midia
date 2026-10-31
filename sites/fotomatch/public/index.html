@@ -101,24 +101,30 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
       <h2 id="reforcoTit">A primeira foto decide se ela para no seu perfil.</h2>
       <p class="sub" id="reforcoTxt">Luz, ângulo e cenário mudam a primeira impressão mais do que qualquer bio. A boa notícia: é o ponto mais fácil de corrigir.</p>
     </div>
-    <button class="btn" data-ir="envio">Ver a nota das minhas fotos</button>
+    <button class="btn" data-ir="contato">Ver a nota das minhas fotos</button>
   </section>
 
   <!-- 6 · Contato + upload -->
-  <section class="tela" data-tela="envio" data-passo="6">
+  <section class="tela" data-tela="contato" data-passo="6">
     <h2>Para onde mandamos o seu resultado?</h2>
     <form id="formContato" novalidate>
       <label>WhatsApp com DDD<input id="whats" inputmode="tel" autocomplete="tel" placeholder="(11) 91234-5678"></label>
       <label>ou e-mail<input id="email" type="email" inputmode="email" autocomplete="email" placeholder="voce@email.com"></label>
       <label class="check"><input type="checkbox" id="aceite"> <span>Aceito que minhas fotos sejam analisadas por IA só para gerar a minha nota, guardadas em ambiente privado e apagadas em até 30 dias. Li a <a href="privacidade.html" target="_blank">privacidade</a>.</span></label>
     </form>
-    <h3>Agora, de 3 a 6 fotos suas</h3>
-    <p class="dica">As que você usa no app (ou usaria). Só você na foto, rosto visível. Nada de foto de outra pessoa.</p>
+    <p class="erro" id="erroContato" role="alert"></p>
+    <button class="btn" id="contatoOk" disabled>Continuar</button>
+    <p class="mini">Grátis, sem cartão. A gente só usa o contato para mandar a sua nota.</p>
+  </section>
+
+  <section class="tela" data-tela="envio" data-passo="7">
+    <h2>Agora, 1 foto sua</h2>
+    <p class="dica">Uma selfie já serve. Quer uma nota mais completa? Mande até 6, as que você usa (ou usaria) no app. Só você na foto, rosto visível.</p>
     <div class="grade" id="grade"></div>
-    <label class="btn sec" id="addFoto">+ Adicionar fotos<input type="file" id="arquivos" accept="image/jpeg,image/png,image/webp" multiple hidden></label>
+    <label class="btn sec" id="addFoto">+ Adicionar foto<input type="file" id="arquivos" accept="image/jpeg,image/png,image/webp" multiple hidden></label>
     <p class="erro" id="erroEnvio" role="alert"></p>
     <button class="btn" id="enviar" disabled>Ver minha nota grátis</button>
-    <p class="mini">Suas selfies são usadas só para gerar a sua nota (e, se você comprar, as suas fotos) e são apagadas em 30 dias. Nunca usamos suas fotos em anúncios sem sua autorização por escrito.</p>
+    <p class="mini">Suas fotos são usadas só para gerar a sua nota (e, se você comprar, as suas fotos) e são apagadas em 30 dias. Nunca usamos suas fotos em anúncios sem sua autorização por escrito.</p>
   </section>
 
   <!-- Analisando -->
@@ -159,6 +165,7 @@ fbq('init','39072077939073915');fbq('track','PageView');fbq('track','ViewContent
     <h2>Recebemos suas fotos!</h2>
     <p class="sub" id="pendenteTxt">Sua nota chega em até 10 min no contato que você deixou.</p>
     <p class="mini" id="pendenteCod"></p>
+    <button class="btn" id="tentarNota">Tentar de novo</button>
   </section>
 </main>
 
