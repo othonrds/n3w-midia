@@ -3,7 +3,12 @@
 // o banco só deixa inserir pedidos/selfies e atualizar status por função que exige ref + id do pedido no Mercado Pago.
 export const SB_URL = 'https://cdtfglylekiyxdmrgbne.supabase.co';
 export const SB_KEY = 'sb_publishable_CVZTk5jPKg5XAQo6QUJeTQ_YxMAUX7h';
-export const PACOTES = { '3': { valor: '39.90', fotos: 3, nome: '3 fotos profissionais' }, '15': { valor: '89.00', fotos: 15, nome: '15 fotos profissionais' } };
+// Produtos do funil próprio. "fotos" = página original (fotos profissionais); "aniversario" = Ensaio de aniversário com IA (11/10/2026).
+export const PRODUTOS = {
+  fotos: { prefixo: 'FA', whatsObrigatorio: true, pacotes: { '3': { valor: '39.90', fotos: 3, nome: '3 fotos profissionais' }, '15': { valor: '89.00', fotos: 15, nome: '15 fotos profissionais' } } },
+  aniversario: { prefixo: 'AN', whatsObrigatorio: false, pacotes: { '5': { valor: '19.90', fotos: 5, nome: 'Ensaio de aniversário - 5 fotos' }, '15': { valor: '39.90', fotos: 15, nome: 'Ensaio de aniversário - 15 fotos' } } },
+};
+export const PACOTES = PRODUTOS.fotos.pacotes; // compatibilidade
 
 export function json(res, code, obj) { res.statusCode = code; res.setHeader('Content-Type', 'application/json'); res.setHeader('Cache-Control', 'no-store'); res.end(JSON.stringify(obj)); }
 
