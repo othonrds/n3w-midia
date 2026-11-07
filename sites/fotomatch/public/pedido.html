@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FotoMatch · Suas fotos</title><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#14110F">
+<link rel="stylesheet" href="style.css">
+<style>
+.galeria{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:16px 0}
+.galeria a{display:block;border-radius:12px;overflow:hidden;background:#221d1a;aspect-ratio:2/3}
+.galeria img{width:100%;height:100%;object-fit:cover;display:block}
+.vaga{border-radius:12px;background:#221d1a;aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;color:#8a8079;font-size:13px}
+.barra2{height:8px;background:#2a2421;border-radius:99px;overflow:hidden;margin:10px 0}.barra2 i{display:block;height:100%;background:#FF5A4E;width:0;transition:width .6s}
+.bio{white-space:pre-wrap;background:#1d1917;border-radius:12px;padding:14px;font-size:14px;line-height:1.5}
+</style></head>
+<body>
+<header class="top"><span class="logo">Foto<b>Match</b></span><span class="selo">Feito com IA</span></header>
+<main>
+  <p class="kicker" id="kick">Seu pedido</p>
+  <h1 id="tit">Suas fotos estão sendo feitas…</h1>
+  <p class="sub" id="sub">Pode deixar esta página aberta. As fotos aparecem aqui conforme ficam prontas (leva poucos minutos).</p>
+  <div class="barra2"><i id="prog"></i></div>
+  <div class="galeria" id="gal"></div>
+  <div id="bioBox" hidden><h3>Sua bio</h3><div class="bio" id="bio"></div></div>
+  <p class="mini">Toque numa foto para abrir em tamanho real e salvar. Não gostou de alguma? Responda o e-mail do pedido que a gente refaz até 3 fotos. O link vale por 7 dias; suas selfies são apagadas em até 30 dias.</p>
+</main>
+<script>
+(function(){
+  var q=new URLSearchParams(location.search), p=q.get("p"), k=q.get("k"), F="https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/match-entrega";
+  var gal=document.getElementById("gal");
+  function vagas(n,alvo,urls){ gal.innerHTML=""; urls.forEach(function(u,i){ var a=document.createElement("a"); a.href=u; a.target="_blank"; a.rel="noopener"; var im=document.createElement("img"); im.src=u; im.alt="Foto "+(i+1); im.loading="lazy"; a.appendChild(im); gal.appendChild(a); });
+    for(var i=urls.length;i<alvo;i++){ var d=document.createElement("div"); d.className="vaga"; d.textContent="gerando…"; gal.appendChild(d); } }
+  function carrega(){
+    fetch(F,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({acao:"pedido",p:p,k:k})}).then(function(r){return r.json()}).then(function(j){
+      if(j.erro&&!j.status){ document.getElementById("tit").textContent="Link inválido"; document.getElementById("sub").textContent="Abra o link que chegou no seu e-mail."; return; }
+      if(j.nome) document.getElementById("kick").textContent="Pedido de "+j.nome;
+      document.getElementById("prog").style.width=Math.round(100*j.prontas/j.alvo)+"%";
+      vagas(j.prontas,j.alvo,j.fotos||[]);
+      if(j.bio){ document.getElementById("bioBox").hidden=false; document.getElementById("bio").textContent=j.bio; }
+      if(j.status==="entregue"){ document.getElementById("tit").textContent="Suas "+j.prontas+" fotos estão prontas 📸"; document.getElementById("sub").textContent="Escolha as melhores para o seu perfil. Dica: a primeira foto deve mostrar bem o rosto, sorrindo."; }
+      else if(j.erro){ document.getElementById("sub").textContent="Tivemos um problema com o seu pedido. Já fomos avisados e vamos te chamar por e-mail."; }
+      else setTimeout(carrega,15000);
+    }).catch(function(){ setTimeout(carrega,15000); });
+  }
+  carrega();
+})();
+</script>
+</body></html>

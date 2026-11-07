@@ -1,0 +1,45 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Teste de conversa grátis · FotoMatch</title><link rel="stylesheet" href="oferta.css?v=4"><script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');if(!location.search.includes('demo'))fbq('init','39072077939073915'),fbq('track','PageView');</script>
+<style>.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin:8px 0;color:var(--ink);font:inherit;font-weight:700;font-size:16px;cursor:pointer}.opt span{font-size:22px}</style></head>
+<body data-pagina="CONVERSA" data-checkout="https://checkout.payt.com.br/b388b1b0dfaa08c0e55ead833c2a7582" style="padding-bottom:100px"><main>
+<div class="top"><div class="logo">Foto<b>Match</b></div><div class="selo">Teste grátis</div></div>
+<section data-tela="pergunta">
+<div class="kicker">Teste de conversa gratuito · 30 segundos</div>
+<h1>Onde sua conversa morre?</h1><p class="sub">Escolha o momento em que você mais trava. Você recebe o diagnóstico e as mensagens certas para esse momento, grátis.</p>
+<button class="opt" data-k="abrir"><span>😶</span>Na primeira mensagem</button><button class="opt" data-k="seco"><span>🥶</span>Ela responde seco</button><button class="opt" data-k="entrevista"><span>🎤</span>Vira entrevista</button><button class="opt" data-k="sair"><span>☕</span>Na hora de chamar pra sair</button><button class="opt" data-k="sumiu"><span>👻</span>Ela some do nada</button>
+<p class="mini centro">Grátis, sem cadastro.</p>
+</section>
+<section data-tela="resultado" hidden>
+<div class="kicker" style="color:var(--ok)">✓ Seu diagnóstico</div>
+<div class="card" style="border-color:var(--accent)"><p class="r-h">O problema</p><p id="dDiag" style="margin:0 0 6px;font-weight:800;font-size:18px"></p><p id="dPq" style="margin:0;color:var(--muted)"></p></div>
+<h2>Mande uma destas (grátis)</h2><div id="dLivres"></div>
+<div class="card" style="border-color:var(--warn);text-align:center"><p class="r-h" style="color:var(--warn)">Kit O Que Mandar completo</p>
+<p style="margin:0 0 12px"><b>35 mensagens prontas</b> para cada momento: primeira mensagem, resposta seca, entrevista, convite, retomada e o que fazer quando ela diz não.</p>
+<a class="btn" data-cta>Liberar o kit · R$ 9,90</a><p class="mini" style="margin:8px 0 0">Pagamento único via Pix. Abre na hora.</p></div>
+<div id="dTrancas"></div>
+<div class="garantia"><b>Garantia de 7 dias.</b> Não gostou, devolvemos 100% do valor.</div>
+</section>
+<footer>FotoMatch · N3W Digital · <a href="../privacidade.html" style="color:inherit">Privacidade</a></footer></main>
+<div class="fixo" id="fixo" hidden><a class="btn" data-cta>Liberar o kit · R$ 9,90</a></div>
+<script src="../pix.js?v=4"></script><script>
+(function(){const D={"abrir": {"diag": "Sua primeira mensagem não dá nada para ela responder.", "porque": "Mensagem que serviria para qualquer pessoa vira “oi tudo bem”. Ela recebe dezenas assim por dia.", "livres": [["Foto de viagem", "essa foto em [lugar] tem cara de viagem que rendeu história boa. qual foi a melhor parte?"], ["Foto com cachorro/gato", "preciso saber o nome do [cachorro] antes de qualquer coisa. ele parece mandar na casa"]], "resto": 10}, "seco": {"diag": "A conversa está sem assunto para ela.", "porque": "“kkk” e “sim” quase sempre significam que ela não tem por onde continuar. Quem dá o assunto é você.", "livres": [["Depois de um “kkk”", "vou considerar esse kkk como um ponto pra mim. agora me conta algo seu que eu não ia adivinhar"], ["Depois de “sim” ou “não”", "resposta de quem tá ocupada ou de quem tá testando minha criatividade? vou supor a segunda"]], "resto": 3}, "entrevista": {"diag": "Você pergunta demais e conta de menos.", "porque": "Pergunta atrás de pergunta cansa. Ela não sabe nada sobre você para criar interesse.", "livres": [["Contar algo seu", "eu também [algo em comum], mas da última vez [história curta e engraçada sua]"], ["Opinião em vez de pergunta", "[assunto dela] é subestimado demais. eu defenderia isso num debate"]], "resto": 3}, "sair": {"diag": "O convite chega cedo, tarde ou vago demais.", "porque": "Convite sem dia e lugar vira “vamos marcar” e morre. Ele precisa ser concreto e leve.", "livres": [["Ligando ao assunto", "tô sentindo que essa conversa sobre [assunto] rende mais pessoalmente. topa um café essa semana?"], ["Com lugar definido", "conheço um lugar em [bairro] que faz o melhor [comida/bebida]. quinta ou sábado fica bom pra vc?"]], "resto": 5}, "sumiu": {"diag": "A conversa esfriou e ninguém retomou.", "porque": "Uma boa retomada resolve metade dos casos. Cobrar resposta resolve nenhum.", "livres": [["Retomando com humor", "a gente parou numa discussão importante sobre [assunto] e eu ainda tenho argumentos"], ["Com algo novo", "lembrei de vc hoje: [algo ligado ao que ela falou]. como tá a semana?"]], "resto": 2}};
+const SEC=["1. Primeira mensagem", "2. Quando ela responde seco", "3. Quando virou entrevista", "4. Chamar pra sair", "5. Conversa esfriou ou ela sumiu"];
+const $=s=>document.querySelector(s),q=new URLSearchParams(location.search),DEMO=q.get('demo'),utm={};['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid'].forEach(k=>q.get(k)&&(utm[k]=q.get(k)));
+let S;try{S=localStorage.getItem('fo_s')}catch(e){};if(!S){S=Array.from(crypto.getRandomValues(new Uint8Array(10)),x=>x.toString(16).padStart(2,'0')).join('');try{localStorage.setItem('fo_s',S)}catch(e){}}
+const marca=(t,o)=>{if(DEMO)return;fetch('https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/match-evento',{method:'POST',headers:{'Content-Type':'text/plain'},keepalive:true,body:JSON.stringify({sessao:S,pagina:'CONVERSA',tela:t,ordem:o,anuncio:utm.utm_content||null})}).catch(()=>{})};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+marca('inicio',0);
+const ck=()=>{const u=new URL(document.body.dataset.checkout);Object.entries(utm).forEach(([k,v])=>u.searchParams.set(k,v));u.searchParams.set('src',S);return u.toString()};
+document.querySelectorAll('[data-cta]').forEach(a=>{a.href=ck();a.addEventListener('click',(e)=>{marca('checkout',9);
+if(window.FMPix&&q.get('pg')!=='payt'){e.preventDefault();marca('pix',9);let em='';try{em=localStorage.getItem('fm_email')||''}catch(x){}
+FMPix.abrir({tipo:'mensagens',sessao:S,email:em,utm,pagina:'CONVERSA',nome:'Kit O Que Mandar · 35 mensagens prontas',valor:9.9,lembra:(x)=>{try{localStorage.setItem('fm_email',x)}catch(y){}},
+onPago:()=>{marca('pago',10);try{sessionStorage.setItem('fo_px_/o/ok-kit.html','1')}catch(y){}location.href='ok-kit.html'},fallback:()=>{location.href=ck()}});return;}
+try{if(!DEMO&&window.fbq)fbq('track','InitiateCheckout',{content_name:'CONVERSA',currency:'BRL',value:9.9})}catch(e){}})});
+const mostra=k=>{const d=D[k];$('#dDiag').textContent=d.diag;$('#dPq').textContent=d.porque;
+$('#dLivres').innerHTML=d.livres.map(([t,x])=>'<div class="resp"><button class="cp" data-t="'+esc(x)+'">Copiar</button><p class="r-h">'+esc(t)+'</p><p class="tx">'+esc(x)+'</p></div>').join('');
+$('#dTrancas').innerHTML=(d.resto?'<div class="card tranca"><p class="r-h">Mais '+d.resto+' mensagens para esse momento</p><p class="tx">Conteúdo liberado no kit</p><p class="tx">Conteúdo liberado no kit</p></div>':'')+SEC.filter((s,i)=>Object.keys(D)[i]!==k).map(s=>'<div class="card tranca"><p class="r-h">'+esc(s.replace(/^\d\. /,''))+'</p><p class="tx">Conteúdo liberado no kit</p></div>').join('');
+document.querySelectorAll('.cp').forEach(b=>b.addEventListener('click',()=>{navigator.clipboard&&navigator.clipboard.writeText(b.dataset.t);b.textContent='Copiado';marca('copiou',4)}));
+document.querySelectorAll('[data-tela]').forEach(s=>s.hidden=s.dataset.tela!=='resultado');$('#fixo').hidden=false;scrollTo(0,0);marca('resultado',3);marca('t-'+k,2);
+try{if(!DEMO&&window.fbq)fbq('track','Lead',{content_name:'CONVERSA'})}catch(e){}};
+document.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>mostra(b.dataset.k)));
+if(DEMO==='res')mostra('seco');})();
+</script></body></html>

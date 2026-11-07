@@ -1,0 +1,43 @@
+/* FotoMatch · versão B (fotos direto). Usa style.css da versão A e acrescenta só o que é da B. */
+.topo3{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:8px;align-items:center;margin:4px 0 8px}
+.topo3 figure{margin:0;border-radius:14px;overflow:hidden;aspect-ratio:2/3;background:var(--surface)}
+.topo3 figure.meio{aspect-ratio:3/5}
+.topo3 img{width:100%;height:100%;object-fit:cover;display:block}
+.passos{display:grid;gap:8px;margin:20px 0 4px}
+.passos div{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14.5px}
+.passos b{flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font:800 14px var(--display)}
+.looks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.looks button{position:relative;aspect-ratio:3/4;border-radius:16px;overflow:hidden;border:2.5px solid var(--line);padding:0;background:var(--surface);cursor:pointer;color:#fff;text-align:left}
+.looks img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.looks button::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0000 45%,#000c)}
+.looks .nome,.looks .desc{position:absolute;left:10px;right:10px;z-index:2}
+.looks .nome{bottom:26px;font:800 17px/1.1 var(--display)}
+.looks .desc{bottom:9px;font-size:12px;color:#ffffffcc}
+.looks .semfoto{background:linear-gradient(160deg,#4a2a22,#1e1a17)}
+.looks .ilu{position:absolute;top:38%;left:0;right:0;text-align:center;font-size:40px;color:#ffffff55;z-index:1}
+.looks button.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.looks button.on::before{content:"✓";position:absolute;top:8px;right:8px;z-index:3;width:26px;height:26px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-weight:800}
+.looks button:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
+.req{list-style:none;padding:0;margin:4px 0 0;display:grid;gap:4px;font-size:14px;color:var(--muted)}
+.req li::before{content:"✓ ";color:var(--ok);font-weight:700}
+.galeria{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}
+.galeria figure{margin:0;position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;background:var(--surface)}
+.galeria img{width:100%;height:100%;object-fit:cover}
+.galeria .antes img{filter:grayscale(1) contrast(1.05)}
+.galeria figcaption{position:absolute;left:5px;right:5px;bottom:5px;background:#000b;color:#fff;border-radius:7px;padding:2px 5px;font-size:11px;text-align:center}
+.compara{width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px;margin:10px 0 0;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.compara th,.compara td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.compara tr:last-child td{border-bottom:0}
+.compara th{font:700 13px var(--display);color:var(--muted)}
+.compara th:nth-child(2){color:var(--accent)}
+.compara td:first-child{color:var(--muted)}
+.compara td.sim{font-weight:700}
+.garantia{background:var(--surface);border:1px solid var(--ok);border-radius:16px;padding:14px 16px;margin:20px 0 4px}
+.garantia .tt{margin:0 0 4px;font:700 14px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--ok)}
+.garantia p{margin:0}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin:8px 0;padding:0 14px}
+.faq summary{cursor:pointer;padding:14px 0;font-weight:600;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";float:right;color:var(--accent);font-weight:800}
+.faq details[open] summary::after{content:"–"}
+.faq details p{margin:0 0 14px;color:var(--muted);font-size:14.5px}
