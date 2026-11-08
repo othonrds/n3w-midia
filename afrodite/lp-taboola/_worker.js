@@ -70,6 +70,23 @@ export default {
     if (url.pathname === '/w/numero') {
       return new Response(JSON.stringify({ numero: await rotaChip({ p_via: 'consulta' }) }), { headers: { 'content-type': 'application/json', 'cache-control': 'no-store', 'access-control-allow-origin': '*' } });
     }
+    // (08/11) TikTok · aprovar posts: mesmo login do Painel Tarô. A API repassa para a edge posts-publicar,
+    // que confere o login de novo e só aceita as ações do painel (tt_lista, tt_creator, tt_preview, tt_aprovar, tt_recusar).
+    if (url.pathname === '/tiktok-posts' || url.pathname.startsWith('/tiktok-posts/')) {
+      const a = request.headers.get('authorization') || '';
+      if (!/^Basic /i.test(a)) return pedeLogin();
+      if (url.pathname === '/tiktok-posts/api') {
+        if (request.method !== 'POST') return new Response('POST', { status: 405 });
+        const corpo = (await request.text()).slice(0, 20000);
+        const r = await fetch('https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/posts-publicar', { method: 'POST', headers: { authorization: a, 'content-type': 'application/json' }, body: corpo || '{}' });
+        return new Response(r.body, { status: r.status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
+      }
+      const ping = await edge(a, { tipo: 'ping' });
+      if (ping.status !== 200) return pedeLogin();
+      const page = await env.ASSETS.fetch(new Request(new URL('/tiktok-posts/', url), { method: 'GET' }));
+      const h = new Headers(page.headers); h.set('cache-control', 'no-store'); h.set('x-robots-tag', 'noindex'); h.delete('etag');
+      return new Response(page.body, { status: page.status, headers: h });
+    }
     // (06/11) Painel de Chips: mesmo login do Painel Tarô; dados vêm da edge chips-dados (que confere o login de novo)
     if (url.pathname === '/painel-chips' || url.pathname.startsWith('/painel-chips/')) {
       const a = request.headers.get('authorization') || '';

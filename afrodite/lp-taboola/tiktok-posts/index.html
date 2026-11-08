@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>TikTok · Aprovar posts</title>
+<style>
+  :root { --bg:#f7f5f2; --panel:#fff; --fg:#1f1b24; --muted:#6c6573; --line:#e7e2dc; --acc:#fe2c55; --ok:#1f9d55; --warn:#b7791f; --bad:#d64545; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#141216; --panel:#1d1a21; --fg:#eeeaf1; --muted:#a39dab; --line:#2e2a33; --ok:#3ccf7e; --warn:#f2b632; --bad:#f06a6a; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  main { max-width:980px; margin:0 auto; padding:20px 16px 64px; }
+  h1 { font-size:1.45rem; margin:0 0 4px; font-weight:600; } h2 { font-size:1.05rem; margin:28px 0 10px; }
+  .muted { color:var(--muted); font-size:.85rem; } .erro { color:var(--bad); } a { color:inherit; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px; min-width:0; }
+  .conta { display:flex; align-items:center; gap:12px; } .conta img { width:44px; height:44px; border-radius:50%; object-fit:cover; background:var(--line); }
+  .lista { display:grid; gap:12px; }
+  .item { display:grid; grid-template-columns:minmax(0,180px) minmax(0,1fr); gap:14px; }
+  @media (max-width:640px) { .item { grid-template-columns:1fr; } }
+  .prev { aspect-ratio:9/16; background:#000; border-radius:10px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .prev video { width:100%; height:100%; object-fit:contain; } .prev button { background:#fff2; color:#fff; border:1px solid #fff5; }
+  label { display:block; font-size:.85rem; margin:8px 0 3px; color:var(--muted); }
+  textarea, select { width:100%; font:inherit; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--panel); color:var(--fg); }
+  textarea { min-height:70px; resize:vertical; }
+  .chk { display:flex; flex-wrap:wrap; gap:6px 18px; margin-top:4px; } .chk label { display:flex; align-items:center; gap:6px; margin:0; color:var(--fg); }
+  .chk label.off { color:var(--muted); }
+  .marca { border-top:1px solid var(--line); margin-top:10px; padding-top:8px; }
+  .aviso { font-size:.82rem; color:var(--muted); margin:10px 0 8px; }
+  .acoes { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  button { font:inherit; padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--panel); color:var(--fg); cursor:pointer; }
+  button.prim { background:var(--acc); border-color:var(--acc); color:#fff; } button:disabled { opacity:.45; cursor:not-allowed; }
+  .tag { font-size:.75rem; padding:2px 8px; border-radius:99px; border:1px solid var(--line); color:var(--muted); }
+  .tag.ok { color:var(--ok); border-color:var(--ok); } .tag.warn { color:var(--warn); border-color:var(--warn); } .tag.bad { color:var(--bad); border-color:var(--bad); }
+  .lote { position:sticky; bottom:0; background:var(--panel); border-top:1px solid var(--line); padding:10px 16px; margin:16px -16px -64px; display:none; }
+  .msg { margin-top:8px; font-size:.85rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>TikTok · Aprovar posts</h1>
+  <p class="muted">Cada vídeo só é publicado no TikTok depois que você escolhe quem pode ver e aprova aqui. Os aprovados saem sozinhos no horário marcado. Se preferir terminar pelo app, use “Enviar como rascunho”.</p>
+
+  <div class="card conta" id="conta"><span class="muted">Carregando a conta do TikTok…</span></div>
+
+  <h2>Aguardando aprovação</h2>
+  <div class="lista" id="pendentes"><p class="muted">Carregando…</p></div>
+
+  <h2>Agendados e publicados</h2>
+  <div class="lista" id="feitos"></div>
+
+  <div class="lote card" id="lote">
+    <b id="loteN">0 selecionados</b>
+    <div id="loteForm"></div>
+  </div>
+</main>
+<script>
+const API = location.pathname.replace(/\/+$/, '') + '/api';
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+const NOMES = { PUBLIC_TO_EVERYONE:'Todo mundo', MUTUAL_FOLLOW_FRIENDS:'Amigos (seguidores que você segue)', FOLLOWER_OF_CREATOR:'Seguidores', SELF_ONLY:'Só eu' };
+const MUSICA = '<a href="https://www.tiktok.com/legal/page/global/music-usage-confirmation/en" target="_blank" rel="noopener">Confirmação de Uso de Música</a>';
+const MARCA = '<a href="https://www.tiktok.com/legal/page/global/bc-policy/en" target="_blank" rel="noopener">Política de Conteúdo de Marca</a>';
+let CREATOR = null; const selecionados = new Set();
+
+async function api(body) {
+  const r = await fetch(API, { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify(body), credentials:'same-origin' });
+  const d = await r.json().catch(() => ({ ok:false, erro:'resposta inválida (' + r.status + ')' }));
+  if (!r.ok || d.ok === false) throw new Error(d.erro || ('erro ' + r.status));
+  return d;
+}
+const quando = (iso) => new Date(iso).toLocaleString('pt-BR', { weekday:'short', day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+
+// Formulário de opções (o mesmo para um item e para o lote). Sem valores pré-marcados, como pedem as regras do TikTok.
+function formOpcoes(k) {
+  const c = CREATOR || { privacidade:[] };
+  const priv = ['<option value="" selected disabled>Escolha quem pode ver</option>'].concat(c.privacidade.map((p) => `<option value="${p}">${esc(NOMES[p] || p)}</option>`)).join('');
+  const box = (campo, txt, desligado) => `<label class="${desligado ? 'off' : ''}" title="${desligado ? 'Desligado nas configurações de privacidade da conta no TikTok' : ''}"><input type="checkbox" data-k="${k}" data-c="${campo}" ${desligado ? 'disabled' : ''}> ${txt}${desligado ? ' (desligado na conta)' : ''}</label>`;
+  return `
+    <label for="priv-${k}">Quem pode ver este vídeo</label>
+    <select id="priv-${k}" data-k="${k}" data-c="privacy_level">${priv}</select>
+    <label>Permitir que as pessoas</label>
+    <div class="chk">${box('allow_comment','Comentem', c.comentario_desligado)}${box('allow_duet','Façam dueto', c.dueto_desligado)}${box('allow_stitch','Façam stitch', c.stitch_desligado)}</div>
+    <div class="marca">
+      <label style="display:flex;gap:6px;align-items:center;color:var(--fg);margin:0"><input type="checkbox" data-k="${k}" data-c="divulgar"> Divulgar conteúdo comercial</label>
+      <div class="muted">Ligue se o vídeo promove a sua marca, um produto ou serviço.</div>
+      <div class="chk" id="marca-${k}" style="display:none">
+        <label><input type="checkbox" data-k="${k}" data-c="marca_propria"> Sua marca</label>
+        <label><input type="checkbox" data-k="${k}" data-c="conteudo_pago"> Conteúdo de marca (parceria paga)</label>
+      </div>
+      <div class="muted" id="rotulo-${k}"></div>
+    </div>
+    <p class="aviso" id="decl-${k}">Ao publicar, você concorda com a ${MUSICA} do TikTok.</p>
+    <div class="acoes"><button class="prim" id="ok-${k}" disabled>${k === 'lote' ? 'Aprovar selecionados' : 'Aprovar e agendar'}</button>${k === 'lote' ? '' : `<button id="raso-${k}" title="O vídeo vai para a caixa de entrada do TikTok; você edita e escolhe quem pode ver no app">Enviar como rascunho</button><button id="nao-${k}">Recusar</button>`}<span class="msg" id="msg-${k}"></span></div>`;
+}
+function ler(k) {
+  const q = (c) => document.querySelector(`[data-k="${k}"][data-c="${c}"]`);
+  return { privacy_level: q('privacy_level').value, allow_comment: q('allow_comment').checked, allow_duet: q('allow_duet').checked, allow_stitch: q('allow_stitch').checked,
+    divulgar: q('divulgar').checked, marca_propria: q('marca_propria').checked, conteudo_pago: q('conteudo_pago').checked };
+}
+// Regras: privacidade obrigatória; se divulgar, marcar ao menos uma opção; parceria paga não pode ser "Só eu".
+function atualizar(k) {
+  const o = ler(k);
+  $('marca-' + k).style.display = o.divulgar ? 'flex' : 'none';
+  const sel = document.querySelector(`[data-k="${k}"][data-c="privacy_level"]`);
+  const self = sel.querySelector('option[value="SELF_ONLY"]');
+  if (self) { self.disabled = o.divulgar && o.conteudo_pago; self.textContent = self.disabled ? 'Só eu (indisponível para conteúdo de marca)' : NOMES.SELF_ONLY; if (self.disabled && sel.value === 'SELF_ONLY') sel.value = ''; }
+  let rot = '';
+  if (o.divulgar && o.conteudo_pago) rot = 'O vídeo será rotulado como “Parceria paga”.';
+  else if (o.divulgar && o.marca_propria) rot = 'O vídeo será rotulado como “Conteúdo promocional”.';
+  else if (o.divulgar) rot = 'Escolha ao menos uma opção para divulgar.';
+  $('rotulo-' + k).textContent = rot;
+  $('decl-' + k).innerHTML = o.divulgar && o.conteudo_pago ? `Ao publicar, você concorda com a ${MARCA} e com a ${MUSICA} do TikTok.` : `Ao publicar, você concorda com a ${MUSICA} do TikTok.`;
+  const pronto = !!sel.value && (!o.divulgar || o.marca_propria || o.conteudo_pago) && (k !== 'lote' || selecionados.size > 0);
+  $('ok-' + k).disabled = !pronto || !CREATOR;
+}
+async function aprovar(k, ids) {
+  const o = ler(k); const btn = $('ok-' + k); btn.disabled = true; $('msg-' + k).textContent = 'Enviando…';
+  const body = { acao:'tt_aprovar', ids, consentimento:true, privacy_level:o.privacy_level, allow_comment:o.allow_comment, allow_duet:o.allow_duet, allow_stitch:o.allow_stitch,
+    marca_propria: o.divulgar && o.marca_propria, conteudo_pago: o.divulgar && o.conteudo_pago };
+  if (k !== 'lote') body.titulo = $('tit-' + k).value;
+  try { await api(body); $('msg-' + k).textContent = 'Agendado. Depois de publicado, o TikTok pode levar alguns minutos para processar o vídeo e mostrar no perfil.'; selecionados.clear(); setTimeout(carregar, 1800); }
+  catch (e) { $('msg-' + k).innerHTML = '<span class="erro">' + esc(e.message) + '</span>'; btn.disabled = false; }
+}
+function cardPendente(it) {
+  const k = it.id; const v = it.posts_videos || {};
+  return `<div class="card item" id="it-${k}">
+    <div><div class="prev" id="prev-${k}"><button data-prev="${k}">Ver vídeo</button></div>
+      <label style="display:flex;gap:6px;align-items:center;color:var(--fg)"><input type="checkbox" data-sel="${k}"> Selecionar para o lote</label></div>
+    <div><div class="acoes"><b>${esc(v.nome || '')}</b><span class="tag">sai ${esc(quando(it.agendado_para))}</span>${it.status === 'erro' ? '<span class="tag bad">erro</span>' : ''}</div>
+      ${it.erro ? `<p class="erro muted">${esc(it.erro)}</p>` : ''}
+      <label for="tit-${k}">Legenda</label><textarea id="tit-${k}" maxlength="2200">${esc([it.titulo, it.legenda].filter(Boolean).join('\n\n'))}</textarea>
+      ${formOpcoes(k)}</div></div>`;
+}
+function cardFeito(it) {
+  const raso = (it.opcoes || {}).modo === 'rascunho';
+  const st = { agendado:['ok', raso ? 'rascunho na fila de envio' : 'aprovado, sai ' + quando(it.agendado_para)], publicando:['warn', raso ? 'enviando rascunho' : 'publicando'], publicado:['ok','publicado'], rascunho:['ok','rascunho no app do TikTok'] }[it.status] || ['', it.status];
+  const op = it.opcoes || {};
+  return `<div class="card"><div class="acoes"><b>${esc((it.posts_videos || {}).nome || '')}</b><span class="tag ${st[0]}">${esc(st[1])}</span>
+    <span class="muted">${esc(NOMES[op.privacy_level] || '')}${op.consentido_por ? ' · aprovado por ' + esc(op.consentido_por) : ''}</span>
+    ${it.url_publicada ? `<a href="${esc(it.url_publicada)}" target="_blank" rel="noopener">abrir no TikTok</a>` : ''}</div></div>`;
+}
+function ligar(k, ids) {
+  document.querySelectorAll(`[data-k="${k}"]`).forEach((el) => el.addEventListener('change', () => atualizar(k)));
+  $('ok-' + k).addEventListener('click', () => aprovar(k, ids()));
+  const raso = $('raso-' + k); if (raso) raso.addEventListener('click', async () => {
+    if (!confirm('Enviar este vídeo como rascunho para a caixa de entrada do TikTok? Você termina e publica pelo app.')) return;
+    raso.disabled = true; $('msg-' + k).textContent = 'Enviando…';
+    try { await api({ acao:'tt_rascunho', ids:[k], consentimento:true }); $('msg-' + k).textContent = 'Enviado. Em alguns minutos o TikTok avisa na caixa de entrada do app para você terminar o post.'; setTimeout(carregar, 1800); }
+    catch (e) { $('msg-' + k).innerHTML = '<span class="erro">' + esc(e.message) + '</span>'; raso.disabled = false; }
+  });
+  const nao = $('nao-' + k); if (nao) nao.addEventListener('click', async () => { if (!confirm('Recusar este vídeo no TikTok?')) return; await api({ acao:'tt_recusar', id:k }); carregar(); });
+  atualizar(k);
+}
+async function carregar() {
+  try {
+    const c = await api({ acao:'tt_creator' }); CREATOR = c.creator;
+    $('conta').innerHTML = `${CREATOR.avatar ? `<img src="${esc(CREATOR.avatar)}" alt="">` : ''}<div><b>${esc(CREATOR.nome || '')}</b> <span class="muted">@${esc(CREATOR.usuario || '')}</span><div class="muted">Os vídeos aprovados aqui serão publicados nesta conta do TikTok.</div></div>`;
+  } catch (e) { CREATOR = null; $('conta').innerHTML = `<span class="erro">Não foi possível falar com o TikTok agora: ${esc(e.message)}. Tente de novo mais tarde.</span>`; }
+  let d; try { d = await api({ acao:'tt_lista' }); } catch (e) { $('pendentes').innerHTML = `<p class="erro">${esc(e.message)}</p>`; return; }
+  const pend = d.itens.filter((i) => i.status === 'aguardando' || i.status === 'erro'); const feitos = d.itens.filter((i) => !pend.includes(i));
+  $('pendentes').innerHTML = pend.length ? pend.map(cardPendente).join('') : '<p class="muted">Nada aguardando aprovação.</p>';
+  $('feitos').innerHTML = feitos.length ? feitos.map(cardFeito).join('') : '<p class="muted">Nenhum ainda.</p>';
+  pend.forEach((it) => ligar(it.id, () => [it.id]));
+  document.querySelectorAll('[data-prev]').forEach((b) => b.addEventListener('click', async () => {
+    const k = b.dataset.prev; b.textContent = 'Carregando…';
+    try { const r = await api({ acao:'tt_preview', id:k }); $('prev-' + k).innerHTML = `<video src="${esc(r.url)}" controls playsinline preload="metadata"></video>`; } catch (e) { b.textContent = 'Erro: ' + e.message; }
+  }));
+  document.querySelectorAll('[data-sel]').forEach((cb) => cb.addEventListener('change', () => { cb.checked ? selecionados.add(Number(cb.dataset.sel)) : selecionados.delete(Number(cb.dataset.sel)); lote(); }));
+  $('loteForm').innerHTML = formOpcoes('lote'); ligar('lote', () => [...selecionados]); lote();
+}
+function lote() { $('lote').style.display = selecionados.size ? 'block' : 'none'; $('loteN').textContent = selecionados.size + ' selecionado(s): as escolhas abaixo valem para todos eles'; if ($('ok-lote')) atualizar('lote'); }
+carregar();
+</script>
+</body>
+</html>
