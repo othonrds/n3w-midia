@@ -33,6 +33,20 @@
   th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); white-space:nowrap; }
   th { color:var(--muted); font-weight:500; } td.n { text-align:right; font-variant-numeric:tabular-nums; }
   .erro { color:var(--bad); }
+  .rolar { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .fora { margin-top:14px; border-top:1px dashed var(--bad); padding-top:12px; }
+  .fora h3 { margin:0 0 8px; font-size:.95rem; color:var(--bad); }
+  .fora .lista { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:8px; }
+  .fora .item { border:1px solid var(--bad); border-left-width:4px; border-radius:8px; padding:8px 10px; font-size:.85rem; background:color-mix(in srgb, var(--bad) 7%, var(--panel)); }
+  .fora .item b { display:block; overflow-wrap:anywhere; } .fora .item span { color:var(--muted); }
+  .fora .item .alerta { color:var(--bad); font-weight:600; display:block; margin-top:2px; }
+  .card.isolado { border-color:var(--bad); border-left-width:4px; opacity:.85; }
+  .nota-mudo { font-size:.8rem; color:var(--muted); margin:8px 0 0; }
+  .filtros { display:flex; flex-wrap:wrap; gap:10px 14px; align-items:flex-end; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px 14px; margin-top:16px; position:sticky; top:0; z-index:5; }
+  .filtros label { display:flex; flex-direction:column; gap:3px; font-size:.75rem; color:var(--muted); min-width:0; }
+  .filtros select, .filtros input { font:inherit; font-size:.88rem; color:var(--fg); background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:6px 8px; min-height:34px; max-width:100%; }
+  .filtros .f-datas[hidden] { display:none; }
+  @media (max-width:560px) { .filtros { position:static; } .filtros label { flex:1 1 140px; } }
 </style>
 </head>
 <body>
@@ -40,13 +54,24 @@
   <header><h1>Painel de Chips</h1><span class="muted" id="hora">carregando…</span></header>
   <p class="muted">Atualiza sozinho a cada 60 s. Verde = recebe tráfego · amarelo = atenção · vermelho = fora do sorteio.</p>
 
-  <h2>Funil de distribuição (hoje): conta/BM → roteador → chip</h2>
+  <div class="filtros" id="filtros" role="group" aria-label="Filtros do painel">
+    <label>Período <select id="f-per"><option value="hoje">Hoje</option><option value="ontem">Ontem</option><option value="7d">Últimos 7 dias</option><option value="custom">Escolher datas</option></select></label>
+    <label class="f-datas" hidden>De <input type="date" id="f-de"></label>
+    <label class="f-datas" hidden>Até <input type="date" id="f-ate"></label>
+    <label>Mostrar <select id="f-vista"><option value="completa">Estrutura completa</option><option value="campanhas">Só campanhas</option><option value="chips">Só chips</option></select></label>
+    <label>Business <select id="f-bm"><option value="">Todos</option></select></label>
+    <label>Conta de anúncio <select id="f-conta"><option value="">Todas</option></select></label>
+  </div>
+
+  <h2 id="tit-funil">Estrutura de distribuição</h2>
   <div class="card" id="funil"></div>
 
-  <h2>Monitor de saúde</h2>
+  <h2>Monitor de saúde · chips no sorteio</h2>
   <div class="grid" id="monitor"></div>
+  <h2 style="color:var(--bad)">Fora da distribuição · banidos e desligados</h2>
+  <div class="grid" id="monitorFora"></div>
 
-  <h2>De onde vem o tráfego e pra qual chip foi (hoje)</h2>
+  <h2 id="tit-traf">De onde vem o tráfego e pra qual chip foi</h2>
   <div class="tbl"><table><thead><tr><th>Conta / BM</th><th>Campanha</th><th>Via</th><th>Chip</th><th class="n">Cliques</th><th class="n">Conversas</th></tr></thead><tbody id="traf"></tbody></table></div>
 
   <h2>Últimos 7 dias</h2>
@@ -81,72 +106,177 @@ function checagens(c) {
     ['Leitura da Meta', minMeta == null ? 'sem leitura' : 'há ' + Math.round(minMeta) + ' min', minMeta == null || minMeta > 20 ? 'warn' : 'ok'],
   ];
 }
-  // ── funil de distribuição: Conta/BM de anúncio → Roteador → Chip (hoje). Largura das faixas = cliques.
-function desenhaFunil(el, rows, cores) {
-    const NS = 'http://www.w3.org/2000/svg';
-    const mk = (tag, attrs, txt) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (txt != null) e.textContent = txt; return e; };
-    const fmt = (n) => Number(n || 0).toLocaleString('pt-BR');
-    const FIXAS = ['Sócio · TARÔ - ESCALA'];
-    const contas = {}; for (const c of FIXAS) contas[c] = 0;
-    const chips = {};
-    for (const r of rows) {
-      if (r.conta) contas[r.conta] = (contas[r.conta] || 0) + r.cliques;
-      const k = r.chip; chips[k] = chips[k] || { nome: k, status: r.chip_status, sorteio: r.no_sorteio, cliques: 0, conversas: 0, vendas: 0 };
-      chips[k].cliques += r.cliques; chips[k].conversas += r.conversas; chips[k].vendas += r.vendas;
-    }
-    const L = Object.entries(contas).map(([nome, v]) => ({ nome, v }));
-    const R = Object.values(chips).sort((a, b) => (b.sorteio - a.sorteio) || (b.cliques - a.cliques));
-    const total = L.reduce((s, x) => s + x.v, 0);
-    const W = Math.max(el.clientWidth || 640, 320), compacto = W < 560;
-    const lh = 64, H = Math.max(L.length, R.length, 2) * lh + 40;
-    const xL = 0, wL = compacto ? 110 : 190, xM = W / 2 - 44, wM = 88, wR = compacto ? 130 : 230, xR = W - wR;
-    const svg = mk('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', height: H, role: 'img', 'aria-label': 'Funil de distribuição: contas de anúncio, roteador e chips' });
-    const maxV = Math.max(total, 1), escala = (v) => (v ? Math.max(3, 34 * v / maxV) : 1.5);
-    const yN = (i, n) => 20 + (H - 40) * (i + 0.5) / n;
-    const yM = H / 2;
-    const faixa = (x1, y1, x2, y2, w, cor, op) => svg.append(mk('path', { d: `M${x1},${y1} C${(x1 + x2) / 2},${y1} ${(x1 + x2) / 2},${y2} ${x2},${y2}`, stroke: cor, 'stroke-width': w, fill: 'none', opacity: op, 'stroke-linecap': 'round' }));
-    L.forEach((c, i) => faixa(xL + wL, yN(i, L.length), xM, yM, escala(c.v), cores.linha, c.v ? 0.55 : 0.25));
-    R.forEach((c, i) => {
-      const cor = c.status === 'CONNECTED' && c.sorteio ? cores.ok : c.status === 'BANNED' || !c.sorteio ? cores.bad : cores.warn;
-      faixa(xM + wM, yM, xR, yN(i, R.length), escala(c.cliques), cor, c.cliques ? 0.6 : 0.2);
-    });
-    const caixa = (x, y, w, titulo, sub, cor) => {
-      const g = mk('g', {});
-      g.append(mk('rect', { x, y: y - 22, width: w, height: 44, rx: 8, fill: cores.painel, stroke: cor || cores.borda }));
-      g.append(mk('text', { x: x + 10, y: y - 4, fill: cores.texto, 'font-size': 12.5, 'font-weight': 600 }, titulo.length > (compacto ? 16 : 30) ? titulo.slice(0, compacto ? 15 : 29) + '…' : titulo));
-      g.append(mk('text', { x: x + 10, y: y + 13, fill: cores.mudo, 'font-size': 11.5 }, sub));
-      svg.append(g);
-    };
-    L.forEach((c, i) => caixa(xL, yN(i, L.length), wL, c.nome, fmt(c.v) + ' cliques'));
-    caixa(xM, yM, wM, 'Roteador', fmt(total) + ' cliques', cores.linha);
-    R.forEach((c, i) => {
-      const cor = c.status === 'CONNECTED' && c.sorteio ? cores.ok : c.status === 'BANNED' || !c.sorteio ? cores.bad : cores.warn;
-      caixa(xR, yN(i, R.length), wR, c.nome, compacto ? `${fmt(c.cliques)} → ${fmt(c.conversas)} → ${fmt(c.vendas)}` : `${fmt(c.cliques)} cliques → ${fmt(c.conversas)} conversas → ${fmt(c.vendas)} vendas`, cor);
-    });
-    el.replaceChildren(svg);
-    if (!total) { const p = document.createElement('p'); p.style.cssText = 'margin:6px 0 0;font-size:12px;opacity:.75'; p.textContent = 'Nenhum clique de anúncio roteado hoje ainda — as faixas engrossam conforme os cliques chegam.'; el.append(p); }
+  // ── (08/11) Estrutura de distribuição, como o Cássio pediu: Business → Conta de anúncio → Campanha → Anúncio → Roteador → Chip.
+  // Largura das faixas = cliques do período. Só os chips no sorteio entram nas faixas; banidos/desligados ficam isolados em vermelho embaixo.
+  // Filtros (08/11): período, o que mostrar (completa / só campanhas / só chips), business e conta. Ficam salvos neste navegador.
+  // Fontes, da mais completa para a mais simples:
+  //   d.funil_periodo (função chips_funil_periodo, qualquer período, com anúncio e vendas) →
+  //   d.funil com campanha/item (só hoje, com anúncio e vendas) → d.trafego (7 dias, sem anúncio; vendas só hoje).
+const limpaTxt = (v) => { if (v == null || v === '') return null; let t = String(v); try { t = decodeURIComponent(t.replace(/\+/g, ' ')); } catch (e) {} return t.trim() || null; };
+const nomeItem = (v) => (/^\d{9,}$/.test(v) ? 'Anúncio …' + v.slice(-6) : v);
+function emDistribuicao(st, sorteio) { return !!sorteio && st !== 'BANNED' && st !== 'RESTRICTED' && st !== 'DISCONNECTED'; }
+const TZ = 'America/Sao_Paulo';
+const diaSP = (dt) => new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(dt);
+const somaDias = (t, n) => { const [y, m, dd] = t.split('-').map(Number); return new Date(Date.UTC(y, m - 1, dd + n)).toISOString().slice(0, 10); };
+const dataBR = (t) => t.split('-').reverse().slice(0, 2).join('/');
+let F = { per: 'hoje', de: null, ate: null, vista: 'completa', bm: '', conta: '' };
+try { Object.assign(F, JSON.parse(localStorage.getItem('chips_filtros') || '{}')); } catch (e) {}
+function salvaF() { try { localStorage.setItem('chips_filtros', JSON.stringify(F)); } catch (e) {} }
+function intervalo() {
+  const h = diaSP(new Date());
+  if (F.per === 'ontem') return [somaDias(h, -1), somaDias(h, -1)];
+  if (F.per === '7d') return [somaDias(h, -6), h];
+  if (F.per === 'custom' && F.de && F.ate) return F.de <= F.ate ? [F.de, F.ate] : [F.ate, F.de];
+  return [h, h];
+}
+function rotuloPeriodo([de, ate]) { const h = diaSP(new Date()); if (de === h && ate === h) return 'hoje'; if (de === ate) return de === somaDias(h, -1) ? 'ontem' : dataBR(de); return dataBR(de) + ' a ' + dataBR(ate); }
+function partesConta(conta) {
+  const c = conta && conta !== 'Origem não identificada' ? limpaTxt(conta) : null;
+  if (!c) return ['Sem origem (sem UTM)', 'sem conta', false];
+  const i = c.indexOf(' · '); return [i > 0 ? c.slice(0, i) : c, i > 0 ? c.slice(i + 3) : c, true];
+}
+function linhasPeriodo(d) {
+  const [de, ate] = intervalo(), h = diaSP(new Date()), soHoje = de === h && ate === h;
+  if (Array.isArray(d.funil_periodo)) return { de, ate, comItem: true, comVendas: true, rows: d.funil_periodo.filter((r) => r.dia >= de && r.dia <= ate && r.cliques > 0) };
+  if (soHoje && (d.funil || []).some((r) => 'campanha' in r)) return { de, ate, comItem: true, comVendas: true, rows: (d.funil || []).filter((r) => r.cliques > 0) };
+  const rows = (d.trafego || []).filter((r) => r.dia >= de && r.dia <= ate && r.cliques > 0);
+  return { de, ate, comItem: false, comVendas: soHoje, vendasHoje: soHoje ? (d.funil || []) : null, rows, limite7: !Array.isArray(d.funil_periodo) && de < somaDias(h, -6) };
+}
+const passaFiltro = (r) => { const [bm, ca] = partesConta(r.conta); return (!F.bm || bm === F.bm) && (!F.conta || ca === F.conta); };
+function preencheFiltros(d) {
+  const bms = new Set(), contas = new Set();
+  for (const r of [].concat(d.trafego || [], d.funil || [], d.funil_periodo || [])) { if (!r.conta && !r.cliques) continue; const [bm, ca] = partesConta(r.conta); bms.add(bm); if (!F.bm || bm === F.bm) contas.add(ca); }
+  const opt = (el, vals, todos, sel) => { el.innerHTML = `<option value="">${todos}</option>` + [...vals].sort().map((v) => `<option${v === sel ? ' selected' : ''}>${esc(v)}</option>`).join(''); el.value = vals.has(sel) ? sel : ''; };
+  opt($('f-bm'), bms, 'Todos', F.bm); opt($('f-conta'), contas, 'Todas', F.conta);
+  $('f-per').value = F.per; $('f-vista').value = F.vista;
+  const h = diaSP(new Date()), [de, ate] = intervalo();
+  for (const l of document.querySelectorAll('.f-datas')) l.hidden = F.per !== 'custom';
+  for (const id of ['f-de', 'f-ate']) { const el = $(id); el.max = h; if (!Array.isArray(d.funil_periodo)) el.min = somaDias(h, -6); else el.removeAttribute('min'); }
+  $('f-de').value = de; $('f-ate').value = ate;
+}
+function desenhaFunil(el, d, cores) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const mk = (tag, attrs, txt) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (txt != null) e.textContent = txt; return e; };
+  const fmt = (n) => Number(n || 0).toLocaleString('pt-BR');
+  const P = linhasPeriodo(d), rows = P.rows.filter(passaFiltro);
+  // status de cada chip (chips_lista) e totais do período por chip
+  const info = {}; for (const c of d.chips || []) info[c.nome] = c;
+  const chips = {};
+  const chip = (nome) => (chips[nome] = chips[nome] || { nome, status: (info[nome] || {}).status, sorteio: !!(info[nome] && info[nome].no_sorteio && info[nome].ativo), cliques: 0, conversas: 0, vendas: 0 });
+  for (const r of rows) { const c = chip(r.chip); c.cliques += r.cliques || 0; c.conversas += r.conversas || 0; if (P.comVendas && !P.vendasHoje) c.vendas += r.vendas || 0; }
+  if (P.vendasHoje) for (const r of P.vendasHoje) if (passaFiltro(r) && r.cliques > 0) chip(r.chip).vendas += r.vendas || 0;
+  const ALERTA = '⚠ chip fora do sorteio';
+  const TIT = { bm: 'Business', conta: 'Conta de anúncio', campanha: 'Campanha', item: 'Anúncio / público', rot: 'Roteador', chip: 'Chip no sorteio' };
+  const chaves = F.vista === 'campanhas' ? ['bm', 'conta', 'campanha'].concat(P.comItem ? ['item'] : [])
+    : F.vista === 'chips' ? ['bm', 'conta', 'rot', 'chip']
+    : ['bm', 'conta', 'campanha'].concat(P.comItem ? ['item'] : [], ['rot', 'chip']);
+  const COLS = chaves.map((k) => TIT[k]), nC = chaves.length, iChip = chaves.indexOf('chip'), iRot = chaves.indexOf('rot');
+  const rotulo = (k, r) => {
+    const [bm, ca, temConta] = partesConta(r.conta);
+    if (k === 'bm') return bm; if (k === 'conta') return ca; if (k === 'rot') return 'Roteador';
+    if (k === 'campanha') return limpaTxt(r.campanha) || (temConta ? '(sem campanha)' : 'sem campanha');
+    if (k === 'item') return nomeItem(limpaTxt(r.item) || (temConta ? '(sem anúncio)' : 'sem anúncio'));
+    const c = chips[r.chip]; return c && emDistribuicao(c.status, c.sorteio) ? r.chip : ALERTA;
+  };
+  const paths = rows.map((r) => ({ v: r.cliques, p: chaves.map((k) => rotulo(k, r)) }));
+  const MAXN = 7, tot = COLS.map(() => ({}));
+  for (const x of paths) x.p.forEach((n, i) => { tot[i][n] = (tot[i][n] || 0) + x.v; });
+  if (iChip > -1 && !F.bm && !F.conta) for (const c of d.chips || []) if (emDistribuicao(c.status, c.no_sorteio && c.ativo) && !(c.nome in tot[iChip])) { tot[iChip][c.nome] = 0; chip(c.nome); }
+  const mapa = tot.map((t, i) => {
+    const ord = Object.entries(t).sort((a, b) => b[1] - a[1]), m = {};
+    if (i === iChip || ord.length <= MAXN) { ord.forEach(([n]) => { m[n] = n; }); return m; }
+    const outros = '+ ' + (ord.length - (MAXN - 1)) + ' outros';
+    ord.forEach(([n], j) => { m[n] = j < MAXN - 1 ? n : outros; });
+    return m;
+  });
+  const nos = COLS.map(() => ({})), links = {};
+  for (const x of paths) {
+    const q = x.p.map((n, i) => mapa[i][n] || n);
+    q.forEach((n, i) => { nos[i][n] = (nos[i][n] || 0) + x.v; });
+    for (let i = 0; i < q.length - 1; i++) { const k = i + '\u0001' + q[i] + '\u0001' + q[i + 1]; links[k] = (links[k] || 0) + x.v; }
   }
+  if (iChip > -1) for (const n in tot[iChip]) if (!(n in nos[iChip])) nos[iChip][n] = 0;
+  const outro = (n) => /^\+ \d+ outros$/.test(n);
+  const colNos = nos.map((o, i) => Object.entries(o).map(([nome, v]) => ({ nome, v })).sort((a, b) => (i === iChip ? ((a.nome === ALERTA) - (b.nome === ALERTA)) : (outro(a.nome) - outro(b.nome))) || (b.v - a.v)));
+  const total = Object.values(nos[0]).reduce((s, v) => s + v, 0);
+  const cs = getComputedStyle(el), Wc = Math.max((el.clientWidth || 900) - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight), 300);
+  const W = Math.max(Wc, nC * 160), gap = 34, bw = Math.min(260, Math.floor((W - (nC - 1) * gap) / nC)), topo = 30, lh = 58;
+  const H = topo + Math.max(...colNos.map((c) => c.length), 2) * lh + 12;
+  const passo = nC > 1 ? (W - bw) / (nC - 1) : 0, xCol = (i) => i * passo;
+  const pos = {}; colNos.forEach((col, i) => col.forEach((n, j) => { pos[i + '\u0001' + n.nome] = topo + (H - topo - 12) * (j + 0.5) / col.length; }));
+  const svg = mk('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img', 'aria-label': 'Estrutura de distribuição: ' + COLS.join(', ') });
+  COLS.forEach((t, i) => svg.append(mk('text', { x: xCol(i), y: 14, fill: cores.mudo, 'font-size': 11, 'font-weight': 600 }, t.toUpperCase())));
+  const maxV = Math.max(total, 1), esp = (v) => (v ? Math.max(2.5, 30 * v / maxV) : 1.2);
+  const corChip = (nome) => { if (nome === ALERTA) return cores.bad; const c = chips[nome]; return c && c.status === 'CONNECTED' ? cores.ok : cores.warn; };
+  for (const k in links) {
+    const [i, a, b] = k.split('\u0001'), ii = +i, v = links[k];
+    const x1 = xCol(ii) + bw, x2 = xCol(ii + 1), y1 = pos[ii + '\u0001' + a], y2 = pos[(ii + 1) + '\u0001' + b];
+    const cor = ii + 1 === iChip ? corChip(b) : cores.linha;
+    const path = mk('path', { d: `M${x1},${y1} C${(x1 + x2) / 2},${y1} ${(x1 + x2) / 2},${y2} ${x2},${y2}`, stroke: cor, 'stroke-width': esp(v), fill: 'none', opacity: ii + 1 === iChip ? 0.6 : 0.4, 'stroke-linecap': 'round' });
+    path.append(mk('title', {}, `${a} → ${b}: ${fmt(v)} cliques`));
+    svg.append(path);
+  }
+  const corta = (t, w) => { const n = Math.max(6, Math.floor((w - 16) / 6.9)); return t.length > n ? t.slice(0, n - 1) + '…' : t; };
+  colNos.forEach((col, i) => col.forEach((n) => {
+    const y = pos[i + '\u0001' + n.nome], x = xCol(i), g = mk('g', {});
+    let sub = fmt(n.v) + ' cliques', borda = cores.borda;
+    if (i === iChip && n.nome !== ALERTA) { const c = chips[n.nome] || {}; sub = P.comVendas ? `${fmt(c.cliques)} → ${fmt(c.conversas)} → ${fmt(c.vendas)}` : `${fmt(c.cliques)} → ${fmt(c.conversas)}`; borda = corChip(n.nome); }
+    if (n.nome === ALERTA) borda = cores.bad;
+    if (i === iRot) borda = cores.linha;
+    g.append(mk('title', {}, `${COLS[i]}: ${n.nome}\n${sub}`));
+    g.append(mk('rect', { x, y: y - 21, width: bw, height: 42, rx: 8, fill: cores.painel, stroke: borda, 'stroke-width': i === iChip ? 1.6 : 1 }));
+    g.append(mk('text', { x: x + 8, y: y - 4, fill: n.nome === ALERTA ? cores.bad : cores.texto, 'font-size': 12, 'font-weight': 600 }, corta(n.nome, bw)));
+    g.append(mk('text', { x: x + 8, y: y + 13, fill: cores.mudo, 'font-size': 11 }, corta(sub, bw)));
+    svg.append(g);
+  }));
+  const rolar = document.createElement('div'); rolar.className = 'rolar'; rolar.append(svg);
+  const partes = [rolar], nota = (t) => { const p = document.createElement('p'); p.className = 'nota-mudo'; p.textContent = t; partes.push(p); };
+  if (iChip > -1) nota((P.comVendas ? 'Chip: cliques → conversas → vendas.' : 'Chip: cliques → conversas (vendas por chip só em "Hoje" até a função de período estar no banco).') + ' Passe o mouse numa caixa ou faixa para ver o nome inteiro.' + (Wc < W ? ' Arraste para o lado para ver tudo.' : ''));
+  if (!total) nota('Nenhum clique de anúncio roteado neste período' + (F.bm || F.conta ? ' com esses filtros' : '') + '.');
+  if (!P.comItem && F.vista !== 'chips') nota('Coluna de anúncio/público aparece quando a função chips_funil nova estiver no banco.');
+  if (P.limite7) nota('Sem a função de período no banco, o painel só tem os últimos 7 dias.');
+  // chips fora da distribuição: isolados, sem faixa
+  const fora = (d.chips || []).filter((c) => !emDistribuicao(c.status, c.no_sorteio && c.ativo));
+  if (fora.length && F.vista !== 'campanhas') {
+    const box = document.createElement('div'); box.className = 'fora';
+    box.innerHTML = `<h3>Fora da distribuição (${fora.length}) · não recebem clique</h3><div class="lista">` + fora.map((c) => {
+      const motivo = c.status === 'BANNED' ? 'banido' : c.status === 'RESTRICTED' ? 'restrito' : c.status === 'DISCONNECTED' ? 'desconectado' : !c.ativo ? 'desativado' : 'fora do sorteio';
+      const h = chips[c.nome] && chips[c.nome].cliques ? `<span class="alerta">⚠ recebeu ${fmt(chips[c.nome].cliques)} cliques no período</span>` : '';
+      return `<div class="item"><b>${esc(c.nome || c.numero)}</b><span>${esc(c.numero)} · ${motivo}</span>${h}</div>`;
+    }).join('') + '</div>';
+    partes.push(box);
+  }
+  el.replaceChildren(...partes);
+  return P;
+}
 
 let ultimo = null;
 function desenha(d) {
   ultimo = d;
   const css = getComputedStyle(document.documentElement), v = (n) => css.getPropertyValue(n).trim();
-  desenhaFunil($('funil'), d.funil || [], { ok: v('--ok'), warn: v('--warn'), bad: v('--bad'), linha: v('--muted'), painel: v('--panel'), borda: v('--line'), texto: v('--fg'), mudo: v('--muted') });
+  preencheFiltros(d);
+  const P = desenhaFunil($('funil'), d, { ok: v('--ok'), warn: v('--warn'), bad: v('--bad'), linha: v('--muted'), painel: v('--panel'), borda: v('--line'), texto: v('--fg'), mudo: v('--muted') });
   $('hora').textContent = 'atualizado ' + new Date(d.agora).toLocaleTimeString('pt-BR');
   const ord = { bad: 0, warn: 1, ok: 2 };
-  const chips = [...d.chips].sort((a, b) => (b.ativo - a.ativo));
-  $('monitor').innerHTML = chips.map((c) => {
+  const cartao = (isolado) => (c) => {
     const ck = checagens(c);
     const pior = ck.reduce((a, x) => (ord[x[2]] < ord[a] ? x[2] : a), 'ok');
     const nota = Math.round(100 * ck.reduce((s, x) => s + (x[2] === 'ok' ? 1 : x[2] === 'warn' ? 0.5 : 0), 0) / ck.length);
-    return `<article class="card"><div class="top"><span class="luz ${pior}"></span><h3>${esc(c.nome || c.numero)}</h3><span class="nota">${nota}</span></div>
+    return `<article class="card${isolado ? ' isolado' : ''}"><div class="top"><span class="luz ${pior}"></span><h3>${esc(c.nome || c.numero)}</h3><span class="nota">${nota}</span></div>
       <div class="muted">${esc(c.numero)} · ${c.no_sorteio && c.ativo ? 'no sorteio do link' : 'fora do sorteio'}${c.tier ? ' · limite ' + esc(String(c.tier).replace('TIER_', '')) + '/dia' : ''}<br>BM ${esc(c.bm)} · ${esc(c.waba_nome || c.waba_id || '')}</div>
       <ul>${ck.map(([r, v, s]) => `<li class="s-${s}"><b>${s === 'ok' ? '✓' : s === 'warn' ? '!' : '✕'}</b><span>${esc(r)}: <em>${esc(v)}</em></span></li>`).join('')}</ul>
       <div class="kpis"><div class="kpi"><div>Novas hoje</div><div>${fmt(c.novos_hoje)}</div></div><div class="kpi"><div>Mensagens in</div><div>${fmt(c.entradas_hoje)}</div></div><div class="kpi"><div>Vendas</div><div>${fmt(c.vendas_hoje)}</div></div><div class="kpi"><div>Faturado</div><div>${brl(c.faturado_hoje)}</div></div></div></article>`;
-  }).join('');
-  const hoje = d.trafego.length ? d.trafego[0].dia : null;
-  const th = d.trafego.filter((r) => r.dia === hoje);
-  $('traf').innerHTML = th.length ? th.map((r) => `<tr><td>${esc(r.conta)}</td><td>${esc(r.campanha)}</td><td>${esc(r.via)}</td><td>${esc(r.chip)}</td><td class="n">${fmt(r.cliques)}</td><td class="n">${fmt(r.conversas)}</td></tr>`).join('') : '<tr><td colspan="6" class="muted">Nenhum clique roteado hoje ainda.</td></tr>';
+  };
+  const dentro = d.chips.filter((c) => emDistribuicao(c.status, c.no_sorteio && c.ativo)), foraM = d.chips.filter((c) => !emDistribuicao(c.status, c.no_sorteio && c.ativo));
+  $('monitor').innerHTML = dentro.map(cartao(false)).join('') || '<p class="muted">Nenhum chip no sorteio.</p>';
+  $('monitorFora').innerHTML = foraM.map(cartao(true)).join('') || '<p class="muted">Nenhum chip fora da distribuição.</p>';
+  const per = rotuloPeriodo([P.de, P.ate]);
+  $('tit-funil').textContent = 'Estrutura de distribuição · ' + per + (F.bm ? ' · ' + F.bm : '') + (F.conta ? ' · ' + F.conta : '');
+  $('tit-traf').textContent = 'De onde vem o tráfego e pra qual chip foi · ' + per;
+  const tg = {};
+  for (const r of (d.trafego || []).filter((r) => r.dia >= P.de && r.dia <= P.ate && passaFiltro(r))) { const k = [r.conta, r.campanha, r.via, r.chip].join('|'); tg[k] = tg[k] || { ...r, cliques: 0, conversas: 0 }; tg[k].cliques += r.cliques; tg[k].conversas += r.conversas; }
+  const th = Object.values(tg).sort((a, b) => b.cliques - a.cliques);
+  $('traf').innerHTML = th.length ? th.map((r) => `<tr><td>${esc(r.conta)}</td><td>${esc(limpaTxt(r.campanha))}</td><td>${esc(r.via)}</td><td>${esc(r.chip)}</td><td class="n">${fmt(r.cliques)}</td><td class="n">${fmt(r.conversas)}</td></tr>`).join('') : '<tr><td colspan="6" class="muted">Nenhum clique roteado neste período.</td></tr>';
   const ag = {};
   for (const r of d.trafego) { const k = r.dia + '|' + r.conta + '|' + r.chip; ag[k] = ag[k] || { ...r, cliques: 0, conversas: 0 }; ag[k].cliques += r.cliques; ag[k].conversas += r.conversas; }
   $('traf7').innerHTML = Object.values(ag).map((r) => `<tr><td>${esc(r.dia)}</td><td>${esc(r.conta)}</td><td>${esc(r.chip)}</td><td class="n">${fmt(r.cliques)}</td><td class="n">${fmt(r.conversas)}</td></tr>`).join('') || '<tr><td colspan="5" class="muted">—</td></tr>';
@@ -155,11 +285,21 @@ function desenha(d) {
 }
 async function carrega() {
   try {
-    const r = await fetch('/painel-chips/api', { method: 'POST', cache: 'no-store' });
+    const [de, ate] = intervalo();
+    const r = await fetch('/painel-chips/api', { method: 'POST', cache: 'no-store', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ de, ate }) });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     desenha(await r.json());
   } catch (e) { $('hora').innerHTML = '<span class="erro">falha ao atualizar (' + esc(e.message) + ')</span>'; }
 }
+function mudaFiltro() {
+  const antes = intervalo().join();
+  F.per = $('f-per').value; F.vista = $('f-vista').value; F.bm = $('f-bm').value; F.conta = $('f-conta').value;
+  if (F.per === 'custom') { F.de = $('f-de').value || F.de; F.ate = $('f-ate').value || F.ate; }
+  salvaF();
+  // com a função de período no banco, outro intervalo pede dados novos; sem ela, redesenha com o que já veio
+  if (ultimo && Array.isArray(ultimo.funil_periodo) && intervalo().join() !== antes) carrega(); else if (ultimo) desenha(ultimo);
+}
+for (const id of ['f-per', 'f-vista', 'f-bm', 'f-conta', 'f-de', 'f-ate']) $(id).addEventListener('change', (e) => { if (e.target.id === 'f-bm') $('f-conta').value = ''; mudaFiltro(); });
 carrega(); setInterval(carrega, 60000);
 let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => ultimo && desenha(ultimo), 200); });
 </script>

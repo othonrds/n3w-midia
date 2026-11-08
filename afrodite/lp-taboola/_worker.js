@@ -75,7 +75,9 @@ export default {
       const a = request.headers.get('authorization') || '';
       if (!/^Basic /i.test(a)) return pedeLogin();
       if (url.pathname === '/painel-chips/api') {
-        const r = await fetch('https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/chips-dados', { method: 'POST', headers: { authorization: a } });
+        // (08/11) repassa o período { de, ate } do filtro de data (corpo pequeno; o resto a edge ignora)
+        const corpo = request.method === 'POST' ? (await request.text()).slice(0, 200) : '';
+        const r = await fetch('https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/chips-dados', { method: 'POST', headers: { authorization: a, 'content-type': 'application/json' }, body: corpo || '{}' });
         return new Response(r.body, { status: r.status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
       }
       const ping = await edge(a, { tipo: 'ping' });
