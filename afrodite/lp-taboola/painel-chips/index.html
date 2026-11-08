@@ -112,8 +112,9 @@ function checagens(c) {
   // Fontes, da mais completa para a mais simples:
   //   d.funil_periodo (função chips_funil_periodo, qualquer período, com anúncio e vendas) →
   //   d.funil com campanha/item (só hoje, com anúncio e vendas) → d.trafego (7 dias, sem anúncio; vendas só hoje).
-// nomes podem chegar codificados 2× (ex.: "%257C" → "%7C" → "|")
-const limpaTxt = (v) => { if (v == null || v === '') return null; let t = String(v).replace(/\+/g, ' '); for (let i = 0; i < 2 && /%[0-9A-Fa-f]{2}/.test(t); i++) { try { t = decodeURIComponent(t); } catch (e) { break; } } return t.trim() || null; };
+// nomes podem chegar codificados 2× ("%257C" → "%7C" → "|") e cortados no meio de um código ("…faca%"): decodifica trecho a trecho e tira o pedaço quebrado do fim
+const decTrechos = (t) => t.replace(/(?:%[0-9A-Fa-f]{2})+/g, (m) => { try { return decodeURIComponent(m); } catch (e) { return m; } });
+const limpaTxt = (v) => { if (v == null || v === '') return null; let t = String(v).replace(/\+/g, ' ').replace(/%[0-9A-Fa-f]?$/, ''); for (let i = 0; i < 2 && /%[0-9A-Fa-f]{2}/.test(t); i++) t = decTrechos(t).replace(/%[0-9A-Fa-f]?$/, ''); return t.trim() || null; };
 const nomeItem = (v) => (/^\d{9,}$/.test(v) ? 'Anúncio …' + v.slice(-6) : v);
 function emDistribuicao(st, sorteio) { return !!sorteio && st !== 'BANNED' && st !== 'RESTRICTED' && st !== 'DISCONNECTED'; }
 const TZ = 'America/Sao_Paulo';
