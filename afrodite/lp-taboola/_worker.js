@@ -9,8 +9,24 @@ async function sha(t) { const d = await crypto.subtle.digest('SHA-256', new Text
 const SB_REST = 'https://cdtfglylekiyxdmrgbne.supabase.co/rest/v1/rpc/rota_chip_log';
 const SB_PUB = 'sb_publishable_CVZTk5jPKg5XAQo6QUJeTQ_YxMAUX7h';
 let ultimoChip = '5548999057155';
-// conta/BM de origem: ?conta=... no link do anúncio; senão, pelo utm_campaign conhecido
-const CONTAS = { zap_roteador: 'Sócio · TARÔ - ESCALA', zap_escala: 'Sócio · TARÔ - ESCALA', zap_leticia: 'Sócio · TARÔ - ESCALA', zap_lp: 'Sócio · TARÔ - ESCALA' };
+// conta/BM de origem: ?conta=... no link do anúncio; senão, pelo utm_campaign.
+// (08/11) Os anúncios de LP mandam utm_campaign={{campaign.name}} (nome da campanha da Meta, às vezes URL-encoded com "+"),
+// não a chave zap_*: por isso 316 cliques de 07/11 caíram em "Origem não identificada". Agora a conta sai do prefixo do nome.
+// Regra para conta nova: prefixo no nome das campanhas ([BM1], [TARÔ]…) listado aqui, ou ?conta=Nome no link do anúncio.
+// Fora da Meta a conta é a plataforma (a LP manda origem=tiktok/taboola/youtube; o TikTok também usa nomes "[TARÔ] …").
+const CONTAS = [
+  [/^zap_(roteador|escala|leticia|lp)$/i, 'Sócio · TARÔ - ESCALA'],
+  [/^\[TAR[ÔO]\]/i, 'Sócio · TARÔ - ESCALA'],
+  [/^\[(BM1|TESTE)\]/i, 'BM 1 · Anúncios Astral Afrodite'],
+];
+const PLATAFORMAS = { tiktok: 'TikTok · 7702236482601238529', taboola: 'Taboola · Realize 2138505', youtube: 'Google Ads · YouTube', google: 'Google Ads · YouTube' };
+function limpa(v) { if (!v) return null; let t = String(v); try { t = decodeURIComponent(t.replace(/\+/g, ' ')); } catch (e) {} t = t.trim().slice(0, 200); return t || null; }
+function contaDe(campanha, origem) {
+  const plat = PLATAFORMAS[String(origem || '').toLowerCase()];
+  if (plat) return plat;
+  for (const [re, nome] of CONTAS) if (re.test(campanha || '')) return nome;
+  return null;
+}
 async function rotaChip(info) {
   try {
     const r = await fetch(SB_REST, { method: 'POST', headers: { apikey: SB_PUB, 'content-type': 'application/json' }, body: JSON.stringify(info || {}) });
@@ -20,8 +36,9 @@ async function rotaChip(info) {
   return ultimoChip;
 }
 function infoDe(q, via, codigo) {
-  return { p_codigo: codigo || null, p_origem: q.get('origem') || q.get('utm_source') || null, p_conta: q.get('conta') || CONTAS[q.get('utm_campaign')] || null,
-    p_campanha: q.get('utm_campaign') || null, p_item: q.get('utm_content') || q.get('ad_id') || null, p_via: via };
+  const campanha = limpa(q.get('utm_campaign')), origem = q.get('origem') || q.get('utm_source') || null;
+  return { p_codigo: codigo || null, p_origem: origem, p_conta: limpa(q.get('conta')) || contaDe(campanha, origem),
+    p_campanha: campanha, p_item: limpa(q.get('utm_content') || q.get('ad_id')), p_via: via };
 }
 function pedeLogin() {
   return new Response('Login necessário.', { status: 401, headers: { 'WWW-Authenticate': 'Basic realm="Painel Taro", charset="UTF-8"', 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } });
