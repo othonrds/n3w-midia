@@ -1,147 +1,90 @@
-// Juris Páginas — app (gerador, personalização, checkout Pix e painel do cliente).
-import { AREAS, TESES, UFS, PALS, TPLS, CSS, renderLP, slugDe, esc, areaCurta } from "./lp.js";
+// Juris Páginas — funil de 3 etapas (14/10):
+//  1) o link do anúncio abre a página já pronta (nome/área/cidade pela URL; nome editável na própria página);
+//  2) "Envie 1 selfie" → fotos de autoridade (acao "fotos"; gerador ainda é stub TODO-Higgsfield no servidor), com marca d'água;
+//  3) Pix único de R$ 97 (página no ar 1 ano em jurispaginas.com/<nome>) + bump domínio próprio R$ 67. WhatsApp/e-mail só aqui.
+// Parâmetros aceitos: ?nome=&area=&tese=&cidade=&uf=&g=a|o (e UTMs/fbclid, lidos por px.js).
+// Pixel: PageView (px.js), ViewContent (página pronta vista), Lead (selfie enviada), InitiateCheckout (abre checkout),
+// AddPaymentInfo (Pix gerado), Purchase (pago). Lead, AddPaymentInfo e Purchase também saem pelo servidor (CAPI) com o mesmo eventID.
+import { AREAS, TESES, UFS, CSS, renderLP, slugDe, esc } from "./lp.js";
+
+const q = new URLSearchParams(location.search);
+// Painel do cliente (link privado pós-compra) continua no editor antigo.
+if (q.get("ref") && q.get("t")) location.replace("legacy/" + location.search);
 
 const FN = "https://cdtfglylekiyxdmrgbne.supabase.co/functions/v1/juris";
-const PRECO = 39.9; // oferta de teste (anúncios F1/F2)
-// Oferta v2: pacotes. Abre com ?oferta=v2 e fica lembrada no navegador; ?oferta=v1 volta ao teste. Preços também estão no servidor.
-const PACOTES = [
-  { id: "p1", n: "Essencial", pg: 1, preco: 97, itens: ["1 página completa", "Todos os modelos e teses", "12 meses de hospedagem"] },
-  { id: "p3", n: "Profissional", pg: 3, preco: 199, top: true, itens: ["3 páginas completas (ex.: área + 2 teses)", "Todos os modelos e teses", "12 meses de hospedagem"] },
-  { id: "p10", n: "Escritório", pg: 10, preco: 397, itens: ["10 páginas (todas as teses que você atende)", "Domínio próprio configurado por nós", "12 meses de hospedagem"] },
-];
-const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const q = new URLSearchParams(location.search);
+const PRECO = 97, PRECO_DOMINIO = 67; // conferidos no servidor (PACOTES / PRECO_DOMINIO)
+const $ = s => document.querySelector(s);
 const brl = n => "R$ " + Number(n).toFixed(2).replace(".", ",");
 const ls = { get(k){ try { return JSON.parse(localStorage.getItem(k) || "null"); } catch { return null; } }, set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }, del(k){ try { localStorage.removeItem(k); } catch {} } };
 const ev = (...a) => { try { window.ev && window.ev(...a); } catch {} };
-// Cookies do pixel (_fbp/_fbc, gravados por px.js mesmo se o pixel for bloqueado): vão no rascunho e no pedido
-// para o servidor mandar Lead, InitiateCheckout e Purchase pela Conversions API com o mesmo eventID do navegador.
-const cookie = n => { try { const m = document.cookie.match(new RegExp("(?:^|; )" + n + "=([^;]*)")); return m ? decodeURIComponent(m[1]) : null; } catch { return null; } };
-const fbIds = () => (window.fbIds ? window.fbIds() : { fbp: cookie("_fbp"), fbc: cookie("_fbc") });
+const fbIds = () => (window.fbIds ? window.fbIds() : {});
+const ZAP = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>';
+const CAM = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3 7.2 5H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.2L15 3zm3 5a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>';
 
 $("#lpcss").textContent = CSS;
-$("#tpls").innerHTML = TPLS.map(t => `<button type="button" data-t="${t[0]}" class="${t[0] === "classico" ? "on" : ""}">${t[3] !== "base" ? `<i>${t[3] === "viral" ? "Viral" : "Top"}</i>` : ""}${t[1]}<small>${t[2]}</small></button>`).join("");
-$("#fArea").innerHTML = Object.entries(AREAS).map(([k, v]) => `<option value="${k}">${v.n}</option>`).join("");
-const teses = (keep) => { const l = TESES[$("#fArea").value] || []; $("#lTese").hidden = !l.length;
-  $("#fTese").innerHTML = `<option value="">Área completa</option>` + l.map(t => `<option value="${t.id}">${t.n}</option>`).join("");
-  if (keep && l.some(t => t.id === keep)) $("#fTese").value = keep; };
-$("#fArea").addEventListener("change", () => teses()); teses();
-// Seções de venda: teses e tabela de pacotes
-$("#teses").innerHTML = Object.entries(TESES).map(([k, l]) => `<div><b>${AREAS[k].n}</b>${l.map(t => `<span>${t.n}</span>`).join("")}</div>`).join("");
-$("#precos").innerHTML = PACOTES.map(p => `<div class="preco${p.top ? " top" : ""}">${p.top ? '<span class="selo">Mais escolhido</span>' : ""}<h3>${p.n}</h3><div class="v">${brl(p.preco).replace(",00", "")}<small>pagamento único</small></div>
-  <ul>${p.itens.map(i => `<li>${i}</li>`).join("")}<li>Sem marca d'água e botão de WhatsApp</li><li>Edições ilimitadas</li></ul><a class="btn${p.top ? "" : " ghost"}" href="#formGen" data-pac="${p.id}">Gerar a minha grátis</a></div>`).join("");
-$("#precos").onclick = e => { const a = e.target.closest("[data-pac]"); if (a) st.pacote = a.dataset.pac; };
-$$('a[href="#formGen"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); if (st.step === 1) { $("#formGen").scrollIntoView({ behavior: "smooth", block: "start" }); setTimeout(() => $("#fNome").focus({ preventScroll: true }), 400); } else $("#steps").scrollIntoView({ behavior: "smooth", block: "start" }); }));
-$("#fUf").innerHTML = UFS.map(u => `<option${u === "CE" ? " selected" : ""}>${u}</option>`).join("");
-$("#pal").innerHTML = PALS.map((p, i) => `<button type="button" data-i="${i}" class="${i ? "" : "on"}" style="background:linear-gradient(135deg,${p[0]} 50%,${p[1]} 50%)" aria-label="Paleta ${i + 1}"></button>`).join("");
 
-const st = { step: 1, view: 1, tpl: "classico", p: PALS[0][0], a: PALS[0][1], foto: null, logo: null, fotoLocal: null, logoLocal: null, id: null, token: null, painel: null, teste: false };
-const V2 = (() => { const o = q.get("oferta"); if (o === "v2") { ls.set("jp_oferta", "v2"); return true; } if (o === "v1") { ls.del("jp_oferta"); return false; } return ls.get("jp_oferta") === "v2"; })();
-document.body.classList.toggle("v2", V2);
-const PAINEL = q.get("ref") && q.get("t") ? { ref: q.get("ref"), t: q.get("t") } : null;
+/* ---------- dados iniciais: rascunho salvo ou parâmetros do anúncio ---------- */
+const limpa = (s, n) => String(s || "").replace(/[<>]/g, "").replace(/\s+/g, " ").trim().slice(0, n);
+const salvo = ls.get("jp_funil");
+const area = AREAS[q.get("area")] ? q.get("area") : "familia";
+const st = salvo?.id ? { ...salvo } : {
+  id: null, token: null, etapa: 1,
+  dados: {
+    tpl: "premium", p: "#15202B", a: "#C5A26B",
+    nome: limpa(q.get("nome"), 60) || (q.get("g") === "o" ? "Dr. Seu Nome" : "Dra. Seu Nome"),
+    genero: q.get("g") === "o" ? "o" : "a", area,
+    tese: (TESES[area] || []).some(t => t.id === q.get("tese")) ? q.get("tese") : "",
+    cidade: limpa(q.get("cidade"), 40), uf: UFS.includes((q.get("uf") || "").toUpperCase()) ? q.get("uf").toUpperCase() : "SP",
+    atend: "Presencial e online", fotos: [],
+  },
+};
+st.teste = false;
+const guarda = () => ls.set("jp_funil", { id: st.id, token: st.token, etapa: st.etapa, dados: st.dados });
 
 async function api(body) {
   const r = await fetch(FN, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   let j = {}; try { j = await r.json(); } catch {}
   if (!r.ok) throw new Error(j.erro || "Falha de conexão. Tente de novo.");
+  if (j.teste) { st.teste = true; $("#modo").hidden = false; }
   return j;
-}
-const v = id => $(id).value.trim();
-function dados() {
-  return { nome: v("#fNome"), genero: v("#fGen"), area: v("#fArea"), tese: v("#fTese"), cidade: v("#fCidade"), uf: v("#fUf"), oab: v("#fOab"), anos: v("#fAnos"), zap: v("#fZap"), atend: v("#fAtend"),
-    tpl: st.tpl, p: st.p, a: st.a, h1: v("#tH1"), sub: v("#tSub"), bio: v("#tBio"), end: v("#tEnd"), email: v("#tEmail"), insta: v("#tInsta"), escritorio: v("#tEscr"), foto: st.foto, logo: st.logo };
-}
-function preenche(d) {
-  const set = (id, x) => { $(id).value = x || ""; };
-  set("#fNome", d.nome); $("#fGen").value = d.genero || "a"; $("#fArea").value = d.area || "familia"; teses(d.tese); set("#fCidade", d.cidade); $("#fUf").value = d.uf || "CE";
-  set("#fOab", d.oab); set("#fAnos", d.anos); set("#fZap", d.zap); $("#fAtend").value = d.atend || "Presencial e online";
-  set("#tH1", d.h1); set("#tSub", d.sub); set("#tBio", d.bio); set("#tEnd", d.end); set("#tEmail", d.email); set("#tInsta", d.insta); set("#tEscr", d.escritorio);
-  st.tpl = d.tpl || "classico"; st.p = d.p || PALS[0][0]; st.a = d.a || PALS[0][1]; st.foto = d.foto || null; st.logo = d.logo || null; st.fotoLocal = st.logoLocal = null;
-  $("#cP").value = st.p;
-  $$("#tpls button").forEach(x => x.classList.toggle("on", x.dataset.t === st.tpl));
-  $$("#pal button").forEach(x => x.classList.toggle("on", PALS[x.dataset.i][0] === st.p && PALS[x.dataset.i][1] === st.a));
-  thumb("#thFoto", st.foto); thumb("#thLogo", st.logo);
-}
-const thumb = (sel, src) => { const i = $(sel); if (src) { i.src = src; i.hidden = false; } else { i.removeAttribute("src"); i.hidden = true; } };
-
-// URL pública da página (no domínio final é jurispaginas.com/slug; em prévias de teste usa p.html?s=slug)
-const NOSSO = /(^|\.)jurispaginas\.com$/.test(location.hostname);
-const urlPagina = slug => NOSSO ? `${location.origin}/${slug}` : new URL("p.html?s=" + encodeURIComponent(slug), location.href).href;
-const urlPainel = (ref, t) => new URL(`./?ref=${ref}&t=${t}`, location.href).href;
-
-function render() {
-  const d = dados();
-  const r = renderLP({ ...d, foto: st.fotoLocal || d.foto, logo: st.logoLocal || d.logo }, { previa: !PAINEL, app: true, fotoVazia: PAINEL ? "Envie sua foto em Visual" : "Sua foto aqui (envie em Personalizar)" });
-  const lp = $("#lp"); lp.className = r.cls; lp.style.cssText = r.style; lp.innerHTML = r.html;
-  const pg = PAINEL && st.painel && st.painel.atual !== "novo" ? st.painel.paginas[st.painel.atual] : null;
-  $("#url").textContent = "jurispaginas.com/" + (pg?.slug || slugDe(d.nome) || "seu-nome");
-}
-
-/* ---------- etapas ---------- */
-function setStep(n) {
-  st.step = n; if (n < 4) st.view = n;
-  $$("#steps li").forEach(li => { const s = +li.dataset.s; li.className = s === n ? "on" : s < n ? "done" : ""; });
-  $("#formGen").hidden = st.view !== 1; $("#ready").hidden = st.view !== 2; $("#custom").hidden = st.view !== 3;
-  // Barra fixa "Publicar": a prévia tem ~3.700px no celular e, rolando até o fim, não havia botão para publicar.
-  if (!PAINEL) { $("#pubBar").hidden = !(n === 2 || n === 3); document.body.classList.toggle("combarra", n === 2 || n === 3); }
-  render();
-}
-
-/* ---------- rascunho (salva no servidor sem cadastro) ---------- */
-let tSave = null;
-function agendaSalvar() {
-  if (PAINEL || !st.id) return;
-  clearTimeout(tSave); $("#saved").textContent = "";
-  tSave = setTimeout(salvaRascunho, 1200);
 }
 async function salvaRascunho() {
-  clearTimeout(tSave);
-  const j = await api({ acao: "rascunho", id: st.id, token: st.token, dados: dados(), utm: window.utm ? window.utm() : null, ...fbIds() });
-  st.id = j.id; st.token = j.token; st.teste = !!j.teste;
-  ls.set("jp_rasc", { id: st.id, token: st.token, dados: dados() });
-  $("#saved").textContent = "Rascunho salvo ✓";
-  if (st.teste) { $("#tag").textContent = "Modo teste · Pix simulado"; $("#tag").classList.add("teste"); }
-  return j;
+  const j = await api({ acao: "rascunho", id: st.id, token: st.token, dados: st.dados, utm: window.utm ? window.utm() : null, ...fbIds() });
+  st.id = j.id; st.token = j.token; guarda(); return j;
 }
 
-$("#formGen").addEventListener("submit", async e => {
-  e.preventDefault(); if (PAINEL) return;
-  const err = $("#errForm"); err.textContent = "";
-  if (v("#fNome").length < 3) { err.textContent = "Digite seu nome profissional."; $("#fNome").focus(); return; }
-  if (v("#fZap").replace(/\D/g, "").length < 10) { err.textContent = "Digite o WhatsApp com DDD: ele vira o botão de contato da página."; $("#fZap").focus(); return; }
-  const b = $("#btnGerar"); b.disabled = true; b.textContent = "Gerando…";
-  try { await salvaRascunho(); if (!ls.get("jp_lead_" + st.id)) { ev("Lead", { content_name: v("#fArea") }, "lead-" + st.id); ls.set("jp_lead_" + st.id, 1); } setStep(2); if (innerWidth < 900) $("#ready").scrollIntoView({ behavior: "smooth", block: "start" }); }
-  catch (x) { err.textContent = x.message; }
-  finally { b.disabled = false; b.textContent = "Gerar minha página"; }
-});
-// ViewContent: a pessoa começou a preencher o gerador (separa "só abriu a página" de "tentou gerar").
-let vcFeito = false;
-$("#formGen").addEventListener("focusin", () => { if (vcFeito || PAINEL) return; vcFeito = true; ev("ViewContent", { content_name: "gerador", content_category: v("#fArea") }); });
-$("#goCustom").onclick = () => setStep(3);
-$("#backForm").onclick = () => setStep(1);
-$("#back").onclick = () => setStep(2);
-$("#goPub2").onclick = () => abrirCheckout();
-if (V2) $("#pubPreco").textContent = "Publicar: a partir de R$ 97 (3 páginas por R$ 199)";
-$("#pubBarBtn").onclick = () => abrirCheckout();
-$("#pubBarPreco").textContent = V2 ? "a partir de " + brl(PACOTES[0].preco).replace(",00", "") : "3 páginas por " + brl(PRECO);
-$("#goPub").onclick = () => PAINEL ? salvarPainel() : abrirCheckout();
+/* ---------- página ---------- */
+const slug = () => slugDe(st.dados.nome) || "seu-nome";
+function render() {
+  const r = renderLP(st.dados, { previa: true, app: true, editavel: true, marca: st.dados.fotos.length > 0 });
+  const lp = $("#lp"); lp.className = r.cls; lp.style.cssText = r.style; lp.innerHTML = r.html;
+  $("#url").textContent = "jurispaginas.com/" + slug();
+  const h1 = lp.querySelector("[data-edit=nome]");
+  if (h1) {
+    h1.addEventListener("focus", () => { $("#dica").hidden = true; });
+    h1.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); h1.blur(); } });
+    h1.addEventListener("input", () => {
+      st.dados.nome = limpa(h1.textContent, 60);
+      lp.querySelectorAll("[data-nome]").forEach(s => s.textContent = st.dados.nome);
+      $("#url").textContent = "jurispaginas.com/" + slug();
+    });
+    h1.addEventListener("blur", () => { if (st.dados.nome.length < 3) { st.dados.nome = "Dra. Seu Nome"; render(); } guarda(); if (st.id) salvaRascunho().catch(() => {}); });
+  }
+}
+function etapa(n) {
+  st.etapa = n; guarda();
+  document.querySelectorAll("#steps i").forEach((i, k) => i.classList.toggle("on", k < n));
+  const b = $("#barIn");
+  if (n === 1) {
+    b.innerHTML = `<div class="tx"><b>Sua página está pronta.</b>Falta só a sua foto.</div><button class="btn gold" type="button" id="goSelfie">${CAM}Envie 1 selfie</button>`;
+    $("#goSelfie").onclick = () => $("#selfie").click();
+  } else {
+    b.innerHTML = `<div class="tx"><b>Gostou? Coloque no ar.</b>1 ano no ar · pagamento único</div><button class="btn" type="button" id="goPub">Publicar · ${brl(PRECO).replace(",00", "")}</button>`;
+    $("#goPub").onclick = abrirCheckout;
+  }
+}
 
-["#fNome","#fGen","#fArea","#fTese","#fCidade","#fUf","#fOab","#fAnos","#fZap","#fAtend","#tH1","#tSub","#tBio","#tEnd","#tEmail","#tInsta"].forEach(i => $(i).addEventListener("input", () => { render(); agendaSalvar(); }));
-$$(".tabs button").forEach(b => b.onclick = () => {
-  $$(".tabs button").forEach(x => x.classList.toggle("on", x === b));
-  ["vis", "txt", "dados", "base"].forEach(t => $("#tab-" + t).hidden = t !== b.dataset.tab);
-});
-$("#tpls").onclick = e => {
-  const b = e.target.closest("button"); if (!b) return; st.tpl = b.dataset.t; $$("#tpls button").forEach(x => x.classList.toggle("on", x === b));
-  // Cada modelo vem com a paleta sugerida, a menos que a pessoa já tenha escolhido uma cor própria.
-  const padrao = [...PALS, ...TPLS.map(t => t[4])].some(q => q[0] === st.p && q[1] === st.a), sug = TPLS.find(t => t[0] === st.tpl)?.[4];
-  if (padrao && sug) { st.p = sug[0]; st.a = sug[1]; $("#cP").value = sug[0]; $$("#pal button").forEach(x => x.classList.toggle("on", PALS[x.dataset.i][0] === st.p && PALS[x.dataset.i][1] === st.a)); }
-  render(); agendaSalvar();
-};
-$("#pal").onclick = e => { const b = e.target.closest("button"); if (!b) return; const p = PALS[b.dataset.i]; st.p = p[0]; st.a = p[1]; $("#cP").value = p[0]; $$("#pal button").forEach(x => x.classList.toggle("on", x === b)); render(); agendaSalvar(); };
-$("#cP").oninput = e => { st.p = e.target.value; render(); agendaSalvar(); };
-
-/* ---------- fotos e logo: reduz no celular e envia ---------- */
+/* ---------- etapa 2: selfie → fotos de autoridade ---------- */
 function reduz(file, max) {
   return new Promise((ok, no) => {
     const r = new FileReader(); r.onerror = no;
@@ -149,156 +92,89 @@ function reduz(file, max) {
       const s = Math.min(1, max / Math.max(i.width, i.height)), c = document.createElement("canvas");
       c.width = Math.round(i.width * s); c.height = Math.round(i.height * s);
       const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(i, 0, 0, c.width, c.height);
-      ok(c.toDataURL("image/jpeg", 0.86)); }; i.src = r.result; };
+      ok(c.toDataURL("image/jpeg", 0.88)); }; i.src = r.result; };
     r.readAsDataURL(file);
   });
 }
-function upload(inp, tipo, th) {
-  $(inp).onchange = async e => {
-    const f = e.target.files[0]; if (!f) return; const err = $("#errCustom"); err.textContent = "";
-    try {
-      const img = await reduz(f, tipo === "logo" ? 600 : 1200);
-      st[tipo + "Local"] = img; thumb(th, img); render();
-      if (!PAINEL && !st.id) await salvaRascunho();
-      const body = PAINEL ? { acao: "midia", tipo, img, ref: PAINEL.ref, ptoken: PAINEL.t, id: st.painel.atual === "novo" ? null : st.painel.paginas[st.painel.atual].id } : { acao: "midia", tipo, img, id: st.id, token: st.token };
-      const j = await api(body); st[tipo] = j.url; agendaSalvar(); $("#saved").textContent = (tipo === "foto" ? "Foto" : "Logo") + " enviada ✓";
-    } catch (x) { err.textContent = "Não foi possível enviar a imagem: " + x.message; }
-  };
+$("#selfie").onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  $("#gen").hidden = false;
+  try {
+    const img = await reduz(f, 1400);
+    if (!st.id) await salvaRascunho();
+    const up = await api({ acao: "midia", tipo: "foto", img, id: st.id, token: st.token });
+    const j = await api({ acao: "fotos", id: st.id, token: st.token, selfie: up.url, ...fbIds() });
+    if (!ls.get("jp_lead_" + st.id)) { ev("Lead", { content_name: st.dados.area }, "lead-" + st.id); ls.set("jp_lead_" + st.id, 1); }
+    st.dados.fotos = j.fotos || [up.url]; st.dados.foto = st.dados.fotos[0];
+    render(); etapa(2); scrollTo({ top: 0, behavior: "smooth" });
+  } catch (x) { alert("Não foi possível usar a foto: " + x.message); }
+  finally { $("#gen").hidden = true; }
+};
+
+/* ---------- etapa 3: checkout Pix ---------- */
+const sheet = $("#sheet"); let poll = null;
+function abre(html, fechavel = true) {
+  sheet.innerHTML = (fechavel ? `<button class="x" type="button" id="mx">Fechar ✕</button>` : "") + html; $("#modal").hidden = false; sheet.scrollTop = 0;
+  if (fechavel) $("#mx").onclick = () => { $("#modal").hidden = true; clearInterval(poll); };
 }
-upload("#upFoto", "foto", "#thFoto"); upload("#upLogo", "logo", "#thLogo");
-
-$("#dDesk").onclick = () => { $("#stage").classList.remove("mobile"); $("#dDesk").classList.add("on"); $("#dMob").classList.remove("on"); };
-$("#dMob").onclick = () => { $("#stage").classList.add("mobile"); $("#dMob").classList.add("on"); $("#dDesk").classList.remove("on"); };
-
-/* ---------- checkout ---------- */
-const sheet = $("#sheet");
-function fecha() { $("#modal").hidden = true; clearInterval(poll); if (st.step === 4) setStep(st.view); }
-function abre(html, fechavel = true) { sheet.innerHTML = (fechavel ? `<button class="x" type="button" id="mx">Fechar ✕</button>` : "") + html; $("#modal").hidden = false; if (fechavel) $("#mx").onclick = fecha; sheet.scrollTop = 0; }
-let poll = null;
-
 function abrirCheckout() {
-  const nome = v("#fNome") || "Seu Nome", slug = slugDe(nome) || "seu-nome";
-  if (!st.pacote) st.pacote = "p3";
-  const pac = () => V2 ? PACOTES.find(p => p.id === st.pacote) : { pg: 3, preco: PRECO };
-  setStep(4); if (!ls.get("jp_ic_" + st.id)) { ev("InitiateCheckout", { value: pac().preco, currency: "BRL", content_name: "juris-checkout" }, "ico-" + st.id); ls.set("jp_ic_" + st.id, 1); } // padrão Meta ao abrir o checkout (14/10)
-  const oferta = V2 ? `<div class="pacs" id="pacs">${PACOTES.map(p => `<label class="pac${p.top ? " top" : ""}"><input type="radio" name="pac" value="${p.id}"${p.id === st.pacote ? " checked" : ""}>
-      <span class="pn">${p.top ? "<i>Mais escolhido</i>" : ""}<b>${p.n}</b><span>${p.itens.join(" · ")}</span></span><span class="pp">${brl(p.preco)}</span></label>`).join("")}</div>
-    <p class="note">Pagamento único no Pix. Todos incluem: sem marca d'água, botão direto para o seu WhatsApp, painel para editar quando quiser e endereço <b>jurispaginas.com/${esc(slug)}</b>.</p>`
-    : `<div class="offer">
-    <div class="ot"><b>Pacote Juris Páginas</b><span class="pr">${brl(PRECO)}<small>pagamento único</small></span></div>
-    <ul><li><b>3 páginas completas</b>: esta e mais 2 (uma para cada área ou serviço)</li><li>No ar em <b>jurispaginas.com/${esc(slug)}</b></li><li>12 meses de hospedagem e edições ilimitadas</li><li>Sem marca d'água · botão direto para o seu WhatsApp</li></ul>
-  </div>`;
-  abre(`<h3>Publique sua página</h3>
-  ${oferta}
-  <label for="cEmail">Seu e-mail <small>para o recibo e o acesso ao painel</small><input id="cEmail" type="email" autocomplete="email" inputmode="email" value="${esc(v("#tEmail"))}"></label>
-  <label for="cZap">Seu WhatsApp <input id="cZap" inputmode="tel" autocomplete="tel" value="${esc(v("#fZap"))}"></label>
-  <div class="total"><span>Total</span><span id="tot"></span></div>
+  ev("InitiateCheckout", { value: PRECO, currency: "BRL", num_items: 1 }, st.id ? "ic-" + st.id : undefined);
+  abre(`<h3>Coloque sua página no ar</h3><p class="sub">Compra única no Pix. Sem mensalidade.</p>
+  <div class="offer"><div class="t"><b>Página profissional · 1 ano</b><span class="pr">${brl(PRECO).replace(",00", "")}<small>pagamento único</small></span></div>
+    <ul><li>No ar em <b>jurispaginas.com/${esc(slug())}</b> por 12 meses</li><li>Suas fotos de autoridade, sem marca d'água</li><li>Botão direto para o seu WhatsApp</li><li>Textos dentro do Provimento 205/2021 da OAB</li><li>Avisamos no seu WhatsApp antes de completar 1 ano. Nada é cobrado automaticamente.</li></ul></div>
+  <label class="bump"><input type="checkbox" id="bump"><span><b>+ ${brl(PRECO_DOMINIO).replace(",00", "")}: domínio próprio (seunome.adv.br)</b><span>Registramos e configuramos o endereço só seu, apontando para a página, por 1 ano.</span></span></label>
+  <label for="cZap">Seu WhatsApp <small>vira o botão de contato da página</small><input id="cZap" inputmode="tel" autocomplete="tel" placeholder="(85) 99999-9999" value="${esc(st.dados.zap || "")}"></label>
+  <label for="cEmail">Seu e-mail <small>recibo e acesso para editar</small><input id="cEmail" type="email" inputmode="email" autocomplete="email" value="${esc(st.dados.email || "")}"></label>
+  <div class="tot"><span>Total</span><span id="tot"></span></div>
   <p class="err" id="errPay"></p>
-  <button class="btn" type="button" id="pagar"></button>
-  <p class="note">Pagamento por Pix pelo Mercado Pago. A página vai ao ar assim que o Pix for confirmado, em segundos.${V2 ? " Garantia de 7 dias: se não gostar, devolvemos o valor." : ""}</p>`);
-  const tot = () => { $("#tot").textContent = brl(pac().preco); $("#pagar").textContent = "Gerar Pix de " + brl(pac().preco); };
-  tot();
-  if (V2) $("#pacs").onchange = e => { st.pacote = e.target.value; tot(); };
+  <button class="btn gold blk" type="button" id="pagar"></button>
+  <p class="note">Pix pelo Mercado Pago. A página vai ao ar assim que o pagamento é confirmado, em segundos. Garantia de 7 dias.</p>`);
+  const tot = () => { const v = PRECO + ($("#bump").checked ? PRECO_DOMINIO : 0); $("#tot").textContent = brl(v); $("#pagar").textContent = "Gerar Pix de " + brl(v); };
+  tot(); $("#bump").onchange = tot;
   $("#pagar").onclick = async () => {
     const err = $("#errPay"); err.textContent = "";
-    const email = v("#cEmail"), whats = v("#cZap");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = "Confira o e-mail."; return; }
-    if (whats.replace(/\D/g, "").length < 10) { err.textContent = "WhatsApp com DDD."; return; }
+    const email = $("#cEmail").value.trim(), whats = $("#cZap").value.trim();
+    if (whats.replace(/\D/g, "").length < 10) { err.textContent = "WhatsApp com DDD."; $("#cZap").focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = "Confira o e-mail."; $("#cEmail").focus(); return; }
     const b = $("#pagar"); b.disabled = true; b.textContent = "Gerando Pix…";
     try {
+      st.dados.zap = whats; st.dados.email = email;
       await salvaRascunho();
-      const j = await api({ acao: "pedido", id: st.id, token: st.token, email, whats, nome: v("#fNome"), ...fbIds(), ...(V2 ? { pacote: st.pacote } : {}) });
-      ls.set("jp_pedido", { ref: j.ref, id: j.id, valor: j.valor });
-      ev("AddPaymentInfo", { value: j.valor, currency: "BRL", num_items: j.creditos || 3 }, "api-" + j.ref); // Pix gerado; mesmo event_id do servidor (CAPI)
+      const j = await api({ acao: "pedido", id: st.id, token: st.token, email, whats, nome: st.dados.nome, pacote: "p1", dominio: $("#bump").checked, ...fbIds() });
+      ls.set("jp_pedido", { ref: j.ref, id: j.id });
+      ev("AddPaymentInfo", { value: j.valor, currency: "BRL" }, "api-" + j.ref);
       telaPix(j);
     } catch (x) { err.textContent = x.message; b.disabled = false; tot(); }
   };
 }
-
 function telaPix(j) {
-  const img = j.qr64 ? `<img alt="QR Code Pix" src="data:image/png;base64,${j.qr64}">` : `<div class="code" style="width:220px;height:220px;display:grid;place-items:center;text-align:center">QR de teste<br>(Mercado Pago ainda não conectado)</div>`;
-  abre(`<h3>Pague ${brl(j.valor)} no Pix</h3>
-  <div class="qr">${img}
-    <p class="note">Abra o app do seu banco, escolha Pix e escaneie o QR. No celular, copie o código abaixo e cole em "Pix copia e cola".</p>
+  const img = j.qr64 ? `<img alt="QR Code Pix" src="data:image/png;base64,${j.qr64}">` : `<div class="ph">QR de teste<br>(Mercado Pago não conectado)</div>`;
+  abre(`<h3>Pague ${brl(j.valor)} no Pix</h3><p class="sub">Abra o app do banco → Pix → Copia e cola.</p><div class="qr">${img}
     <div class="code" id="pixCode">${esc(j.qr || "")}</div>
-    <button class="btn" type="button" id="copia">Copiar código Pix</button>
+    <button class="btn gold blk" type="button" id="copia">Copiar código Pix</button>
     <div class="wait"><i></i>Aguardando o pagamento…</div>
-    ${j.teste ? `<button class="btn ghost" type="button" id="simula">Simular pagamento (modo teste)</button>` : ""}
-  </div>`);
-  $("#copia").onclick = async () => { try { await navigator.clipboard.writeText(j.qr); } catch { const r = document.createRange(); r.selectNodeContents($("#pixCode")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand("copy"); } $("#copia").textContent = "Código copiado ✓"; };
+    ${j.teste ? `<button class="btn ghost blk" type="button" id="simula">Simular pagamento (modo teste)</button>` : ""}</div>`);
+  $("#copia").onclick = async () => { try { await navigator.clipboard.writeText(j.qr); } catch {} $("#copia").textContent = "Código copiado ✓"; };
   const confere = async (simular = false) => { try { const s = await api({ acao: "status", ref: j.ref, id: j.id, simular }); if (s.pago) { clearInterval(poll); sucesso(s); } } catch {} };
   clearInterval(poll); poll = setInterval(confere, 4000);
   if (j.teste) $("#simula").onclick = () => confere(true);
 }
-
 function sucesso(s) {
-  ls.del("jp_rasc"); ls.del("jp_pedido");
-  if (!ls.get("jp_px_" + s.ref)) { ev("Purchase", { value: Number(s.valor), currency: "BRL", content_name: "juris-" + (s.creditos || 3) + "-paginas" }, s.ref); ls.set("jp_px_" + s.ref, 1); }
+  if (!ls.get("jp_px_" + s.ref)) { ev("Purchase", { value: Number(s.valor), currency: "BRL", content_name: "juris-premium-1ano" }, s.ref); ls.set("jp_px_" + s.ref, 1); }
+  ls.del("jp_pedido"); ls.del("jp_funil");
   const pg = (s.paginas || []).find(p => p.slug) || {};
-  const link = pg.slug ? urlPagina(pg.slug) : "";
-  const painel = urlPainel(s.ref, s.token);
-  ls.set("jp_painel", painel);
-  $$("#steps li").forEach(li => li.className = "done");
-  abre(`<h3>Sua página está no ar ✓</h3>
-  ${link ? `<div class="live">${esc(link.replace(/^https?:\/\//, ""))}</div><a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Ver minha página</a>` : ""}
-  <div class="box"><b>Seu painel: guarde este link</b><p class="note">É por ele que você edita esta página${(s.creditos || 3) > 1 ? ` e cria as outras ${(s.creditos || 3) - 1} do seu pacote` : ""}. Ele também vai no recibo.</p>
-    <a class="btn ghost" href="${esc(painel)}">Abrir meu painel</a>
-    <a class="btn ghost" href="https://wa.me/?text=${encodeURIComponent("Meu painel do Juris Páginas: " + painel)}" target="_blank" rel="noopener">Enviar o link para o meu WhatsApp</a></div>
-  ${s.fotos ? `<div class="box"><b>Suas 3 fotos profissionais</b><p class="note">Envie uma selfie e escolha os estilos. As fotos ficam prontas em até 12 horas e você troca a foto da página pelo painel.</p><a class="btn" href="${esc(s.fotos)}" target="_blank" rel="noopener">Enviar minha selfie</a></div>` : ""}`, true);
-}
-
-/* ---------- painel do cliente (link privado) ---------- */
-async function iniciaPainel() {
-  document.title = "Meu painel · Juris Páginas";
-  $("#hero").hidden = true; $("#steps").hidden = true; $("#heroPainel").hidden = false; $("#pages").hidden = false;
-  $("#formTit").textContent = "Dados da página"; $("#formSub").textContent = "Mudou algo aqui? Toque em Salvar no quadro de baixo.";
-  $("#btnGerar").hidden = true; $("#ready").hidden = true; $("#back").hidden = true;
-  $("#formGen").hidden = false; $("#custom").hidden = false;
-  $("#goPub").textContent = "Salvar e publicar";
-  try {
-    const j = await api({ acao: "painel", ref: PAINEL.ref, token: PAINEL.t });
-    st.painel = { ...j, atual: 0 }; $("#nCred").textContent = j.creditos;
-    if (j.teste) { $("#tag").textContent = "Modo teste"; $("#tag").classList.add("teste"); }
-    abas(); seleciona(0);
-  } catch (x) { $("#heroPainel").innerHTML = `<h1>Link inválido</h1><p>${esc(x.message)}. Confira se você abriu o link completo enviado depois do pagamento.</p>`; $(".bench").hidden = true; $("#pages").hidden = true; }
-}
-function abas() {
-  const P = st.painel;
-  $("#pages").innerHTML = P.paginas.map((p, i) => `<button type="button" data-i="${i}" class="${P.atual === i ? "on" : ""}">${i + 1} · ${esc(AREAS[p.dados.area] ? areaCurta(AREAS[p.dados.area]) : "Página")}</button>`).join("")
-    + (P.paginas.length < P.creditos ? `<button type="button" data-i="novo" class="add ${P.atual === "novo" ? "on" : ""}">+ Criar página ${P.paginas.length + 1} de ${P.creditos}</button>` : "")
-    + (P.fotos ? `<a class="pages-link" href="${esc(P.fotos)}" target="_blank" rel="noopener" style="align-self:center;font-size:13px;color:var(--accent);font-weight:600">Minhas fotos profissionais ↗</a>` : "");
-  $("#pages").onclick = e => { const b = e.target.closest("button"); if (!b) return; seleciona(b.dataset.i === "novo" ? "novo" : +b.dataset.i); };
-}
-function seleciona(i) {
-  const P = st.painel; P.atual = i;
-  if (i === "novo") { const base = P.paginas[0]?.dados || {}; preenche({ ...base, h1: "", sub: "", bio: "" }); const outra = Object.keys(AREAS).find(k => !P.paginas.some(p => p.dados.area === k)); if (outra) $("#fArea").value = outra; }
-  else preenche(P.paginas[i].dados);
-  abas(); render();
-  const pg = i === "novo" ? null : P.paginas[i];
-  $("#saved").innerHTML = pg?.slug ? `No ar: <a href="${esc(urlPagina(pg.slug))}" target="_blank" rel="noopener">${esc(urlPagina(pg.slug).replace(/^https?:\/\//, ""))}</a>` : (i === "novo" ? "Escolha a área no quadro de dados e toque em Salvar para publicar." : "");
-}
-async function salvarPainel() {
-  const P = st.painel, err = $("#errCustom"); err.textContent = ""; const b = $("#goPub"); b.disabled = true; b.textContent = "Salvando…";
-  try {
-    const j = await api({ acao: "salvar", ref: PAINEL.ref, token: PAINEL.t, pagina_id: P.atual === "novo" ? null : P.paginas[P.atual].id, dados: dados() });
-    if (P.atual === "novo") { P.paginas.push(j.pagina); P.atual = P.paginas.length - 1; } else P.paginas[P.atual] = j.pagina;
-    st.fotoLocal = st.logoLocal = null; seleciona(P.atual);
-    $("#saved").innerHTML = "Salvo e publicado ✓ " + $("#saved").innerHTML;
-  } catch (x) { err.textContent = x.message; }
-  finally { b.disabled = false; b.textContent = "Salvar e publicar"; }
+  const link = pg.slug ? (/(^|\.)jurispaginas\.com$/.test(location.hostname) ? `${location.origin}/${pg.slug}` : new URL("p.html?s=" + pg.slug, location.href).href) : "";
+  const painel = new URL(`./?ref=${s.ref}&t=${s.token}`, location.href).href;
+  document.querySelectorAll("#steps i").forEach(i => i.classList.add("on"));
+  abre(`<h3>Sua página está no ar ✓</h3><p class="sub">Válida até ${s.validade ? s.validade.split("-").reverse().join("/") : "daqui a 1 ano"}. Avisaremos no seu WhatsApp antes do vencimento.</p>
+    ${link ? `<div class="live">${esc(link.replace(/^https?:\/\//, ""))}</div><a class="btn gold blk" href="${esc(link)}" target="_blank" rel="noopener">Ver minha página</a>` : ""}
+    <a class="btn ghost blk" href="${esc(painel)}">Editar minha página</a>
+    ${s.dominio ? `<p class="note">Domínio próprio: vamos falar com você no WhatsApp em até 1 dia útil para escolher o endereço.</p>` : ""}`, true);
 }
 
 /* ---------- início ---------- */
-if (PAINEL) { $("#vendas").hidden = true; iniciaPainel(); }
-else {
-  const r = ls.get("jp_rasc");
-  if (r?.id) { st.id = r.id; st.token = r.token; preenche(r.dados || {}); setStep(2); }
-  else {
-    // Link de anúncio pode chegar com ?area=&tese=&tpl= para abrir o gerador já no tema do criativo.
-    if (AREAS[q.get("area")]) { $("#fArea").value = q.get("area"); teses(q.get("tese")); }
-    const tq = TPLS.find(t => t[0] === q.get("tpl")); if (tq) { st.tpl = tq[0]; st.p = tq[4][0]; st.a = tq[4][1]; $("#cP").value = st.p; $$("#tpls button").forEach(x => x.classList.toggle("on", x.dataset.t === st.tpl)); }
-    setStep(1);
-  }
-  const pd = ls.get("jp_pedido");
-  if (pd?.ref) api({ acao: "status", ref: pd.ref, id: pd.id }).then(s => { if (s.pago) sucesso(s); }).catch(() => {});
-}
+render();
+etapa(st.dados.fotos?.length ? 2 : 1);
+ev("ViewContent", { content_name: "pagina-pronta", content_category: st.dados.area });
+const pd = ls.get("jp_pedido");
+if (pd?.ref) api({ acao: "status", ref: pd.ref, id: pd.id }).then(s => { if (s.pago) sucesso(s); }).catch(() => {});
