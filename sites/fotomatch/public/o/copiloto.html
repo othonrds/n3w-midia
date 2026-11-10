@@ -1,0 +1,66 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Copiloto de Conversa · FotoMatch</title><link rel="stylesheet" href="oferta.css?v=4">
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');if(!location.search.includes('demo'))fbq('init','39072077939073915'),fbq('track','PageView');</script><style>.tm{display:flex;align-items:center;justify-content:space-between;gap:10px}.tm-n b{font-size:42px;font-weight:800;line-height:1}.tm-n span{color:var(--muted);font-size:14px}
+.tm-bar{height:8px;background:var(--surface2);border-radius:9px;overflow:hidden;margin:8px 0 10px}.tm-bar i{display:block;height:100%;background:linear-gradient(90deg,#5aa0ff,var(--warn),var(--accent));width:0;transition:width 1s}
+.sinais{list-style:none;padding:0;margin:0;display:grid;gap:6px}.sinais li{display:flex;gap:8px;font-size:14px}.sinais li b{flex:0 0 auto;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:13px}
+.sinais li.p b{background:#17301F;color:var(--ok)}.sinais li.n b{background:#3A1F1C;color:var(--accent)}
+.v3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.v3 span{text-align:center;padding:9px 4px;border-radius:10px;background:var(--surface2);font-size:13px;font-weight:700;color:var(--muted)}.v3 span.on{background:var(--accent);color:#fff}
+.resp.lock{border-style:dashed}.resp.lock .pq{color:var(--warn)}.ini{color:var(--ink);font-weight:600}.ini::after{content:" ▒▒▒▒ ▒▒▒ ▒▒▒▒▒";color:var(--muted);letter-spacing:-1px}</style></head>
+<body style="padding-bottom:30px" data-checkout="https://checkout.payt.com.br/3941127612b515ae4ce61cab30fc0dff" data-preco="9.90">
+<main>
+<div class="top"><div class="logo">Foto<b>Match</b></div><div class="selo" id="selo">1ª análise grátis</div></div>
+
+<section id="envio">
+<div class="kicker">Copiloto de conversa</div>
+<h1>Manda o print. Eu te digo o que responder.</h1>
+<p class="sub">A IA lê a conversa, mostra o interesse dela e te dá a melhor estratégia e as respostas prontas.</p>
+<label class="l">O que você quer agora?</label>
+<div class="chips" id="obj">
+<button class="chip" data-v="continuar" aria-pressed="true">Manter a conversa</button><button class="chip" data-v="sair" aria-pressed="false">Chamar pra sair</button>
+<button class="chip" data-v="seco" aria-pressed="false">Ela tá seca</button><button class="chip" data-v="esfriou" aria-pressed="false">Esfriou / sumiu</button>
+<button class="chip" data-v="abrir" aria-pressed="false">Primeira mensagem</button></div>
+<label class="up" for="arq"><b>+ Escolher prints da conversa</b><span>Até 4 prints, em ordem. Pode cortar nome e foto.</span></label>
+<input type="file" id="arq" accept="image/*" multiple hidden>
+<div class="thumbs" id="thumbs"></div>
+<label class="l" for="ctx">Contexto (opcional)</label>
+<textarea id="ctx" maxlength="400" placeholder="Ex.: a gente se falou ontem, ela gosta de trilha"></textarea>
+<p class="mini">🔒 Seus prints não ficam guardados: são lidos pela IA e descartados.</p>
+<button class="btn verm" id="vai" disabled>Analisar conversa</button>
+<p class="mini centro" id="erro" style="color:var(--accent)"></p>
+</section>
+
+<section id="carregando" hidden><div class="load"><div class="sp"></div><b id="loadTxt">Lendo quem disse o quê…</b><p class="mini">Leva uns 30 segundos: a IA testa 8 respostas e te entrega as 3 melhores.</p></div></section>
+
+<section id="resultado" hidden>
+<div class="card"><p class="r-h">Interesse dela</p>
+<div class="tm"><div class="tm-n"><b id="rTermo">0</b><span>/100</span></div><span class="tag" id="rInt"></span></div>
+<div class="tm-bar"><i id="rTermoBar"></i></div>
+<ul class="sinais" id="rSinais"></ul>
+<p id="rIntP" style="margin:8px 0 0;font-size:14px;color:var(--muted)"></p></div>
+<div class="card"><p class="r-h">Onde vocês estão · Método 3V</p><div class="v3" id="rPasso"><span data-p="voce">1 · Você</span><span data-p="vinculo">2 · Vínculo</span><span data-p="vamos">3 · Vamos</span></div></div>
+<div class="card"><p class="r-h">O que está acontecendo</p><p id="rLei" style="margin:0"></p><p class="r-h" style="margin-top:12px">Seu erro até aqui</p><p id="rErro" style="margin:0"></p></div>
+<div class="card"><p class="r-h">Estratégia</p><p id="rEst" style="margin:0"></p></div>
+<h2 style="margin-top:18px">Mande uma destas</h2><div id="rResp"></div>
+<div class="card" id="cReac" hidden><p class="r-h">Como ela deve reagir</p><p id="rReac" style="margin:0"></p></div>
+<div class="card" id="cProx"><p class="r-h">Depois que ela responder</p><p id="rProx" style="margin:0"></p></div>
+<div class="card" id="cConv"><p class="r-h">📅 Convite pronto pra hora certa</p><p id="rConv" style="margin:0"></p></div>
+<div class="card"><p class="r-h">Evite agora</p><p id="rEvi" style="margin:0"></p></div>
+<button class="btn" id="outro" style="background:var(--surface2);color:var(--ink);margin-top:10px">Analisar outro print</button>
+</section>
+
+<section id="pague" hidden>
+<div class="card" style="border-color:var(--warn)">
+<div class="kicker" style="color:var(--warn)">Copiloto ilimitado</div>
+<h2 style="margin:4px 0 10px">Tenha a melhor resposta para cada conversa</h2>
+<ul class="lista"><li>Mande prints sempre que travar, por 30 dias</li><li>Todas as respostas e o próximo passo liberados</li><li>Primeira mensagem, convite pra sair e conversa que esfriou</li></ul>
+<div class="preco"><div><b>Copiloto de Conversa</b><br><span>30 dias · pagamento único</span></div><div class="v">R$ 9,90</div>
+<p>✓ Pagamento único de R$ 9,90. Sem mensalidade e sem renovação automática.</p></div>
+<a class="btn" id="cta">Liberar o Copiloto · R$ 9,90</a>
+<div class="garantia"><b>Garantia de 7 dias.</b> Não gostou, devolvemos 100% do valor.</div>
+<label class="l" for="email">Já pagou? Digite o e-mail da compra</label>
+<div style="display:flex;gap:8px"><input type="email" id="email" placeholder="seu@email.com"><button class="chip" id="entrar">Entrar</button></div>
+<p class="mini" id="emailMsg"></p>
+</div></section>
+<footer>FotoMatch · N3W Digital · A IA sugere, você decide o que mandar. Respeite sempre um “não”. · <a href="../privacidade.html" style="color:inherit">Privacidade</a></footer>
+</main>
+<script src="../pix.js?v=4"></script><script src="copiloto.js?v=5"></script></body></html>

@@ -1,0 +1,25 @@
+@font-face{font-family:P;src:url(/usr/share/fonts/truetype/google-fonts/Poppins-Regular.ttf);font-weight:400}
+@font-face{font-family:P;src:url(/usr/share/fonts/truetype/google-fonts/Poppins-Medium.ttf);font-weight:500}
+@font-face{font-family:P;src:url(/usr/share/fonts/truetype/google-fonts/Poppins-Bold.ttf);font-weight:700}
+*{box-sizing:border-box}
+html,body{margin:0;width:1080px;height:1350px;overflow:hidden}
+body{background:#14110F;color:#F6F0EA;font-family:P,'Noto Color Emoji',sans-serif;padding:72px 72px 60px;display:flex;flex-direction:column}
+.logo{font-weight:700;font-size:40px;letter-spacing:-.5px}.logo b{color:#FF5A4E}
+.h1{font-weight:700;text-transform:uppercase;text-align:center;line-height:1.04;letter-spacing:-1px}
+.q{font-weight:700;text-align:center;color:#FF5A4E;line-height:1.05;letter-spacing:-1.5px}
+.op{display:flex;align-items:center;gap:26px;background:#1E1A17;border:2px solid #3A322C;border-radius:26px;padding:26px 34px;font-weight:500;font-size:36px;line-height:1.2}
+.op .e{font-size:46px;font-family:'Noto Color Emoji'}
+.ops{display:flex;flex-direction:column;gap:20px}
+.pe{text-align:center;color:#B7ABA0;font-size:28px}
+.mini{text-align:center;color:#7d736b;font-size:20px}
+.ad{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.ad figure{margin:0;position:relative;border-radius:24px;overflow:hidden;border:3px solid #3A322C}
+.ad figure.dep{border-color:#3FBF7F}
+.ad img{width:100%;height:100%;object-fit:cover;display:block}
+.ad figcaption{position:absolute;left:16px;top:16px;background:rgba(20,17,15,.85);padding:8px 18px;border-radius:99px;font-weight:700;font-size:24px;text-transform:uppercase;letter-spacing:1px}
+.ad .dep figcaption{background:#3FBF7F;color:#0f1a12}
+.nt{position:absolute;right:16px;bottom:16px;background:rgba(20,17,15,.88);padding:8px 16px;border-radius:16px;font-weight:700;font-size:34px}
+.nt small{font-size:20px;color:#B7ABA0}
+.nt.r{color:#FF6B5E}.nt.g{color:#3FBF7F}
+.op.sel{border-color:#FF5A4E;background:#3A1F1C}
+.op.sel::after{content:"✓";margin-left:auto;color:#FF5A4E;font-weight:700;font-size:40px}

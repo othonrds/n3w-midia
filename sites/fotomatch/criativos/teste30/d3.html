@@ -1,0 +1,64 @@
+<!doctype html><html><head><meta charset="utf-8"><style>*{box-sizing:border-box;margin:0;padding:0}
+body{width:1080px;height:1350px;overflow:hidden;font-family:Inter,-apple-system,system-ui,sans-serif;background:#111;color:#fff;position:relative}
+:root{--tg:linear-gradient(90deg,#fd267a,#ff6036);--pink:#fd267a;--blue:#1786ff;--grey:#e9ebee}
+/* layout do criativo */
+.cv{position:absolute;inset:0}
+.hk{position:absolute;left:64px;right:64px;top:64px;font:800 70px/1.06 Poppins;letter-spacing:-.015em;text-wrap:balance;z-index:5}
+.hk em{font-style:normal;color:#ffd166}
+.hk.dark{color:#111}.hk.dark em{color:#fd267a}
+.sub{position:absolute;left:64px;right:64px;font:600 32px/1.3 Inter;opacity:.85;z-index:5}
+.cta{position:absolute;left:64px;right:64px;bottom:60px;height:110px;border-radius:999px;background:var(--tg);display:flex;align-items:center;justify-content:center;font:800 40px Poppins;color:#fff;box-shadow:0 14px 34px rgba(253,38,122,.45);z-index:6}
+.cta small{font:600 30px Inter;opacity:.9;margin-left:14px}
+/* celular */
+.phone{position:absolute;background:#fff;color:#111;border-radius:64px;border:14px solid #0b0b0c;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.55);z-index:4}
+.sb{height:54px;display:flex;justify-content:space-between;align-items:center;padding:0 34px;font:600 22px Inter;color:#111}
+.sb.w{color:#fff}
+/* card de swipe */
+.card{position:absolute;inset:54px 14px 140px;border-radius:22px;overflow:hidden;background:#333 center/cover}
+.card .grad{position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(0,0,0,.85))}
+.card .nm{position:absolute;left:26px;bottom:70px;color:#fff;font:800 46px Inter}.card .nm span{font-weight:400}
+.card .ds{position:absolute;left:26px;bottom:30px;color:#fff;font:500 24px Inter;opacity:.9}
+.card .dots{position:absolute;top:12px;left:12px;right:12px;display:flex;gap:6px}.card .dots i{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.4)}.card .dots i:first-child{background:#fff}
+.btns{position:absolute;left:0;right:0;bottom:24px;display:flex;justify-content:center;gap:30px}
+.btns b{width:92px;height:92px;border-radius:50%;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;font:900 44px Inter}
+.btns .x{color:#fd3c5a}.btns .s{color:#1ca9ff;width:72px;height:72px;margin-top:10px;font-size:34px}.btns .h{color:#22d48f}
+.stampL{position:absolute;top:110px;left:40px;border:6px solid #22d48f;color:#22d48f;font:900 64px Inter;padding:2px 18px;border-radius:12px;transform:rotate(-18deg)}
+.stampN{position:absolute;top:110px;right:40px;border:6px solid #fd3c5a;color:#fd3c5a;font:900 64px Inter;padding:2px 18px;border-radius:12px;transform:rotate(18deg)}
+/* match */
+.mt{position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,10,30,.55),rgba(20,10,30,.92)),var(--bgimg) center/cover;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;color:#fff}
+.mt h3{font:italic 900 104px/1 Poppins;background:linear-gradient(90deg,#26f7a8,#5fe0ff);-webkit-background-clip:text;color:transparent;transform:rotate(-6deg)}
+.mt p{font:500 28px Inter;opacity:.9}
+.mt .duo{display:flex}.mt .duo i{width:190px;height:190px;border-radius:50%;border:6px solid #fff;background:center/cover;margin:0 -16px}
+.mt .in{width:82%;height:84px;border-radius:42px;background:rgba(255,255,255,.18);display:flex;align-items:center;padding:0 30px;font:500 26px Inter;opacity:.9}
+/* curtidas */
+.lk{padding:10px 22px}.lk h4{font:800 34px Inter;margin:10px 0 4px}.lk .gd{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.lk .gd i{aspect-ratio:3/4;border-radius:16px;background:center/cover;filter:blur(9px);transform:scale(1);display:block}
+.lk .gdw{border-radius:16px;overflow:hidden;position:relative}
+.gold{display:inline-block;background:linear-gradient(90deg,#d4a73d,#f5d27a);color:#3a2a00;font:800 24px Inter;padding:8px 18px;border-radius:999px}
+.tabs{display:flex;gap:28px;border-bottom:2px solid #eee;padding:0 22px;font:700 24px Inter;color:#999}.tabs b{color:#111;border-bottom:4px solid var(--pink);padding-bottom:12px}.tabs span{padding-bottom:12px}
+/* mensagens */
+.ms{padding:6px 0}.ms h5{font:800 26px Inter;color:var(--pink);padding:14px 24px 10px}
+.row{display:flex;gap:16px;padding:0 24px;overflow:hidden}.row .m{flex:none;width:118px;text-align:center;font:700 20px Inter}.row .m i{display:block;width:118px;height:150px;border-radius:14px;background:center/cover;margin-bottom:6px}
+.it{display:flex;gap:18px;align-items:center;padding:16px 24px;border-bottom:1px solid #f0f0f0}
+.it i{width:92px;height:92px;border-radius:50%;background:center/cover;flex:none}
+.it b{display:block;font:800 26px Inter}.it span{display:block;font:400 23px Inter;color:#555;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:520px}
+.it .new{color:#111;font-weight:600}.it .tag{background:var(--pink);color:#fff;font:800 16px Inter;padding:3px 9px;border-radius:6px;margin-left:8px;vertical-align:middle}
+/* chat */
+.ch-h{display:flex;align-items:center;gap:16px;padding:12px 22px 16px;border-bottom:1px solid #eee}.ch-h i{width:70px;height:70px;border-radius:50%;background:center/cover}.ch-h b{font:800 28px Inter}
+.ch{padding:22px 20px;display:flex;flex-direction:column;gap:12px}
+.bb{max-width:78%;padding:16px 22px;border-radius:28px;font:400 26px/1.32 Inter}
+.bb.me{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:8px}
+.bb.she{align-self:flex-start;background:var(--grey);color:#111;border-bottom-left-radius:8px}
+.tm{align-self:center;font:600 18px Inter;color:#aaa;margin:6px 0}
+.rd{align-self:flex-end;font:600 18px Inter;color:#999;margin-top:-4px}
+.hl{outline:6px solid #ffd166;outline-offset:5px}
+.xx{text-decoration:line-through;opacity:.55}
+.bar{position:absolute;left:0;right:0;bottom:0;height:96px;border-top:1px solid #eee;display:flex;align-items:center;padding:0 22px;gap:14px;background:#fff}
+.bar span{flex:1;height:62px;border-radius:31px;border:2px solid #e3e3e3;display:flex;align-items:center;padding:0 24px;font:400 24px Inter;color:#aaa}
+.bar b{font:800 24px Inter;color:#ccc}
+/* selos e setas */
+.pill{position:absolute;z-index:7;background:#ffd166;color:#111;font:800 28px Inter;padding:12px 22px;border-radius:16px;box-shadow:0 10px 24px rgba(0,0,0,.35)}
+.pill.r{background:#ff3b5c;color:#fff}.pill.g{background:#22d48f;color:#062}
+.ex{position:absolute;z-index:8;right:22px;top:66px;font:800 15px Inter;letter-spacing:.12em;color:rgba(0,0,0,.35)}
+.ex.w{color:rgba(255,255,255,.55)}
+</style></head><body style="background:linear-gradient(160deg,#2a0f22,#0d0610)"><div class="hk">Quando o perfil está certo, <em>a caixa fica assim</em>.</div><div class="phone" style="left:170px;top:320px;width:740px;height:920px"><div class="sb"><span>21:47</span><span>▂▄▆ 5G ▮</span></div><div class="ms"><h5>Novos matches</h5><div class="row"><div class="m"><i style="background-image:url(faces/f1.jpg)"></i>Lu</div><div class="m"><i style="background-image:url(faces/f2.jpg)"></i>Bia</div><div class="m"><i style="background-image:url(faces/f3.jpg)"></i>Mari</div><div class="m"><i style="background-image:url(faces/f4.jpg)"></i>Carol</div><div class="m"><i style="background-image:url(faces/f5.jpg)"></i>Nina</div></div><h5>Mensagens</h5><div class="it"><i style="background-image:url(faces/f6.jpg)"></i><div><b>Júlia<span class="tag">SUA VEZ</span></b><span class="new">oi! adorei sua foto da praia</span></div></div><div class="it"><i style="background-image:url(faces/f7.jpg)"></i><div><b>Rafa<span class="tag">SUA VEZ</span></b><span class="new">kkkk para, sério?</span></div></div><div class="it"><i style="background-image:url(faces/f8.jpg)"></i><div><b>Gabi<span class="tag">SUA VEZ</span></b><span class="new">sábado então? 😊</span></div></div><div class="it"><i style="background-image:url(faces/f2.jpg)"></i><div><b>Bia</b><span class="">vc que tirou essa foto?</span></div></div></div><div class="ex">EXEMPLO</div></div><div class="cta">Arrumar meu perfil <small>R$ 9,90</small></div></body></html>
